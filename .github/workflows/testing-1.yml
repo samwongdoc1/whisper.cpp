@@ -1,1 +1,13 @@
-testing
+name: Testing Windows x86-64
+run-name: Testing Windows
+on:
+  workflow_dispatch:
+
+jobs:
+  Testing-0:
+    runs-on: windows-2022
+    steps:
+      - name: Check Environment 0
+        run: |
+          echo "GITHUB_ENV"
+          echo $env:GITHUB_ENV
