@@ -11,8 +11,8 @@ jobs:
     steps:
       - name: Set default environment variables for Windows
         run: |
-          Get-Date -Format "yyyyMMdd-HHmmss"
-        # echo "now=$now" >> $GITHUB_ENV
+          $now=& Get-Date "yyyyMMdd-HHmmss"
+          echo "now=$now" >> $GITHUB_ENV
 
       - name: Check Environment 0
         run: |
