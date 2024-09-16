@@ -7,11 +7,11 @@ jobs:
   Testing-0:
     runs-on: windows-2022
     steps:
-      - name: Set default env variables for Linux
+      - name: Set default environment variables for Windows
         run: |
           $now = Get-Date -Format "yyyyMMdd-HHmmss"
           echo "now=$now" >> $GITHUB_ENV
-          
+
       - name: Check Environment 0
         run: |
           echo "`nCurrent Folder : $(pwd)`n"
