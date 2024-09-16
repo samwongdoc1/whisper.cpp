@@ -11,17 +11,19 @@ jobs:
     steps:
       - name: Set default environment variables for Windows
         run: |
-          $now = Get-Date -Format "yyyyMMdd-HHmmss"
-          echo "now=$now" >> $GITHUB_ENV
+          Get-Date -Format "yyyyMMdd-HHmmss"
+        # echo "now=$now" >> $GITHUB_ENV
 
       - name: Check Environment 0
         run: |
           echo "`nThe current time: $env:now "
           echo "`nCurrent Folder : $(pwd)"
           ls
-          echo "The path of GITHUB_ENV : $env:GITHUB_ENV `n"
-          echo "The content of GITHUB_ENV : `n"
-          cat $env:GITHUB_ENV
+          echo "`nThe path of GITHUB_ENV : $env:GITHUB_ENV `n"
+          echo "`nThe variable of GITHUB_ENV : `n"
+          echo $env:GITHUB_ENV
+          echo "`nThe variable of PATH"
+          echo $env:PATH
 
       - name: Check Environment 1
         run: |
