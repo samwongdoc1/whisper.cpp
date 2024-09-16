@@ -9,5 +9,13 @@ jobs:
     steps:
       - name: Check Environment 0
         run: |
-          echo "GITHUB_ENV"
-          echo $env:GITHUB_ENV
+          "`nCurrent Folder : $(pwd)`n"
+          ls
+          echo -e "The path of GITHUB_ENV : $env:GITHUB_ENV \n"
+          echo -e "\nThe content of GITHUB_ENV : \n"
+          cat $env:GITHUB_ENV
+
+      - name: Check Environment 1
+        run: |
+          cmake --version
+          cmake --help
