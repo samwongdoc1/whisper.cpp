@@ -21,7 +21,7 @@ jobs:
           ls
           echo "`nThe path of GITHUB_ENV : $env:GITHUB_ENV `n"
           echo "`nThe variable of GITHUB_ENV : `n"
-          echo $env:GITHUB_ENV
+          cat $env:GITHUB_ENV
           echo "`nThe variable of PATH"
           echo $env:PATH
 
