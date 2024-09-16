@@ -5,6 +5,8 @@ on:
 
 jobs:
   Testing-0:
+    permissions:
+      contents: write
     runs-on: windows-2022
     steps:
       - name: Set default environment variables for Windows
@@ -14,7 +16,8 @@ jobs:
 
       - name: Check Environment 0
         run: |
-          echo "`nCurrent Folder : $(pwd)`n"
+          echo "`nThe current time: $env:now "
+          echo "`nCurrent Folder : $(pwd)"
           ls
           echo "The path of GITHUB_ENV : $env:GITHUB_ENV `n"
           echo "The content of GITHUB_ENV : `n"
