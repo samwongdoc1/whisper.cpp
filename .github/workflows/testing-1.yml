@@ -7,12 +7,17 @@ jobs:
   Testing-0:
     runs-on: windows-2022
     steps:
+      - name: Set default env variables for Linux
+        run: |
+          $now = Get-Date -Format "yyyyMMdd-HHmmss"
+          echo "now=$now" >> $GITHUB_ENV
+          
       - name: Check Environment 0
         run: |
           echo "`nCurrent Folder : $(pwd)`n"
           ls
           echo "The path of GITHUB_ENV : $env:GITHUB_ENV `n"
-          echo "`nThe content of GITHUB_ENV : `n"
+          echo "The content of GITHUB_ENV : `n"
           cat $env:GITHUB_ENV
 
       - name: Check Environment 1
