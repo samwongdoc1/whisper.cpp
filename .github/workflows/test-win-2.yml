@@ -1,0 +1,162 @@
+name: Testing Windows x86-64 cpu openblas
+run-name: build for Windows
+on:
+  # push:
+  #   paths:
+  #     - .github/workflows/test1.yml
+  workflow_dispatch:
+# on: [push]
+
+jobs:
+  build-windows-x64-T1:
+    # runs-on: windows-latest
+    runs-on: windows-2022
+
+    strategy:
+      matrix:
+        build: [Release]
+        arch: [x64]
+        # arch: [Win32, x64]
+        sdl2: [ON]
+        include:
+          # - arch: Win32
+          #   s2arc: x86
+          #   jnaPath: win32-x86
+          - arch: x64
+            s2arc: x64
+            jnaPath: win32-x86-64
+          - sdl2: ON
+            s2ver: 2.28.5
+
+    steps:
+      - name: Clone
+        uses: actions/checkout@v4
+
+      - name: Check Env 0
+        run: |
+          echo ""
+          echo "PATH"
+          echo ""
+          echo $env:PATH
+          echo ""
+          echo "GITHUB_ENV"
+          echo ""
+          echo $env:GITHUB_ENV
+          echo ""
+          dir $env:GITHUB_ENV
+          cat "$env:GITHUB_ENV"
+          echo ""
+          dir
+
+      - name: Add msbuild to PATH
+        uses: microsoft/setup-msbuild@v2
+
+      - name: Check Env 1
+        run: |
+          echo ""
+          echo "PATH"
+          echo ""
+          echo $env:PATH
+          echo ""
+          echo "GITHUB_ENV"
+          echo ""
+          echo $env:GITHUB_ENV
+          echo ""
+          dir $env:GITHUB_ENV
+          cat "$env:GITHUB_ENV"
+          echo ""
+          dir
+          
+      - name: Fetch SDL2 and set SDL2_DIR
+        if: matrix.sdl2 == 'ON'
+        run: |
+          C:/msys64/usr/bin/wget.exe -qO sdl2.zip https://github.com/libsdl-org/SDL/releases/download/release-${{ matrix.s2ver }}/SDL2-devel-${{ matrix.s2ver }}-VC.zip
+          7z x sdl2.zip
+          echo "SDL2_DIR=$env:GITHUB_WORKSPACE/SDL2-${{ matrix.s2ver }}/cmake" >> $env:GITHUB_ENV
+          echo ""
+          echo "PATH"
+          echo ""
+          echo $env:PATH
+          echo ""
+          echo "GITHUB_ENV"
+          echo ""
+          echo $env:GITHUB_ENV
+          echo ""
+          dir $env:GITHUB_ENV
+          cat "$env:GITHUB_ENV"
+          echo "SDL2_DIR"
+          echo ""
+          echo $env:SDL2_DIR
+          echo ""
+          echo ""
+          dir
+
+      - name: Fetch OpenBLAS
+        run: |
+          C:/msys64/usr/bin/wget.exe -qO blas.zip https://github.com/OpenMathLib/OpenBLAS/releases/download/v0.3.25/OpenBLAS-0.3.25-x64.zip
+          7z x blas.zip -oblas -y
+          copy blas/include/cblas.h .
+          copy blas/include/openblas_config.h .
+          echo "OPENBLAS_PATH=$env:GITHUB_WORKSPACE/blas" >> $env:GITHUB_ENV
+          echo ""
+          echo "PATH"
+          echo ""
+          echo $env:PATH
+          echo ""
+          echo "GITHUB_ENV"
+          echo ""
+          echo $env:GITHUB_ENV
+          echo ""
+          dir $env:GITHUB_ENV
+          cat "$env:GITHUB_ENV"
+          echo ""
+          echo OPENBLAS_PATH/lib
+          echo ""
+          dir "$env:OPENBLAS_PATH/lib"
+          echo ""
+          dir
+
+      # - name: Configure
+      #   run: >
+      #     cmake -S . -B ./build -A ${{ matrix.arch }}
+      #     -DCMAKE_BUILD_TYPE=${{ matrix.build }}
+      #     -DWHISPER_SDL2=${{ matrix.sdl2 }}
+
+      - name: Configure
+        run: >
+          cmake -S . -B ./build -A ${{ matrix.arch }}
+          -DCMAKE_BUILD_TYPE=${{ matrix.build }}
+          -DGGML_OPENBLAS=ON
+          -DCMAKE_LIBRARY_PATH="$env:OPENBLAS_PATH/lib"
+          -DWHISPER_SDL2=${{ matrix.sdl2 }}
+
+      # - name: Build
+      #   run: |
+      #     cd ./build
+      #     msbuild ALL_BUILD.vcxproj -t:build -p:configuration=${{ matrix.build }} -p:platform=${{ matrix.arch }}
+
+      # - name: Copy libopenblas.dll
+      #   run: copy "$env:OPENBLAS_PATH/bin/libopenblas.dll" build/bin/${{ matrix.build }}
+
+      # - name: Copy SDL2.dll
+      #   if: matrix.sdl2 == 'ON'
+      #   run: copy "$env:SDL2_DIR/../lib/${{ matrix.s2arc }}/SDL2.dll" build/bin/${{ matrix.build }}
+
+      # - name: Testing 1
+      #   run: |
+      #     dir
+      #     dir build/bin/${{ matrix.build }}
+      #     ./build/bin/${{ matrix.build }}/main.exe -h
+
+      # - name: Upload dll
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: ${{ matrix.jnaPath }}_whisper.dll
+      #     path: build/bin/${{ matrix.build }}/whisper.dll
+
+      # - name: Upload binaries
+      #   if: matrix.sdl2 == 'ON'
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: build-windows-x86-64-cpu-openblas-msbuild_T1
+      #     path: build/bin/${{ matrix.build }}

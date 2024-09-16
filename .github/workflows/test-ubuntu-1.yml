@@ -1,0 +1,146 @@
+name: Testing build for Ubuntu 22.04
+run-name: build for Linux by using GitHub Actions
+on:
+  # push:
+  #   paths:
+  #     - .github/workflows/test1.yml
+  workflow_dispatch:
+# on: [push]
+
+jobs:
+  build-ubuntu2204-x86-64:
+    # runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
+    steps:
+      
+      - name: Check system environment
+        run: |
+          now=$(TZ="Asia/Hong_Kong" date +%Y%m%d-%H%M%S)
+          testing_type="GitHub Actions"
+          os_type=$(uname -o|sed s/'GNU'//| tr -d '/' |tr [A-Z] [a-z])
+          kernel_version=$(uname -r)
+          os_name=$(cat /etc/os-release|grep "^ID="| sed 's/ID=//')
+          os_name_version=$(lsb_release -r -s | tr "." "-")
+          os_arch=$(dpkg --print-architecture)
+          cpu_model=$(cat /proc/cpuinfo | grep "^model name" | head -1 | sed 's/model name//;s/://;s/\t//;s/ //1')
+          mem_total=$(awk '/MemTotal/ {print $2}' /proc/meminfo)
+          
+          cat << EOF| tee "/tmp/log-testing-1.md"
+          # Testing Record ${now}
+
+          ## Current status of the machine
+          
+          \`\`\`
+          Current Time   : $(TZ="Asia/Hong_Kong" date +%Y%m%d-%H%M%S-%Z)
+
+          OS type        : $os_type
+          Kernel version : $kernel_version
+          Testing type   : $testing_type
+          OS name        : $os_name
+          OS version     : $os_name_version
+          OS arch        : $os_arch
+          CPU model      : $cpu_model
+          Memory         : $(numfmt --from=si --to=si --format "%5.4f" "$mem_total"K)
+
+          Graphic card   :
+          $(lspci|grep VGA)
+
+          \`\`\`
+
+          EOF
+
+      - name: Check development tools version
+        run: |
+          cat << EOF| tee -a "/tmp/log-testing-1.md"
+          ## Current status of the application
+
+          \`\`\`
+          Current shell  : $SHELL
+          Bash version   : $(bash --version | head -1)
+          Python version : $(python3 -VV)
+          NVCC version   : $(nvcc -V | grep "release" | awk '{print $6}')
+          GCC version    : $(gcc --version | head -1)
+          G++ version    : $(g++ --version | head -1)
+          Make version   : $(make --version | head -1)
+          CMake version  : $(cmake --version | head -1)
+          JAVA version   : $(java -version 2>&1 | head -n 1)
+
+          \`\`\`
+
+          EOF
+
+      - name: Clone the repository from GitHub
+        uses: actions/checkout@v4
+
+      - name: Build linux/amd64
+        run: |
+          cat << EOF| tee -a "/tmp/log-testing-1.md"
+          ## Current location  : $(pwd)
+
+          \`\`\`
+          $(ls -al)
+
+          \`\`\`
+
+          ## Build the source code with CPU support by using make
+
+          EOF
+
+          echo -e "\`\`\`" | tee -a /tmp/log-testing-1.md
+
+          make -j $(nproc) 2>&1 | tee -a /tmp/log-testing-1.md
+
+          echo -e "\`\`\`" | tee -a /tmp/log-testing-1.md
+
+          echo -e "\n## The compiled file as below:" | tee -a /tmp/log-testing-1.md
+
+          for file in *; do
+            if [ -f "$file" ]; then
+              if file "$file" | grep -q "ELF"; then
+                echo -e "\n### "$file"\n" | tee -a /tmp/log-testing-1.md
+                echo -e "\`\`\`" | tee -a /tmp/log-testing-1.md
+                ./"$file" -h 2>&1 | tee -a /tmp/log-testing-1.md
+                echo -e "\`\`\`" | tee -a /tmp/log-testing-1.md
+                echo -e "\n#### The shared libraries used by "$file"\n" | tee -a /tmp/log-testing-1.md
+                echo -e "\`\`\`" | tee -a /tmp/log-testing-1.md
+                readelf -d "$file" 2>&1 | tee -a /tmp/log-testing-1.md
+                echo -e "\`\`\`" | tee -a /tmp/log-testing-1.md
+                echo -e "" | tee -a /tmp/log-testing-1.md               
+              fi
+            fi
+          done
+          
+        # for file in *; do [[ $(file "$file") == *"ELF"* ]] && echo -e "\n### "$file"" && ./"$file" -h && echo -e "" ; done 2>&1 | tee -a /tmp/log-testing-1.txt
+
+      - name: preview the log file
+        run: |
+          
+          ls -al "/tmp/log-testing-1.md"
+          echo -e "\nPreview of "log-testing-1.md"\n"
+          cat /tmp/log-testing-1.md
+
+      # - name: Archive the log file
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: log-testing-1
+      #     path: |
+      #       /tmp/log-testing-1.md
+
+      - name: Save the compiled file
+        run: |
+          now=$(TZ="Asia/Hong_Kong" date +%Y%m%d-%H%M%S)
+          echo -e "\nCurrent Time    : ${now}\n" | tee -a /tmp/log-testing-1.md
+          cp /tmp/log-testing-1.md log-testing-1-$now.md
+          ls -al log-testing-1-$now.md
+          mkdir build
+          for file in *; do [[ $(file "$file") == *"ELF"* ]] && cp $file build ; done
+          ls -al build
+          
+      - name: Archive the compiled file
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-ubuntu-2204-x86_64-cpu-make_T1
+          path: |
+            log-testing*
+            build
+

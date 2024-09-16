@@ -1,0 +1,87 @@
+name: Testing OS Ubuntu 22.04
+run-name: ${{ github.actor }} is testing GitHub Actions
+on:
+  # push:
+  #   paths:
+  #     - .github/workflows/test1.yml
+  workflow_dispatch:
+# on: [push]
+
+jobs:
+  build-ubuntu2204-x64-T1:
+    # runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Clone
+        uses: actions/checkout@v4
+      # - uses: actions/setup-node@v4
+      #   with:
+      #     node-version: '20'
+
+      # - name: Update system
+      #   run: |
+      #     now=$(TZ="Asia/Hong_Kong" date +%Y%m%d-%H%M%S)
+      #     echo -e "\nCurrent Time  :${now}\n"
+      #     set -e
+      #     apt update && upgrade
+      #     apt install -y build-essential
+      
+      - name: Check system environment
+        run: |
+          now=$(TZ="Asia/Hong_Kong" date +%Y%m%d-%H%M%S)
+          echo -e "\nCurrent Time    : ${now}" | tee -a log-testing-1.txt
+          echo -e "\nCurrent system  : $(uname -a)\n" | tee -a log-testing-1.txt
+        
+      - name: Check development tools version
+        run: |
+          gcc -v 2>&1 | tee -a log-testing-1.txt
+          echo -e "" | tee -a log-testing-1.txt
+          g++ -v 2>&1 | tee -a log-testing-1.txt
+          echo -e "\n$(cmake --version)\n" 2>&1 | tee -a log-testing-1.txt
+          echo -e "$(make --version)\n" 2>&1 | tee -a log-testing-1.txt
+          echo -e "$(python -V)\n" 2>&1 | tee -a log-testing-1.txt
+          
+      - name: Build linux/amd64
+        run: |
+          echo -e "\nCurrent location  : $(pwd)\n" | tee -a log-testing-1.txt
+          echo -e "$(ls -al)\n" | tee -a log-testing-1.txt
+          echo -e "Build whisper.cpp with CPU support by using make \n" | tee -a log-testing-1.txt
+          make -j $(nproc) 2>&1 | tee -a log-testing-1.txt
+          echo -e "" | tee -a log-testing-1.txt
+          for file in *; do [[ $(file "$file") == *"ELF"* ]] && echo -e "\n### "$file"" && ./"$file" -h && echo -e "" ; done 2>&1 | tee -a log-testing-1.txt
+        # now=$(TZ="Asia/Hong_Kong" date +%Y%m%d-%H%M%S)
+        # echo -e "\nCurrent Time    :${now}" | tee -a log-testing-1.txt
+        # echo -e "\nPreview of "log-testing-1-${now}.txt"\n"
+        # mv log-testing-1.txt log-testing-1-$now.txt
+        # ls -al log-testing-1-$now.txt
+        # cat log-testing-1-$now.txt
+
+      - name: preview the log file
+        run: |
+          ls -al log-testing-1.txt
+          echo -e "\nPreview of "log-testing-1.txt"\n"
+          cat log-testing-1.txt
+
+      - name: Save the compiled file
+        run: |
+          now=$(TZ="Asia/Hong_Kong" date +%Y%m%d-%H%M%S)
+          echo -e "\nCurrent Time    : ${now}\n" | tee -a log-testing-1.txt
+          mv log-testing-1.txt log-testing-1-$now.txt
+          ls -al log-testing-1-$now.txt
+          mkdir build
+          for file in *; do [[ $(file "$file") == *"ELF"* ]] && cp $file build ; done
+          ls -al build
+          
+      - name: Archive the compiled file
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-ubuntu-2204-x86-x64-cpu-make_T1
+          path: |
+            log-testing*
+            build
+
+        # SDL2
+        # apt install -y libsdl2-dev
+      
+      # - run: npm install -g bats
+      # - run: bats -v
