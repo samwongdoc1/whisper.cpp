@@ -9,10 +9,10 @@ jobs:
     steps:
       - name: Check Environment 0
         run: |
-          "`nCurrent Folder : $(pwd)`n"
+          echo "`nCurrent Folder : $(pwd)`n"
           ls
-          echo -e "The path of GITHUB_ENV : $env:GITHUB_ENV \n"
-          echo -e "\nThe content of GITHUB_ENV : \n"
+          echo "The path of GITHUB_ENV : $env:GITHUB_ENV `n"
+          echo "`nThe content of GITHUB_ENV : `n"
           cat $env:GITHUB_ENV
 
       - name: Check Environment 1
