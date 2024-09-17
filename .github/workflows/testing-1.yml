@@ -3,6 +3,9 @@ run-name: Testing Windows
 on:
   workflow_dispatch:
 
+env:
+  CMAKE_BUILD_TYPE: Release
+
 jobs:
   Testing-0:
     permissions:
@@ -11,6 +14,7 @@ jobs:
     steps:
       - name: Set default environment variables for Windows
         run: |
+          echo "CMAKE_BUILD_TYPE=${{ inputs.cmake_build_type || 'Release' }}" >> $GITHUB_ENV
           echo "now=Get-Date -format yyyy-MM-dd" >> $GITHUB_ENV
         # $now=& Get-Date -format yyyy-MM-dd
         # echo "now=$now" >> $GITHUB_ENV
