@@ -17,7 +17,6 @@ jobs:
           echo "CMAKE_BUILD_TYPE=${{ inputs.cmake_build_type || 'Release' }}" >> $GITHUB_ENV
           $now =(Get-Date).ToUniversalTime().AddHours(8).ToString("yyyyMMdd-HHmmss")
           echo "now=$now" >> $env:GITHUB_ENV
-          echo "`nThe current time: $now'n"
 
       - name: Check Environment 0
         run: |
