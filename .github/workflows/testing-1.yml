@@ -19,6 +19,9 @@ jobs:
           echo "TimeZone=$TimeZone" >> $GITHUB_ENV
           $now = [System.TimeZoneInfo]::ConvertTimeBySystemTimeZoneId((Get-Date), $TimeZone.Id).ToString("yyyyMMdd-HHmmss")
           echo "now=$now" >> $GITHUB_ENV 
+        # $now = Get-Date -Format "yyyyMMdd-HHmmss" -UFormat "%Z"
+        # echo "now=$now"
+
 
       - name: Check Environment 0
         run: |
