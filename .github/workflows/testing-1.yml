@@ -29,7 +29,7 @@ jobs:
           echo "`nThe variable of PATH"
           echo $env:PATH
           echo "`nThe variable of current environment"
-          echo Get-Variable
+          Get-Variable
 
       - name: Check Environment 1
         run: |
@@ -39,4 +39,4 @@ jobs:
       - name: Check Environment 2
         run: |
           cmake --version
-          cmake --help
+          Measure-Command -Expression {cmake --help}
