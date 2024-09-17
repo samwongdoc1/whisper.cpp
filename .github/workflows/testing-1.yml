@@ -21,7 +21,7 @@ jobs:
 
       - name: Check Environment 0
         run: |
-          echo "`nThe current time: $env:now "
+          echo "`nThe current time: ${{ env.now }} "
           echo "`nCurrent Folder : $(pwd)"
           ls
           echo "`nThe path of GITHUB_ENV : $env:GITHUB_ENV `n"
