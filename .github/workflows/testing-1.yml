@@ -28,6 +28,8 @@ jobs:
           echo $env:GITHUB_ENV
           echo "`nThe variable of PATH"
           echo $env:PATH
+          echo "`nThe variable of current environment"
+          echo Get-Variable
 
       - name: Check Environment 1
         run: |
