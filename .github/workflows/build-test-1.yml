@@ -3,14 +3,14 @@ on:
   # push:
   # pull_request:
   workflow_dispatch:
-    inputs:
-      cmake_build_type:
-        required: false
-        default: Release
-        type: choice
-        options:
-          - Debug
-          - Release
+    # inputs:
+    #   cmake_build_type:
+    #     required: false
+    #     default: Release
+    #     type: choice
+    #     options:
+    #       - Debug
+    #       - Release
 
 env:
   MODEL_URL: https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-tiny.bin
@@ -43,20 +43,20 @@ jobs:
                 - platform: "ubuntu-22.04"
                   name: "ubuntu-2204-x86_64-cpu-cmake-sdl2"
                   build-name: "build-ubuntu-2204-x86_64-cpu-cmake-sdl2"
-                  cmake-args: "-DWHISPER_SDL2=ON -DCMAKE_BUILD_TYPE=${{ inputs.cmake_build_type }}"
+                  cmake-args: "-DWHISPER_SDL2=ON -DCMAKE_BUILD_TYPE=${{ env.CMAKE_BUILD_TYPE }}"
 
                 # Linux cmake SDL2 Static
                 - platform: "ubuntu-22.04"
                   name: "ubuntu-2204-x86_64-cpu-cmake-sdl2-static"
                   build-name: "build-ubuntu-2204-x86_64-cpu-cmake-sdl2-static"
-                  cmake-args: "-DGGML_CCACHE=OFF -DBUILD_SHARED_LIBS=OFF -DWHISPER_SDL2=ON -DCMAKE_BUILD_TYPE=${{ inputs.cmake_build_type }} -DGGML_STATIC=ON"
+                  cmake-args: "-DGGML_CCACHE=OFF -DBUILD_SHARED_LIBS=OFF -DWHISPER_SDL2=ON -DCMAKE_BUILD_TYPE=${{ env.CMAKE_BUILD_TYPE }} -DGGML_STATIC=ON"
                 
                   # Linux make SDL2 + OpenBLAS
                 - platform: "ubuntu-22.04"
                   name: "ubuntu-2204-x86_64-cpu-make-sdl2-openblas"
                   build-name: "build-ubuntu-2204-x86_64-cpu-make-sdl2-openblas"
                   make-args: "GGML_OPENBLAS=1"
-                  # cmake-args: "-DGGML_CCACHE=OFF -DBUILD_SHARED_LIBS=OFF -DWHISPER_SDL2=ON -DCMAKE_BUILD_TYPE=${{ inputs.cmake_build_type }} -DGGML_STATIC=ON -DGGML_OPENBLAS=ON"
+                  # cmake-args: "-DGGML_CCACHE=OFF -DBUILD_SHARED_LIBS=OFF -DWHISPER_SDL2=ON -DCMAKE_BUILD_TYPE=${{ env.CMAKE_BUILD_TYPE }} -DGGML_STATIC=ON -DGGML_OPENBLAS=ON"
 
 
                 # - platform: "ubuntu-24.04"
@@ -67,7 +67,7 @@ jobs:
                 - platform: "windows-2022"
                   name: "windows-x86_64-cpu-cmake"
                   build-name: "build-windows-x86_64-cpu-cmake"
-                  cmake-args: "-DGGML_CCACHE=OFF -DBUILD_SHARED_LIBS=OFF -DCMAKE_BUILD_TYPE=${{ inputs.cmake_build_type }} -DGGML_STATIC=ON"
+                  cmake-args: "-DGGML_CCACHE=OFF -DBUILD_SHARED_LIBS=OFF -DCMAKE_BUILD_TYPE=${{ env.CMAKE_BUILD_TYPE }} -DGGML_STATIC=ON"
 
                 # - platform: "windows-latest"
                 #   name: "Windows - x86_64 - Vulkan"
@@ -82,14 +82,14 @@ jobs:
               if: contains(matrix.platform, 'windows') == false
               run: |
                 echo "now=$(TZ="Asia/Hong_Kong" date +%Y%m%d-%H%M%S)" >> $GITHUB_ENV
-                echo "CMAKE_BUILD_TYPE=${{ inputs.cmake_build_type || 'Release' }}" >> $GITHUB_ENV
+              # echo "CMAKE_BUILD_TYPE=${{ inputs.cmake_build_type || 'Release' }}" >> $GITHUB_ENV
 
             - name: Set default env variables for Windows
               if: contains(matrix.platform, 'windows')
               run: |
                 $now =(Get-Date).ToUniversalTime().AddHours(8).ToString("yyyyMMdd-HHmmss")
                 echo "now=$now" >> $env:GITHUB_ENV
-                echo "CMAKE_BUILD_TYPE=${{ inputs.cmake_build_type || 'Release' }}" >> $GITHUB_ENV
+              # echo "CMAKE_BUILD_TYPE=${{ inputs.cmake_build_type || 'Release' }}" >> $GITHUB_ENV
 
             # - name: Prepare Vulkan SDK for Windows
             #   run: |
@@ -157,7 +157,13 @@ jobs:
                 ls -al
                 echo -e "\nThe path of GITHUB_ENV : "$GITHUB_ENV" \n"
                 echo -e "\nThe content of GITHUB_ENV : \n"
-                cat $GITHUB_ENV
+                echo $GITHUB_ENV
+                echo "\nThe variable of PATH\n"
+                echo $$PATH
+                echo "\nThe content of cmake-args\n"
+                echo ${{ matrix.cmake-args }}
+                echo "\nThe content of make-args\n"
+                echo ${{ matrix.make-args }}
 
             - name: Windows Test 1
               if: contains(matrix.platform, 'windows')
@@ -205,7 +211,7 @@ jobs:
               if: contains(matrix.platform, 'windows')
               run: |
                 cmake --build build --config ${{ inputs.cmake_build_type }}
-                ls build/bin                
+                ls build\bin\${{ inputs.cmake_build_type }}        
 
             # - name: Test Unix
             #   if: ${{ contains(matrix.platform, 'ubuntu') || contains(matrix.platform, 'macos') }}
