@@ -74,8 +74,7 @@ jobs:
                   name: "windows-x86_64-cpu-msbuild-1-sdl2"
                   build-name: "build-windows-x86_64-cpu-msbuild-1-sdl2"
                   cmake-args: "-DGGML_CCACHE=OFF -DBUILD_SHARED_LIBS=OFF -DWHISPER_SDL2=ON -DCMAKE_BUILD_TYPE=Release -DGGML_STATIC=ON"
-                  s2ver: 2.28.5
-                  
+                  s2ver: 2.30.7                  
 
                 # - platform: "windows-latest"
                 #   name: "Windows - x86_64 - Vulkan"
@@ -205,10 +204,6 @@ jobs:
                 echo "`nThe variable of current environment"
                 Get-Variable
 
-              # echo "`nThe path of GITHUB_ENV : $GITHUB_ENV `n"
-              # echo "The content of GITHUB_ENV : "
-              # echo $GITHUB_ENV
-
             - name: Configure cmake for Ubuntu
               run: |
                 echo -e "\nThe cmake args are: ${{ matrix.cmake-args }}\n"
@@ -218,7 +213,9 @@ jobs:
             - name: Configure cmake for Windows
               if: contains(matrix.platform, 'windows')
               run: |
+                echo -e "`nThe cmake args are: ${{ matrix.cmake-args }}`n"
                 cmake -B build ${{ matrix.cmake-args }}
+                ls ./build
 
             # - name: Configure
             #   run: |
