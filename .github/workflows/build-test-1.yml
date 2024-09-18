@@ -65,9 +65,17 @@ jobs:
       
                 # Windows
                 - platform: "windows-2022"
-                  name: "windows-x86_64-cpu-cmake"
-                  build-name: "build-windows-x86_64-cpu-cmake"
+                  name: "windows-x86_64-cpu-msbuild-1"
+                  build-name: "build-windows-x86_64-cpu-msbuild-1"
                   cmake-args: "-DGGML_CCACHE=OFF -DBUILD_SHARED_LIBS=OFF -DCMAKE_BUILD_TYPE=Release -DGGML_STATIC=ON"
+
+                # Windows
+                - platform: "windows-2022"
+                  name: "windows-x86_64-cpu-msbuild-1-sdl2"
+                  build-name: "build-windows-x86_64-cpu-msbuild-1-sdl2"
+                  cmake-args: "-DGGML_CCACHE=OFF -DBUILD_SHARED_LIBS=OFF -DWHISPER_SDL2=ON -DCMAKE_BUILD_TYPE=Release -DGGML_STATIC=ON"
+                  s2ver: 2.28.5
+                  
 
                 # - platform: "windows-latest"
                 #   name: "Windows - x86_64 - Vulkan"
@@ -118,14 +126,31 @@ jobs:
               if: contains(matrix.platform, 'ubuntu')
               run: |
                 sudo apt update
+                echo -e "\nThe current version of libsdl2-dev is:\n"
+                apt show libsdl2-dev |grep "Version:" && echo -e
                 echo -e "\n$(apt show libsdl2-dev)\n"
                 sudo apt install -y libsdl2-dev
               # if: ${{ contains(matrix.platform, 'ubuntu') && contains(matrix.cmake-args, 'DWHISPER_SDL2=ON') }}
 
+            - name: Prepare SDL2 for Windows
+              run: |
+                wget.exe -qO sdl2.zip https://github.com/libsdl-org/SDL/releases/download/release-${{ matrix.s2ver }}/SDL2-devel-${{ matrix.s2ver }}-VC.zip
+                7z x sdl2.zip
+                echo "SDL2_DIR=$env:GITHUB_WORKSPACE/SDL2-${{ matrix.s2ver }}/cmake" >> $env:GITHUB_ENV
+                echo "`nPATH"
+                echo $env:PATH
+                echo "`nSDL2_DIR"
+                echo $env:SDL2_DIR
+                echo "`nGITHUB_ENV"
+                echo $env:GITHUB_ENV
+                ls
+              if: ${{ contains(matrix.platform, 'windows') && contains(matrix.cmake-args, '-DWHISPER_SDL2=ON') }}  
+
             - name: Prepare OpenBLAS for Linux
               run: |
                 sudo apt update
-                echo -e "\n$(apt show libopenblas-dev)\n"
+                echo -e "\nThe current version of libopenblas-dev is:\n"
+                apt show libopenblas-dev |grep "Version:" && echo -e
                 sudo apt install -y libopenblas-dev
               if: ${{ contains(matrix.platform, 'ubuntu') && contains(matrix.make-args, 'GGML_OPENBLAS=1') }}              
 
@@ -216,7 +241,7 @@ jobs:
                 ls -al
               if: ${{ contains(matrix.platform, 'ubuntu') && contains(matrix.make-args, 'GGML_OPENBLAS=1') }}
 
-            - name: Build for Windows (cmake)
+            - name: Build for Windows (msbuild-1)
               run: |
                 cmake --build build --config Release
                 ls build\bin\Release     
