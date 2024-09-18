@@ -156,13 +156,13 @@ jobs:
                 echo -e "\nCurrent Folder : $(pwd)"
                 ls -al
                 echo -e "\nThe path of GITHUB_ENV : "$GITHUB_ENV" \n"
-                echo -e "\nThe content of GITHUB_ENV : \n"
+                echo -e "\nThe variable of GITHUB_ENV : \n"
                 echo $GITHUB_ENV
-                echo "\nThe variable of PATH\n"
-                echo $$PATH
-                echo "\nThe content of cmake-args\n"
+                echo -e "\nThe variable of PATH\n"
+                echo $PATH
+                echo -e "\nThe variable of cmake-args\n"
                 echo ${{ matrix.cmake-args }}
-                echo "\nThe content of make-args\n"
+                echo -e "\nThe variable of make-args\n"
                 echo ${{ matrix.make-args }}
 
             - name: Windows Test 1
@@ -172,20 +172,27 @@ jobs:
                 echo ${{ matrix.build-name }}_${{ env.now }}
                 echo "`nCurrent Folder : $(pwd)`n"
                 ls
+                echo "`nThe path of GITHUB_ENV : $env:GITHUB_ENV `n"
+                echo "`nThe variable of GITHUB_ENV : `n"
+                echo $env:GITHUB_ENV
+                echo "`nThe variable of PATH"
+                echo $env:PATH
+                echo "`nThe variable of current environment"
+                Get-Variable
 
               # echo "`nThe path of GITHUB_ENV : $GITHUB_ENV `n"
               # echo "The content of GITHUB_ENV : "
               # echo $GITHUB_ENV
 
-            - name: Configure cmake for Windows
-              if: contains(matrix.platform, 'windows')
-              run: |
-                cmake -B build ${{ matrix.cmake-args }}
-                
             - name: Configure cmake for Ubuntu
               run: |
                 cmake -B build ${{ matrix.cmake-args }}
               if: ${{ contains(matrix.platform, 'ubuntu') && contains(matrix.cmake-args, '-DCMAKE_BUILD_TYPE=Release') }}  
+
+            - name: Configure cmake for Windows
+              if: contains(matrix.platform, 'windows')
+              run: |
+                cmake -B build ${{ matrix.cmake-args }}
 
             # - name: Configure
             #   run: |
@@ -197,20 +204,20 @@ jobs:
 
             - name: Build for Ubuntu (cmake)
               run: |
-                cmake --build build -j$(nproc) --config ${{ inputs.cmake_build_type }}
+                cmake --build build -j$(nproc) --config Release
                 ls -al build/bin
               if: ${{ contains(matrix.platform, 'ubuntu') && contains(matrix.cmake-args, '-DCMAKE_BUILD_TYPE=Release') }}
 
             - name: Build for Ubuntu (make)
               run: |
-                ${{ matrix.cmake-args }} make -j$(nproc)
+                ${{ matrix.make-args }} make -j$(nproc)
                 ls -al build/bin
               if: ${{ contains(matrix.platform, 'ubuntu') && contains(matrix.make-args, 'GGML_OPENBLAS=ON') }}
 
             - name: Build for Windows (cmake)
               if: contains(matrix.platform, 'windows')
               run: |
-                cmake --build build --config ${{ inputs.cmake_build_type }}
+                cmake --build build --config Release
                 ls build\bin\${{ inputs.cmake_build_type }}        
 
             # - name: Test Unix
