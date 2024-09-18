@@ -43,20 +43,20 @@ jobs:
                 - platform: "ubuntu-22.04"
                   name: "ubuntu-2204-x86_64-cpu-cmake-sdl2"
                   build-name: "build-ubuntu-2204-x86_64-cpu-cmake-sdl2"
-                  cmake-args: "-DWHISPER_SDL2=ON -DCMAKE_BUILD_TYPE=${{ env.CMAKE_BUILD_TYPE }}"
+                  cmake-args: "-DWHISPER_SDL2=ON -DCMAKE_BUILD_TYPE=Release"
 
                 # Linux cmake SDL2 Static
                 - platform: "ubuntu-22.04"
                   name: "ubuntu-2204-x86_64-cpu-cmake-sdl2-static"
                   build-name: "build-ubuntu-2204-x86_64-cpu-cmake-sdl2-static"
-                  cmake-args: "-DGGML_CCACHE=OFF -DBUILD_SHARED_LIBS=OFF -DWHISPER_SDL2=ON -DCMAKE_BUILD_TYPE=${{ env.CMAKE_BUILD_TYPE }} -DGGML_STATIC=ON"
+                  cmake-args: "-DGGML_CCACHE=OFF -DBUILD_SHARED_LIBS=OFF -DWHISPER_SDL2=ON -DCMAKE_BUILD_TYPE=Release -DGGML_STATIC=ON"
                 
                   # Linux make SDL2 + OpenBLAS
                 - platform: "ubuntu-22.04"
                   name: "ubuntu-2204-x86_64-cpu-make-sdl2-openblas"
                   build-name: "build-ubuntu-2204-x86_64-cpu-make-sdl2-openblas"
                   make-args: "GGML_OPENBLAS=1"
-                  # cmake-args: "-DGGML_CCACHE=OFF -DBUILD_SHARED_LIBS=OFF -DWHISPER_SDL2=ON -DCMAKE_BUILD_TYPE=${{ env.CMAKE_BUILD_TYPE }} -DGGML_STATIC=ON -DGGML_OPENBLAS=ON"
+                  # cmake-args: "-DGGML_CCACHE=OFF -DBUILD_SHARED_LIBS=OFF -DWHISPER_SDL2=ON -DCMAKE_BUILD_TYPE=Release -DGGML_STATIC=ON -DGGML_OPENBLAS=ON"
 
 
                 # - platform: "ubuntu-24.04"
@@ -67,7 +67,7 @@ jobs:
                 - platform: "windows-2022"
                   name: "windows-x86_64-cpu-cmake"
                   build-name: "build-windows-x86_64-cpu-cmake"
-                  cmake-args: "-DGGML_CCACHE=OFF -DBUILD_SHARED_LIBS=OFF -DCMAKE_BUILD_TYPE=${{ env.CMAKE_BUILD_TYPE }} -DGGML_STATIC=ON"
+                  cmake-args: "-DGGML_CCACHE=OFF -DBUILD_SHARED_LIBS=OFF -DCMAKE_BUILD_TYPE=Release -DGGML_STATIC=ON"
 
                 # - platform: "windows-latest"
                 #   name: "Windows - x86_64 - Vulkan"
