@@ -238,13 +238,11 @@ jobs:
             #       time ./build/bin/main -m ${{ env.MODEL_FILENAME }} -f ${{ env.AUDIO_FILENAME }}
 
             - name: Test compiled file (Ubuntu cmake)
-              if: contains(matrix.platform, 'ubuntu')
               run: |
                   ./build/bin/main -h
               if: ${{ contains(matrix.platform, 'ubuntu') && contains(matrix.cmake-args, '-DCMAKE_BUILD_TYPE=Release') }}
 
             - name: Test compiled file (Ubuntu make)
-              if: contains(matrix.platform, 'ubuntu')
               run: |
                   ./main -h
               if: ${{ contains(matrix.platform, 'ubuntu') && contains(matrix.make-args, 'GGML_OPENBLAS=1') }}             
