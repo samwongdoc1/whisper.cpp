@@ -127,7 +127,7 @@ jobs:
                 sudo apt update
                 echo -e "\n$(apt show libopenblas-dev)\n"
                 sudo apt install -y libopenblas-dev
-              if: ${{ contains(matrix.platform, 'ubuntu') && contains(matrix.make-args, 'GGML_OPENBLAS=ON') }}              
+              if: ${{ contains(matrix.platform, 'ubuntu') && contains(matrix.make-args, 'GGML_OPENBLAS=1') }}              
 
             - name: Download assets on Windows
               if: contains(matrix.platform, 'windows')
