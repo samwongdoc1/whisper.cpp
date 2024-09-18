@@ -43,13 +43,13 @@ jobs:
                 - platform: "ubuntu-22.04"
                   name: "ubuntu-2204-x86_64-cpu-cmake-sdl2"
                   build-name: "build-ubuntu-2204-x86_64-cpu-cmake-sdl2"
-                  cmake-args: "-DWHISPER_SDL2=ON -DCMAKE_BUILD_TYPE=${{ env.CMAKE_BUILD_TYPE }}"
+                  cmake-args: "-DWHISPER_SDL2=ON -DCMAKE_BUILD_TYPE=${{ inputs.cmake_build_type }}"
 
                 # Linux cmake SDL2 Static
                 - platform: "ubuntu-22.04"
                   name: "ubuntu-2204-x86_64-cpu-cmake-sdl2-static"
-                  build-name: "build-ubuntu-2204-x86_64-cpu-cmake-sdl2"
-                  cmake-args: "-DGGML_CCACHE=OFF -DBUILD_SHARED_LIBS=OFF -DWHISPER_SDL2=ON -DCMAKE_BUILD_TYPE=${{ env.CMAKE_BUILD_TYPE }} -DGGML_STATIC=ON"
+                  build-name: "build-ubuntu-2204-x86_64-cpu-cmake-sdl2-static"
+                  cmake-args: "-DGGML_CCACHE=OFF -DBUILD_SHARED_LIBS=OFF -DWHISPER_SDL2=ON -DCMAKE_BUILD_TYPE=${{ inputs.cmake_build_type }} -DGGML_STATIC=ON"
                 
                   # Linux make SDL2 + OpenBLAS
                 - platform: "ubuntu-22.04"
@@ -67,7 +67,7 @@ jobs:
                 - platform: "windows-2022"
                   name: "windows-x86_64-cpu-cmake"
                   build-name: "build-windows-x86_64-cpu-cmake"
-                  cmake-args: "-DGGML_CCACHE=OFF -DBUILD_SHARED_LIBS=OFF -DCMAKE_BUILD_TYPE=${{ env.CMAKE_BUILD_TYPE }} -DGGML_STATIC=ON"
+                  cmake-args: "-DGGML_CCACHE=OFF -DBUILD_SHARED_LIBS=OFF -DCMAKE_BUILD_TYPE=${{ inputs.cmake_build_type }} -DGGML_STATIC=ON"
 
                 # - platform: "windows-latest"
                 #   name: "Windows - x86_64 - Vulkan"
@@ -187,25 +187,25 @@ jobs:
 
             # - name: Build
             #   run: |
-            #     cmake --build build --target main --config ${{ env.CMAKE_BUILD_TYPE }}
+            #     cmake --build build --target main --config ${{ inputs.cmake_build_type }}
 
             - name: Build for Ubuntu (cmake)
               run: |
-                cmake --build build --config ${{ env.CMAKE_BUILD_TYPE }}
+                cmake --build build -j$(nproc) --config ${{ inputs.cmake_build_type }}
                 ls -al build/bin
               if: ${{ contains(matrix.platform, 'ubuntu') && contains(matrix.cmake-args, '-DCMAKE_BUILD_TYPE=Release') }}
 
             - name: Build for Ubuntu (make)
               run: |
-                cmake --build build --config ${{ env.CMAKE_BUILD_TYPE }}
+                ${{ matrix.cmake-args }} make -j$(nproc)
                 ls -al build/bin
               if: ${{ contains(matrix.platform, 'ubuntu') && contains(matrix.make-args, 'GGML_OPENBLAS=ON') }}
 
-            # - name: Build for Windows (cmake)
-            #   if: contains(matrix.platform, 'windows')
-            #   run: |
-            #     cmake --build build --config ${{ env.CMAKE_BUILD_TYPE }}
-            #     ls build/bin                
+            - name: Build for Windows (cmake)
+              if: contains(matrix.platform, 'windows')
+              run: |
+                cmake --build build --config ${{ inputs.cmake_build_type }}
+                ls build/bin                
 
             # - name: Test Unix
             #   if: ${{ contains(matrix.platform, 'ubuntu') || contains(matrix.platform, 'macos') }}
@@ -222,10 +222,10 @@ jobs:
               run: |
                   time ./build/bin/main -m ${{ env.MODEL_FILENAME }} -f ${{ env.AUDIO_FILENAME }}
 
-            # - name: Test compiled file (Windows) 1
-            #   if: contains(matrix.platform, 'windows')
-            #   run: |
-            #     .\build\bin\${{ env.CMAKE_BUILD_TYPE }}\main -m ${{ env.MODEL_FILENAME }} -f ${{ env.AUDIO_FILENAME }}
+            - name: Test compiled file (Windows) 1
+              if: contains(matrix.platform, 'windows')
+              run: |
+                .\build\bin\${{ inputs.cmake_build_type }}\main -m ${{ env.MODEL_FILENAME }} -f ${{ env.AUDIO_FILENAME }}
 
             - name: Save the compiled file
               if: contains(matrix.platform, 'ubuntu')
