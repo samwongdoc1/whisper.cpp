@@ -213,7 +213,7 @@ jobs:
             - name: Configure cmake for Windows
               if: contains(matrix.platform, 'windows')
               run: |
-                echo -e "`nThe cmake args are: ${{ matrix.cmake-args }}`n"
+                echo "`nThe cmake args are: ${{ matrix.cmake-args }}`n"
                 cmake -B build ${{ matrix.cmake-args }}
                 ls ./build
 
