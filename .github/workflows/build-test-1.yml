@@ -227,28 +227,40 @@ jobs:
             #   run: |
             #       ./build/bin/main -m ${{ env.MODEL_FILENAME }} -f ${{ env.AUDIO_FILENAME }}
 
-            - name: Test compiled file (Ubuntu) 0
+            # - name: Test compiled file (Ubuntu) 0
+            #   if: contains(matrix.platform, 'ubuntu')
+            #   run: |
+            #       ./build/bin/main -h
+
+            # - name: Test compiled file (Ubuntu) 1
+            #   if: contains(matrix.platform, 'ubuntu')
+            #   run: |
+            #       time ./build/bin/main -m ${{ env.MODEL_FILENAME }} -f ${{ env.AUDIO_FILENAME }}
+
+            - name: Test compiled file (Ubuntu cmake)
               if: contains(matrix.platform, 'ubuntu')
               run: |
                   ./build/bin/main -h
+              if: ${{ contains(matrix.platform, 'ubuntu') && contains(matrix.cmake-args, '-DCMAKE_BUILD_TYPE=Release') }}
 
-            - name: Test compiled file (Ubuntu) 1
+            - name: Test compiled file (Ubuntu make)
               if: contains(matrix.platform, 'ubuntu')
               run: |
-                  time ./build/bin/main -m ${{ env.MODEL_FILENAME }} -f ${{ env.AUDIO_FILENAME }}
+                  ./main -h
+              if: ${{ contains(matrix.platform, 'ubuntu') && contains(matrix.make-args, 'GGML_OPENBLAS=1') }}             
 
             - name: Test compiled file (Windows) 1
               if: contains(matrix.platform, 'windows')
               run: |
                 .\build\bin\Release\main -m ${{ env.MODEL_FILENAME }} -f ${{ env.AUDIO_FILENAME }}
 
-            - name: Save the compiled file
-              if: contains(matrix.platform, 'ubuntu')
-              run: |
-                mkdir archive
-                mkdir archive/${{ matrix.build-name }}_$now
-                cp -r build archive/${{ matrix.build-name }}_$now
-                ls -al archive/${{ matrix.build-name }}_$now/build
+            # - name: Save the compiled file
+            #   if: contains(matrix.platform, 'ubuntu')
+            #   run: |
+            #     mkdir archive
+            #     mkdir archive/${{ matrix.build-name }}_$now
+            #     cp -r build archive/${{ matrix.build-name }}_$now
+            #     ls -al archive/${{ matrix.build-name }}_$now/build
 
             # - name: Archive the compiled file
             #   if: contains(matrix.platform, 'ubuntu')
