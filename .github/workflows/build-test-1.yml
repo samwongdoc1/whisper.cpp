@@ -115,7 +115,7 @@ jobs:
             #   if: ${{ contains(matrix.platform, 'ubuntu') && contains(matrix.cmake-args, 'DGGML_VULKAN=ON') }}
 
             - name: Prepare SDL2 for Linux
-              if: contains(matrix.platform, 'ubuntu') == false
+              if: contains(matrix.platform, 'ubuntu')
               run: |
                 sudo apt update
                 echo -e "\n$(apt show libsdl2-dev)\n"
