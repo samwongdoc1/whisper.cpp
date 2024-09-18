@@ -186,6 +186,7 @@ jobs:
 
             - name: Configure cmake for Ubuntu
               run: |
+                echo -e "\nThe cmake args are: ${{ matrix.cmake-args }}\n"
                 cmake -B build ${{ matrix.cmake-args }}
               if: ${{ contains(matrix.platform, 'ubuntu') && contains(matrix.cmake-args, '-DCMAKE_BUILD_TYPE=Release') }}  
 
@@ -210,15 +211,16 @@ jobs:
 
             - name: Build for Ubuntu (make)
               run: |
+                echo -e "\nThe make args are: ${{ matrix.make-args }}\n"
                 ${{ matrix.make-args }} make -j$(nproc)
-                ls -al build/bin
-              if: ${{ contains(matrix.platform, 'ubuntu') && contains(matrix.make-args, 'GGML_OPENBLAS=ON') }}
+                ls -al
+              if: ${{ contains(matrix.platform, 'ubuntu') && contains(matrix.make-args, 'GGML_OPENBLAS=1') }}
 
             - name: Build for Windows (cmake)
-              if: contains(matrix.platform, 'windows')
               run: |
                 cmake --build build --config Release
-                ls build\bin\Release        
+                ls build\bin\Release     
+              if: ${{ contains(matrix.platform, 'windows') && contains(matrix.cmake-args, '-DCMAKE_BUILD_TYPE=Release') }}  
 
             # - name: Test Unix
             #   if: ${{ contains(matrix.platform, 'ubuntu') || contains(matrix.platform, 'macos') }}
