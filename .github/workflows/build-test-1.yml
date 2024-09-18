@@ -3,14 +3,14 @@ on:
   # push:
   # pull_request:
   workflow_dispatch:
-    inputs:
-      cmake_build_type:
-        required: false
-        default: Release
-        type: choice
-        options:
-          - Debug
-          - Release
+    # inputs:
+    #   cmake_build_type:
+    #     required: false
+    #     default: Release
+    #     type: choice
+    #     options:
+    #       - Debug
+    #       - Release
 
 env:
   MODEL_URL: https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-tiny.bin
@@ -34,22 +34,29 @@ jobs:
                 #   cmake-args: "-DGGML_CCACHE=OFF -DBUILD_SHARED_LIBS=OFF -DCMAKE_BUILD_TYPE=${{ inputs.cmake_build_type }} -DGGML_STATIC=ON"
       
                 # Linux cmake
-                - platform: "ubuntu-22.04"
-                  name: "ubuntu-2204-x86_64-cpu-cmake"
-                  build-name: "build-ubuntu-2204-x86_64-cpu-cmake"
-                  cmake-args: "-DGGML_CCACHE=OFF -DBUILD_SHARED_LIBS=OFF -DCMAKE_BUILD_TYPE=${{ inputs.cmake_build_type }} -DGGML_STATIC=ON"
+                # - platform: "ubuntu-22.04"
+                #   name: "ubuntu-2204-x86_64-cpu-cmake"
+                #   build-name: "build-ubuntu-2204-x86_64-cpu-cmake"
+                #   cmake-args: "-DGGML_CCACHE=OFF -DBUILD_SHARED_LIBS=OFF -DCMAKE_BUILD_TYPE=${{ inputs.cmake_build_type }} -DGGML_STATIC=ON"
 
                 # Linux cmake SDL2
                 - platform: "ubuntu-22.04"
                   name: "ubuntu-2204-x86_64-cpu-cmake-sdl2"
                   build-name: "build-ubuntu-2204-x86_64-cpu-cmake-sdl2"
-                  cmake-args: "-DGGML_CCACHE=OFF -DBUILD_SHARED_LIBS=OFF -DWHISPER_SDL2=ON -DCMAKE_BUILD_TYPE=${{ inputs.cmake_build_type }} -DGGML_STATIC=ON"
-                
-                  # Linux cmake SDL2 + OpenBLAS
+                  cmake-args: "-DWHISPER_SDL2=ON -DCMAKE_BUILD_TYPE=${{ env.cmake_build_type }}"
+
+                # Linux cmake SDL2 Static
                 - platform: "ubuntu-22.04"
-                  name: "ubuntu-2204-x86_64-cpu-cmake-sdl2-openblas"
-                  build-name: "build-ubuntu-2204-x86_64-cpu-cmake-sdl2-openblas"
-                  cmake-args: "-DGGML_CCACHE=OFF -DBUILD_SHARED_LIBS=OFF -DWHISPER_SDL2=ON -DCMAKE_BUILD_TYPE=${{ inputs.cmake_build_type }} -DGGML_STATIC=ON -DGGML_OPENBLAS=ON"
+                  name: "ubuntu-2204-x86_64-cpu-cmake-sdl2-static"
+                  build-name: "build-ubuntu-2204-x86_64-cpu-cmake-sdl2"
+                  cmake-args: "-DGGML_CCACHE=OFF -DBUILD_SHARED_LIBS=OFF -DWHISPER_SDL2=ON -DCMAKE_BUILD_TYPE=${{ env.cmake_build_type }} -DGGML_STATIC=ON"
+                
+                  # Linux make SDL2 + OpenBLAS
+                - platform: "ubuntu-22.04"
+                  name: "ubuntu-2204-x86_64-cpu-make-sdl2-openblas"
+                  build-name: "build-ubuntu-2204-x86_64-cpu-make-sdl2-openblas"
+                  make-args: "GGML_OPENBLAS=1"
+                  # cmake-args: "-DGGML_CCACHE=OFF -DBUILD_SHARED_LIBS=OFF -DWHISPER_SDL2=ON -DCMAKE_BUILD_TYPE=${{ inputs.cmake_build_type }} -DGGML_STATIC=ON -DGGML_OPENBLAS=ON"
 
 
                 # - platform: "ubuntu-24.04"
@@ -60,7 +67,7 @@ jobs:
                 - platform: "windows-2022"
                   name: "windows-x86_64-cpu-cmake"
                   build-name: "build-windows-x86_64-cpu-cmake"
-                  cmake-args: "-DGGML_CCACHE=OFF -DBUILD_SHARED_LIBS=OFF -DCMAKE_BUILD_TYPE=${{ inputs.cmake_build_type }} -DGGML_STATIC=ON"
+                  cmake-args: "-DGGML_CCACHE=OFF -DBUILD_SHARED_LIBS=OFF -DCMAKE_BUILD_TYPE=${{ env.cmake_build_type }} -DGGML_STATIC=ON"
 
                 # - platform: "windows-latest"
                 #   name: "Windows - x86_64 - Vulkan"
@@ -74,13 +81,15 @@ jobs:
             - name: Set default env variables for Linux
               if: contains(matrix.platform, 'windows') == false
               run: |
-                echo "CMAKE_BUILD_TYPE=${{ inputs.cmake_build_type || 'Release' }}" >> $GITHUB_ENV
                 echo "now=$(TZ="Asia/Hong_Kong" date +%Y%m%d-%H%M%S)" >> $GITHUB_ENV
+              # echo "CMAKE_BUILD_TYPE=${{ inputs.cmake_build_type || 'Release' }}" >> $GITHUB_ENV
 
             - name: Set default env variables for Windows
               if: contains(matrix.platform, 'windows')
               run: |
-                echo "CMAKE_BUILD_TYPE=${{ inputs.cmake_build_type || 'Release' }}" >> $GITHUB_ENV
+                $now =(Get-Date).ToUniversalTime().AddHours(8).ToString("yyyyMMdd-HHmmss")
+                echo "now=$now" >> $env:GITHUB_ENV
+              # echo "CMAKE_BUILD_TYPE=${{ inputs.cmake_build_type || 'Release' }}" >> $GITHUB_ENV
 
             # - name: Prepare Vulkan SDK for Windows
             #   run: |
@@ -106,16 +115,19 @@ jobs:
             #   if: ${{ contains(matrix.platform, 'ubuntu') && contains(matrix.cmake-args, 'DGGML_VULKAN=ON') }}
 
             - name: Prepare SDL2 for Linux
+              if: contains(matrix.platform, 'ubuntu') == false
               run: |
                 sudo apt update
+                echo -e "\n$(apt show libsdl2-dev)\n"
                 sudo apt install -y libsdl2-dev
-              if: ${{ contains(matrix.platform, 'ubuntu') && contains(matrix.cmake-args, 'DWHISPER_SDL2=ON') }}
+              # if: ${{ contains(matrix.platform, 'ubuntu') && contains(matrix.cmake-args, 'DWHISPER_SDL2=ON') }}
 
             - name: Prepare OpenBLAS for Linux
               run: |
                 sudo apt update
+                echo -e "\n$(apt show libopenblas-dev)\n"
                 sudo apt install -y libopenblas-dev
-              if: ${{ contains(matrix.platform, 'ubuntu') && contains(matrix.cmake-args, 'DGGML_OPENBLAS=ON') }}              
+              if: ${{ contains(matrix.platform, 'ubuntu') && contains(matrix.make-args, 'GGML_OPENBLAS=ON') }}              
 
             - name: Download assets on Windows
               if: contains(matrix.platform, 'windows')
@@ -163,11 +175,11 @@ jobs:
               if: contains(matrix.platform, 'windows')
               run: |
                 cmake -B build ${{ matrix.cmake-args }}
-
+                
             - name: Configure cmake for Ubuntu
-              if: contains(matrix.platform, 'ubuntu')
               run: |
                 cmake -B build ${{ matrix.cmake-args }}
+              if: ${{ contains(matrix.platform, 'ubuntu') && contains(matrix.cmake-args, '-DCMAKE_BUILD_TYPE=Release') }}  
 
             # - name: Configure
             #   run: |
@@ -178,16 +190,22 @@ jobs:
             #     cmake --build build --target main --config ${{ env.CMAKE_BUILD_TYPE }}
 
             - name: Build for Ubuntu (cmake)
-              if: contains(matrix.platform, 'ubuntu')
               run: |
                 cmake --build build --config ${{ env.CMAKE_BUILD_TYPE }}
                 ls -al build/bin
+              if: ${{ contains(matrix.platform, 'ubuntu') && contains(matrix.cmake-args, '-DCMAKE_BUILD_TYPE=Release') }}
 
-            - name: Build for Windows (cmake)
-              if: contains(matrix.platform, 'windows')
+            - name: Build for Ubuntu (make)
               run: |
                 cmake --build build --config ${{ env.CMAKE_BUILD_TYPE }}
-                ls build/bin                
+                ls -al build/bin
+              if: ${{ contains(matrix.platform, 'ubuntu') && contains(matrix.make-args, 'GGML_OPENBLAS=ON') }}
+
+            # - name: Build for Windows (cmake)
+            #   if: contains(matrix.platform, 'windows')
+            #   run: |
+            #     cmake --build build --config ${{ env.CMAKE_BUILD_TYPE }}
+            #     ls build/bin                
 
             # - name: Test Unix
             #   if: ${{ contains(matrix.platform, 'ubuntu') || contains(matrix.platform, 'macos') }}
@@ -204,10 +222,10 @@ jobs:
               run: |
                   time ./build/bin/main -m ${{ env.MODEL_FILENAME }} -f ${{ env.AUDIO_FILENAME }}
 
-            - name: Test compiled file (Windows) 1
-              if: contains(matrix.platform, 'windows')
-              run: |
-                .\build\bin\${{ env.CMAKE_BUILD_TYPE }}\main -m ${{ env.MODEL_FILENAME }} -f ${{ env.AUDIO_FILENAME }}
+            # - name: Test compiled file (Windows) 1
+            #   if: contains(matrix.platform, 'windows')
+            #   run: |
+            #     .\build\bin\${{ env.CMAKE_BUILD_TYPE }}\main -m ${{ env.MODEL_FILENAME }} -f ${{ env.AUDIO_FILENAME }}
 
             - name: Save the compiled file
               if: contains(matrix.platform, 'ubuntu')
