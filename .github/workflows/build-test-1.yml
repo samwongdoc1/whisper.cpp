@@ -277,11 +277,13 @@ jobs:
                       if file "$file" | grep -q "ELF"; then
                         echo -e "\n### "$file""
                         ./"$file" -h
-                        echo -e ""
+                        echo -e "\nThe following shared libraries used by "$file"\n"
+                        ldd "$file"
                       fi
                     fi
                   done
                   }
+                  echo -e ""
               if: ${{ contains(matrix.platform, 'ubuntu') && contains(matrix.cmake-args, '-DCMAKE_BUILD_TYPE=Release') }}
 
             - name: Test compiled file (Ubuntu make)
@@ -303,11 +305,13 @@ jobs:
                       if file "$file" | grep -q "ELF"; then
                         echo -e "\n### "$file""
                         ./"$file" -h
-                        echo -e ""
+                        echo -e "\nThe following shared libraries used by "$file"\n"
+                        ldd "$file"
                       fi
                     fi
                   done
                   }
+                  echo -e ""
               if: ${{ contains(matrix.platform, 'ubuntu') && contains(matrix.make-args, 'GGML_OPENBLAS=1') }}             
 
             - name: Test compiled file (Windows) 1
