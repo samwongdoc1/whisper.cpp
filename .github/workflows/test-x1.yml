@@ -39,30 +39,53 @@ jobs:
                 #   build-name: "build-ubuntu-2204-x86_64-cpu-cmake"
                 #   cmake-args: "-DGGML_CCACHE=OFF -DBUILD_SHARED_LIBS=OFF -DCMAKE_BUILD_TYPE=${{ inputs.cmake_build_type }} -DGGML_STATIC=ON"
 
-                # Linux cmake SDL2
-                - platform: "ubuntu-22.04"
-                  name: "ubuntu-2204-x86_64-cpu-cmake-sdl2"
-                  build-name: "build-ubuntu-2204-x86_64-cpu-cmake-sdl2"
-                  cmake-args: "-DWHISPER_SDL2=ON -DCMAKE_BUILD_TYPE=Release"
+                # # Linux cmake SDL2
+                # - platform: "ubuntu-22.04"
+                #   name: "ubuntu-2204-x86_64-cpu-cmake-sdl2"
+                #   build-name: "build-ubuntu-2204-x86_64-cpu-cmake-sdl2"
+                #   cmake-args: "-DWHISPER_SDL2=ON -DCMAKE_BUILD_TYPE=Release"
 
-                # Linux cmake SDL2 Static
-                - platform: "ubuntu-22.04"
-                  name: "ubuntu-2204-x86_64-cpu-cmake-sdl2-static"
-                  build-name: "build-ubuntu-2204-x86_64-cpu-cmake-sdl2-static"
-                  cmake-args: "-DGGML_CCACHE=OFF -DBUILD_SHARED_LIBS=OFF -DWHISPER_SDL2=ON -DCMAKE_BUILD_TYPE=Release -DGGML_STATIC=ON"
+                # # Linux cmake SDL2 Static
+                # - platform: "ubuntu-22.04"
+                #   name: "ubuntu-2204-x86_64-cpu-cmake-sdl2-static"
+                #   build-name: "build-ubuntu-2204-x86_64-cpu-cmake-sdl2-static"
+                #   cmake-args: "-DGGML_CCACHE=OFF -DBUILD_SHARED_LIBS=OFF -DWHISPER_SDL2=ON -DCMAKE_BUILD_TYPE=Release -DGGML_STATIC=ON"
                 
-                  # Linux make SDL2 + OpenBLAS
-                - platform: "ubuntu-22.04"
-                  name: "ubuntu-2204-x86_64-cpu-make-sdl2-openblas"
-                  build-name: "build-ubuntu-2204-x86_64-cpu-make-sdl2-openblas"
-                  make-args: "GGML_OPENBLAS=1"
-                  # cmake-args: "-DGGML_CCACHE=OFF -DBUILD_SHARED_LIBS=OFF -DWHISPER_SDL2=ON -DCMAKE_BUILD_TYPE=Release -DGGML_STATIC=ON -DGGML_OPENBLAS=ON"
+                #   # Linux make SDL2 + OpenBLAS
+                # - platform: "ubuntu-22                # # Linux cmake SDL2
+                # - platform: "ubuntu-22.04"
+                #   name: "ubuntu-2204-x86_64-cpu-cmake-sdl2"
+                #   build-name: "build-ubuntu-2204-x86_64-cpu-cmake-sdl2"
+                #   cmake-args: "-DWHISPER_SDL2=ON -DCMAKE_BUILD_TYPE=Release"
 
-                # Linux cmake SDL2 Static
-                - platform: "ubuntu-24.04"
-                  name: "ubuntu-2404-x86_64-cpu-cmake-sdl2-static"
-                  build-name: "build-ubuntu-2404-x86_64-cpu-cmake-sdl2-static"
-                  cmake-args: "-DGGML_CCACHE=OFF -DBUILD_SHARED_LIBS=OFF -DWHISPER_SDL2=ON -DCMAKE_BUILD_TYPE=Release -DGGML_STATIC=ON"
+                # # Linux cmake SDL2 Static
+                # - platform: "ubuntu-22.04"
+                #   name: "ubuntu-2204-x86_64-cpu-cmake-sdl2-static"
+                #   build-name: "build-ubuntu-2204-x86_64-cpu-cmake-sdl2-static"
+                #   cmake-args: "-DGGML_CCACHE=OFF -DBUILD_SHARED_LIBS=OFF -DWHISPER_SDL2=ON -DCMAKE_BUILD_TYPE=Release -DGGML_STATIC=ON"
+                
+                #   # Linux make SDL2 + OpenBLAS
+                # - platform: "ubuntu-22.04"
+                #   name: "ubuntu-2204-x86_64-cpu-make-sdl2-openblas"
+                #   build-name: "build-ubuntu-2204-x86_64-cpu-make-sdl2-openblas"
+                #   make-args: "GGML_OPENBLAS=1"
+                #   # cmake-args: "-DGGML_CCACHE=OFF -DBUILD_SHARED_LIBS=OFF -DWHISPER_SDL2=ON -DCMAKE_BUILD_TYPE=Release -DGGML_STATIC=ON -DGGML_OPENBLAS=ON"
+
+                # # Linux cmake SDL2 Static
+                # - platform: "ubuntu-24.04"
+                #   name: "ubuntu-2404-x86_64-cpu-cmake-sdl2-static"
+                #   build-name: "build-ubuntu-2404-x86_64-cpu-cmake-sdl2-static"
+                #   cmake-args: "-DGGML_CCACHE=OFF -DBUILD_SHARED_LIBS=OFF -DWHISPER_SDL2=ON -DCMAKE_BUILD_TYPE=Release -DGGML_STATIC=ON".04"
+                #   name: "ubuntu-2204-x86_64-cpu-make-sdl2-openblas"
+                #   build-name: "build-ubuntu-2204-x86_64-cpu-make-sdl2-openblas"
+                #   make-args: "GGML_OPENBLAS=1"
+                #   # cmake-args: "-DGGML_CCACHE=OFF -DBUILD_SHARED_LIBS=OFF -DWHISPER_SDL2=ON -DCMAKE_BUILD_TYPE=Release -DGGML_STATIC=ON -DGGML_OPENBLAS=ON"
+
+                # # Linux cmake SDL2 Static
+                # - platform: "ubuntu-24.04"
+                #   name: "ubuntu-2404-x86_64-cpu-cmake-sdl2-static"
+                #   build-name: "build-ubuntu-2404-x86_64-cpu-cmake-sdl2-static"
+                #   cmake-args: "-DGGML_CCACHE=OFF -DBUILD_SHARED_LIBS=OFF -DWHISPER_SDL2=ON -DCMAKE_BUILD_TYPE=Release -DGGML_STATIC=ON"
 
                 # - platform: "ubuntu-24.04"
                 #   name: "Ubuntu 24.04 - x86_64 - Vulkan"
@@ -74,12 +97,12 @@ jobs:
                   build-name: "build-windows-x86_64-cpu-msbuild-1"
                   cmake-args: "-DGGML_CCACHE=OFF -DBUILD_SHARED_LIBS=OFF -DCMAKE_BUILD_TYPE=Release -DGGML_STATIC=ON"
 
-                # Windows
-                - platform: "windows-2022"
-                  name: "windows-x86_64-cpu-msbuild-1-sdl2"
-                  build-name: "build-windows-x86_64-cpu-msbuild-1-sdl2"
-                  cmake-args: "-DGGML_CCACHE=OFF -DBUILD_SHARED_LIBS=OFF -DWHISPER_SDL2=ON -DCMAKE_BUILD_TYPE=Release -DGGML_STATIC=ON"
-                  s2ver: 2.30.7                  
+                # # Windows
+                # - platform: "windows-2022"
+                #   name: "windows-x86_64-cpu-msbuild-1-sdl2"
+                #   build-name: "build-windows-x86_64-cpu-msbuild-1-sdl2"
+                #   cmake-args: "-DGGML_CCACHE=OFF -DBUILD_SHARED_LIBS=OFF -DWHISPER_SDL2=ON -DCMAKE_BUILD_TYPE=Release -DGGML_STATIC=ON"
+                #   s2ver: 2.30.7                  
 
                 # - platform: "windows-latest"
                 #   name: "Windows - x86_64 - Vulkan"
@@ -103,43 +126,48 @@ jobs:
                 echo "now=$now" >> $env:GITHUB_ENV
               # echo "CMAKE_BUILD_TYPE=${{ inputs.cmake_build_type || 'Release' }}" >> $GITHUB_ENV
 
-            - name: Ununtu Test 1
-              if: contains(matrix.platform, 'ubuntu')
-              run: |
-                echo -e "\nThe current runner of Github action is : ${{ matrix.platform }}"
-                echo -e "\nThe current build name is              : ${{ matrix.build-name }}_${{ env.now }}"
-                echo -e "\nThe Current Folder                     : $(pwd) \n"
-                ls -al
-                echo -e "\nThe path of GITHUB_ENV : "
-                echo $GITHUB_ENV
-                echo -e "\nThe variable of GITHUB_ENV : "
-                cat "$GITHUB_ENV"         
-                echo -e "\nThe variable of PATH : "
-                echo $PATH
-                echo -e "\nThe variable of cmake-args : "
-                echo ${{ matrix.cmake-args }}
-                echo -e "\nThe variable of make-args  : "
-                echo ${{ matrix.make-args }}
+            # - name: Ununtu Test 1
+            #   if: contains(matrix.platform, 'ubuntu')
+            #   run: |
+            #     echo -e "\nThe current runner of Github action is : ${{ matrix.platform }}"
+            #     echo -e "\nThe current build name is              : ${{ matrix.build-name }}_${{ env.now }}"
+            #     echo -e "\nThe Current Folder                     : $(pwd) \n"
+            #     ls -al
+            #     echo -e "\nThe path of GITHUB_ENV : "
+            #     echo $GITHUB_ENV
+            #     echo -e "\nThe variable of GITHUB_ENV : "
+            #     cat "$GITHUB_ENV"         
+            #     echo -e "\nThe variable of PATH : "
+            #     echo $PATH
+            #     echo -e "\nThe variable of cmake-args : "
+            #     echo ${{ matrix.cmake-args }}
+            #     echo -e "\nThe variable of make-args  : "
+            #     echo ${{ matrix.make-args }}
+
+            # - name: Windows Test 1
+            #   if: contains(matrix.platform, 'windows')
+            #   run: |
+            #     echo `n"The current runner of Github action is : ${{ matrix.platform }}"
+            #     echo `n"The current build name is              : ${{ matrix.build-name }}_${{ env.now }}"
+            #     echo `n"The Current Folder                     : $(pwd) \n"
+            #     ls
+            #     echo `n"The path of GITHUB_ENV : "
+            #     echo $env:GITHUB_ENV
+            #     echo `n"The variable of GITHUB_ENV : "
+            #     echo $env:GITHUB_ENV'         
+            #     echo `n"The variable of PATH : "
+            #     $env:PATH -split ';'
+            #     echo `n"The variable of cmake-args : "
+            #     echo ${{ matrix.cmake-args }}
+            #     Get-ChildItem env:
+            #     echo `n"The current version of Powershell: "
+            #     $PSVersionTable
+            #     echo 
 
             - name: Windows Test 1
               if: contains(matrix.platform, 'windows')
               run: |
-                echo `n"The current runner of Github action is : ${{ matrix.platform }}"
-                echo `n"The current build name is              : ${{ matrix.build-name }}_${{ env.now }}"
-                echo `n"The Current Folder                     : $(pwd) \n"
-                ls
-                echo `n"The path of GITHUB_ENV : "
-                echo $env:GITHUB_ENV
-                echo `n"The variable of GITHUB_ENV : "
-                echo $env:GITHUB_ENV'         
-                echo `n"The variable of PATH : "
-                $env:PATH -split ';'
-                echo `n"The variable of cmake-args : "
-                echo ${{ matrix.cmake-args }}
-                Get-ChildItem env:
-                echo `n"The current version of Powershell: "
-                $PSVersionTable
-                echo 
-
-
+                C:\msys64\usr\bin\wget.exe https://github.com/samwongdoc1/whisper.cpp/actions/runs/10949492338/artifacts/1955608025
+                7z x build*.zip
+                ls build*\build\bin\Release
 
