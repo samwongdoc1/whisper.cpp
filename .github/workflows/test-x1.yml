@@ -103,7 +103,6 @@ jobs:
                 echo "now=$now" >> $env:GITHUB_ENV
               # echo "CMAKE_BUILD_TYPE=${{ inputs.cmake_build_type || 'Release' }}" >> $GITHUB_ENV
 
-              
             - name: Ununtu Test 1
               if: contains(matrix.platform, 'ubuntu')
               run: |
@@ -111,14 +110,33 @@ jobs:
                 echo -e "\nThe current build name is              : ${{ matrix.build-name }}_${{ env.now }}"
                 echo -e "\nThe Current Folder                     : $(pwd) \n"
                 ls -al
-                echo -e "\nThe path of GITHUB_ENV                 : "
+                echo -e "\nThe path of GITHUB_ENV : "
                 echo $GITHUB_ENV
                 echo -e "\nThe variable of GITHUB_ENV : "
-                test.txt << $GITHUB_ENV
-                cat test.txt         
+                $GITHUB_ENV         
                 echo -e "\nThe variable of PATH : "
                 echo $PATH
                 echo -e "\nThe variable of cmake-args : "
                 echo ${{ matrix.cmake-args }}
                 echo -e "\nThe variable of make-args  : "
                 echo ${{ matrix.make-args }}
+
+            - name: Windows Test 1
+              if: contains(matrix.platform, 'windows')
+              run: |
+                echo "`nThe current runner of Github action is : ${{ matrix.platform }}"
+                echo "`nThe current build name is              : ${{ matrix.build-name }}_${{ env.now }}"
+                echo "`nThe Current Folder                     : $(pwd) \n"
+                ls
+                echo "`nThe path of GITHUB_ENV : "
+                echo $env:GITHUB_ENV
+                echo "`nThe variable of GITHUB_ENV : "
+                cat -Path $env:GITHUB_ENV         
+                echo "`nThe variable of PATH : "
+                $env:PATH -split ';'
+                echo "`nThe variable of cmake-args : "
+                echo ${{ matrix.cmake-args }}
+                echo "`nThe variable of make-args  : "
+                echo ${{ matrix.make-args }}
+
+
