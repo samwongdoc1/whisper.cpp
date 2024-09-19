@@ -124,19 +124,20 @@ jobs:
             - name: Windows Test 1
               if: contains(matrix.platform, 'windows')
               run: |
-                echo "`nThe current runner of Github action is : ${{ matrix.platform }}"
-                echo "`nThe current build name is              : ${{ matrix.build-name }}_${{ env.now }}"
-                echo "`nThe Current Folder                     : $(pwd) \n"
+                echo `n"The current runner of Github action is : ${{ matrix.platform }}"
+                echo `n"The current build name is              : ${{ matrix.build-name }}_${{ env.now }}"
+                echo `n"The Current Folder                     : $(pwd) \n"
                 ls
-                echo "`nThe path of GITHUB_ENV : "
+                echo `n"The path of GITHUB_ENV : "
                 echo $env:GITHUB_ENV
-                echo "`nThe variable of GITHUB_ENV : "
-                cat -Path $env:GITHUB_ENV         
-                echo "`nThe variable of PATH : "
+                echo `n"The variable of GITHUB_ENV : "
+                $env:GITHUB_ENV         
+                echo `n"The variable of PATH : "
                 $env:PATH -split ';'
-                echo "`nThe variable of cmake-args : "
+                echo `n"The variable of cmake-args : "
                 echo ${{ matrix.cmake-args }}
-                echo "`nThe variable of make-args  : "
+                echo `n"The variable of make-args  : "
                 echo ${{ matrix.make-args }}
+                Get-ChildItem env:
 
 
