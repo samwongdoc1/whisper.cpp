@@ -136,8 +136,6 @@ jobs:
                 $env:PATH -split ';'
                 echo `n"The variable of cmake-args : "
                 echo ${{ matrix.cmake-args }}
-                echo `n"The variable of make-args  : "
-              # echo ${{ matrix.make-args }}
                 Get-ChildItem env:
 
 
