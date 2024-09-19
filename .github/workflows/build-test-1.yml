@@ -269,8 +269,10 @@ jobs:
             - name: Test compiled file (Ubuntu cmake)
               run: |
                   time ./build/bin/main -m ${{ env.MODEL_FILENAME }} -f ${{ env.AUDIO_FILENAME }}
+                  echo -e "\nThe following compiled files will be tested : \n"
+                  ls -al build/bin
                   {
-                  for file in build/bin/main/*; do
+                  for file in build/bin/* ; do
                     if [ -f "$file" ]; then
                       if file "$file" | grep -q "ELF"; then
                         echo -e "\n### "$file""
@@ -286,6 +288,16 @@ jobs:
             - name: Test compiled file (Ubuntu make)
               run: |
                   time ./main -m ${{ env.MODEL_FILENAME }} -f ${{ env.AUDIO_FILENAME }}
+                  echo -e "\nThe following compiled files will be tested : \n"
+                  {
+                  for file in * ; do
+                    if [ -f "$file" ]; then
+                      if file "$file" | grep -q "ELF"; then
+                        ls -al $file
+                      fi
+                    fi
+                  done
+                  }
                   {
                   for file in * ; do
                     if [ -f "$file" ]; then
