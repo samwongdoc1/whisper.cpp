@@ -193,7 +193,7 @@ jobs:
                 echo ${{ matrix.platform }}
                 echo ${{ matrix.build-name }}_${{ env.now }}
                 echo "Current Folder : "
-                ls                OpenVINO_DIR
+                ls
                 echo "The environment of current runner : "
                 env 
 
