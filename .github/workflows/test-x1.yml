@@ -164,17 +164,18 @@ jobs:
             #     $PSVersionTable
             #     echo 
 
-            - name: Download
-              if: contains(matrix.platform, 'windows')
-              uses: actions/download-artifact@v4
-              with:
-                name: build-windows-x86_64-cpu-msbuild-1_20240920-064109
-                path: |
-                  archive
+            # - name: Download
+            #   if: contains(matrix.platform, 'windows')
+            #   uses: actions/download-artifact@v4
+            #   with:
+            #     name: build-windows-x86_64-cpu-msbuild-1_20240920-064109
+            #     path: |
+            #       archive
 
             - name: Windows Test 1
               if: contains(matrix.platform, 'windows')
               run: |
+                gh run download 10949993286 -n build-windows-x86_64-cpu-msbuild-1-sdl2_20240920-064107
                 ls
 
 
