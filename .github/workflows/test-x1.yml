@@ -14,15 +14,12 @@ jobs:
       #   with:
       #     node-version: '20'
       - run: echo "now=$(TZ="Asia/Hong_Kong" date +%Y%m%d-%H%M%S)" >> $GITHUB_ENV
-      - run: run: |
-      # - run: npm install -g bats
-      # - run: bats -v
-
-                echo -e "\nThe Current Folder                     : $(pwd) \n"
-                ls -al
-                echo -e "\nThe path of GITHUB_ENV                 : "
-                echo $GITHUB_ENV
-                echo -e "\nThe variable of GITHUB_ENV : "
-                cat $GITHUB_ENV
-                echo -e "\nThe variable of PATH : "
-                echo $PATH
+      - run: |
+              echo -e "\nThe Current Folder                     : $(pwd) \n"
+              ls -al
+              echo -e "\nThe path of GITHUB_ENV                 : "
+              echo $GITHUB_ENV
+              echo -e "\nThe variable of GITHUB_ENV : "
+              cat $GITHUB_ENV
+              echo -e "\nThe variable of PATH : "
+              echo $PATH
