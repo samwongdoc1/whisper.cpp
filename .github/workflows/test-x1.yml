@@ -164,10 +164,18 @@ jobs:
             #     $PSVersionTable
             #     echo 
 
+            - name: Download
+              if: contains(matrix.platform, 'windows')
+              uses: actions/download-artifact@v4
+              with:
+                name: build-windows-x86_64-cpu-msbuild-1_20240920-064109
+                path: |
+                  archive
+
             - name: Windows Test 1
               if: contains(matrix.platform, 'windows')
               run: |
-                C:\msys64\usr\bin\wget.exe https://github.com/samwongdoc1/whisper.cpp/actions/runs/10949492338/artifacts/1955608025
-                7z x build*.zip
-                ls build*\build\bin\Release
+                ls
+
+
 
