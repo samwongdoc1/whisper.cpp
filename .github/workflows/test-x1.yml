@@ -1,13 +1,15 @@
 name: X1
 run-name: ${{ github.actor }} is learning GitHub Actions
-on:
+on: 
+  # push:
+  # pull_request:
   workflow_dispatch:
-
 
 jobs:
   check-bats-version:
     # runs-on: ubuntu-latest
     runs-on: ubuntu-22.04
+    name: Ununtu Test X1
     steps:
       - uses: actions/checkout@v4
       # - uses: actions/setup-node@v4
