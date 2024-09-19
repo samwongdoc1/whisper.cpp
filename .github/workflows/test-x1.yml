@@ -114,7 +114,8 @@ jobs:
                 echo -e "\nThe path of GITHUB_ENV                 : "
                 echo $GITHUB_ENV
                 echo -e "\nThe variable of GITHUB_ENV : "
-                cat "$GITHUB_ENV"         
+                test.txt << $GITHUB_ENV
+                cat test.txt         
                 echo -e "\nThe variable of PATH : "
                 echo $PATH
                 echo -e "\nThe variable of cmake-args : "
