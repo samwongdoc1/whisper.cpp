@@ -130,9 +130,9 @@ jobs:
               if: contains(matrix.platform, 'ubuntu')
               run: |
                 sudo apt update
-                echo -e "\nThe current version of libsdl2-dev is:\n"
-                apt show libsdl2-dev |grep "Version:" && echo -e
-                echo -e "\n$(apt show libsdl2-dev)\n"
+                echo -e "\nThe current version of libsdl2-dev is  : \n"
+                apt show libsdl2-dev | grep "Version  : " | cut -d' ' -f2
+                echo -e "\nInstalling libsdl2-dev ... \n"
                 sudo apt install -y libsdl2-dev
               # if: ${{ contains(matrix.platform, 'ubuntu') && contains(matrix.cmake-args, 'DWHISPER_SDL2=ON') }}
 
@@ -153,8 +153,9 @@ jobs:
             - name: Prepare OpenBLAS for Linux
               run: |
                 sudo apt update
-                echo -e "\nThe current version of libopenblas-dev is:\n"
-                apt show libopenblas-dev |grep "Version:" && echo -e
+                echo -e "\nThe current version of libopenblas-dev is  : \n"
+                apt show libopenblas-dev | grep "Version  : " | cut -d' ' -f2
+                echo -e "\nInstalling libsdl2-dev ... \n"
                 sudo apt install -y libopenblas-dev
               if: ${{ contains(matrix.platform, 'ubuntu') && contains(matrix.make-args, 'GGML_OPENBLAS=1') }}              
 
@@ -184,9 +185,10 @@ jobs:
                 echo -e "\nThe current build name is              : ${{ matrix.build-name }}_${{ env.now }}"
                 echo -e "\nThe Current Folder                     : $(pwd) \n"
                 ls -al
-                echo -e "\nThe path of GITHUB_ENV                 : "$GITHUB_ENV""
+                echo -e "\nThe path of GITHUB_ENV                 : "
+                $GITHUB_ENV
                 echo -e "\nThe variable of GITHUB_ENV : "
-                cat $GITHUB_ENV
+                echo ${{ env }}
                 echo -e "\nThe variable of PATH : "
                 echo $PATH
                 echo -e "\nThe variable of cmake-args : "
