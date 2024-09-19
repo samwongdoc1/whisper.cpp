@@ -281,7 +281,7 @@ jobs:
               run: |
                 .\build\bin\Release\main -m ${{ env.MODEL_FILENAME }} -f ${{ env.AUDIO_FILENAME }}
 
-            - name: Save the compiled file (Ubuntu Test 1)
+            - name: Save the compiled file (Ubuntu cmake)
               run: |
                 mkdir archive
                 mkdir archive/${{ matrix.build-name }}_${{ env.now }}
@@ -292,6 +292,27 @@ jobs:
                 ls -al ${{ matrix.build-name }}_${{ env.now }}.tar.gz
                 cd ..
               if: ${{ contains(matrix.platform, 'ubuntu') && contains(matrix.cmake-args, '-DCMAKE_BUILD_TYPE=Release') }}
+
+            - name: Save the compiled file (Ubuntu make)
+              run: |
+                mkdir archive
+                mkdir archive/${{ matrix.build-name }}_${{ env.now }}
+                mkdir archive/${{ matrix.build-name }}_${{ env.now }}/build
+                {
+                for file in *; do
+                  if [ -f "$file" ]; then
+                    if file "$file" | grep -q "ELF"; then
+                      cp $file archive/${{ matrix.build-name }}_${{ env.now }}/build
+                      ls -al archive/${{ matrix.build-name }}_${{ env.now }}/build/$file
+                    fi
+                  fi
+                done
+                }
+                cd archive 
+                tar -cvzf ${{ matrix.build-name }}_${{ env.now }}.tar.gz ${{ matrix.build-name }}_${{ env.now }}
+                ls -al ${{ matrix.build-name }}_${{ env.now }}.tar.gz
+                cd ..
+              if: ${{ contains(matrix.platform, 'ubuntu') && contains(matrix.make-args, 'GGML_OPENBLAS=1') }}
 
             - name: Save the compiled file (Windows Test 1)
               if: contains(matrix.platform, 'windows')
