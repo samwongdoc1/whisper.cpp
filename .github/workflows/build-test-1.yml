@@ -300,19 +300,18 @@ jobs:
             - name: Test compiled file (Ubuntu cmake) 1
               run: |
                   time ./build/bin/main -m ${{ env.MODEL_FILENAME }} -f ${{ env.AUDIO_FILENAME }}
-                  echo -e ""
               if: ${{ contains(matrix.platform, 'ubuntu') && contains(matrix.cmake-args, '-DCMAKE_BUILD_TYPE=Release') }}
 
             - name: Test compiled file (Ubuntu make) 1
               run: |
                   time ./main -m ${{ env.MODEL_FILENAME }} -f ${{ env.AUDIO_FILENAME }}
-                  echo -e ""
               if: ${{ contains(matrix.platform, 'ubuntu') && contains(matrix.make-args, 'GGML_OPENBLAS=1') }}             
 
             - name: Test compiled file (Windows) 1
               if: contains(matrix.platform, 'windows')
               run: |
-                .\build\bin\Release\main -m ${{ env.MODEL_FILENAME }} -f ${{ env.AUDIO_FILENAME }}
+                .\build\bin\Release\main -h
+            # .\build\bin\Release\main -m ${{ env.MODEL_FILENAME }} -f ${{ env.AUDIO_FILENAME }}
 
             - name: Save the compiled file (Ubuntu cmake)
               run: |
