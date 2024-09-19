@@ -1,27 +1,123 @@
 name: X1
-run-name: ${{ github.actor }} is learning GitHub Actions
 on: 
   # push:
   # pull_request:
   workflow_dispatch:
+    # inputs:
+    #   cmake_build_type:
+    #     required: false
+    #     default: Release
+    #     type: choice
+    #     options:
+    #       - Debug
+    #       - Release
+
+env:
+  MODEL_URL: https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-tiny.bin
+  MODEL_FILENAME: ggml-tiny.bin
+  AUDIO_URL: https://github.com/ggerganov/whisper.cpp/raw/master/samples/jfk.wav
+  AUDIO_FILENAME: jfk.wav
+  CMAKE_BUILD_TYPE: Release
 
 jobs:
-  build-ubuntu2204-x86-64:
-    # runs-on: ubuntu-latest
-    runs-on: ubuntu-22.04
-    steps:
+    test:
+        permissions:
+            contents: write
+        strategy:
+            fail-fast: false
+            matrix:
+              include:
+                # # macOS
+
+                # - platform: "macos-latest"
+                #   name: "MacOS (Arm) - aarch64"
+                #   cmake-args: "-DGGML_CCACHE=OFF -DBUILD_SHARED_LIBS=OFF -DCMAKE_BUILD_TYPE=${{ inputs.cmake_build_type }} -DGGML_STATIC=ON"
       
-      - name: Check system environment
-        run: |
-          echo "now=$(TZ="Asia/Hong_Kong" date +%Y%m%d-%H%M%S)" >> $GITHUB_ENV
-          echo -e "\nThe Current Folder                     : $(pwd) \n"
-          ls -al
-          echo -e "\nThe path of GITHUB_ENV                 : "
-          echo $GITHUB_ENV
-          echo -e "\nThe variable of GITHUB_ENV : "
-          cat $GITHUB_ENV
-          echo -e "\nThe variable of PATH : "
-          echo $PATH
+                # Linux cmake
+                # - platform: "ubuntu-22.04"
+                #   name: "ubuntu-2204-x86_64-cpu-cmake"
+                #   build-name: "build-ubuntu-2204-x86_64-cpu-cmake"
+                #   cmake-args: "-DGGML_CCACHE=OFF -DBUILD_SHARED_LIBS=OFF -DCMAKE_BUILD_TYPE=${{ inputs.cmake_build_type }} -DGGML_STATIC=ON"
 
+                # Linux cmake SDL2
+                - platform: "ubuntu-22.04"
+                  name: "ubuntu-2204-x86_64-cpu-cmake-sdl2"
+                  build-name: "build-ubuntu-2204-x86_64-cpu-cmake-sdl2"
+                  cmake-args: "-DWHISPER_SDL2=ON -DCMAKE_BUILD_TYPE=Release"
 
+                # Linux cmake SDL2 Static
+                - platform: "ubuntu-22.04"
+                  name: "ubuntu-2204-x86_64-cpu-cmake-sdl2-static"
+                  build-name: "build-ubuntu-2204-x86_64-cpu-cmake-sdl2-static"
+                  cmake-args: "-DGGML_CCACHE=OFF -DBUILD_SHARED_LIBS=OFF -DWHISPER_SDL2=ON -DCMAKE_BUILD_TYPE=Release -DGGML_STATIC=ON"
+                
+                  # Linux make SDL2 + OpenBLAS
+                - platform: "ubuntu-22.04"
+                  name: "ubuntu-2204-x86_64-cpu-make-sdl2-openblas"
+                  build-name: "build-ubuntu-2204-x86_64-cpu-make-sdl2-openblas"
+                  make-args: "GGML_OPENBLAS=1"
+                  # cmake-args: "-DGGML_CCACHE=OFF -DBUILD_SHARED_LIBS=OFF -DWHISPER_SDL2=ON -DCMAKE_BUILD_TYPE=Release -DGGML_STATIC=ON -DGGML_OPENBLAS=ON"
 
+                # Linux cmake SDL2 Static
+                - platform: "ubuntu-24.04"
+                  name: "ubuntu-2404-x86_64-cpu-cmake-sdl2-static"
+                  build-name: "build-ubuntu-2404-x86_64-cpu-cmake-sdl2-static"
+                  cmake-args: "-DGGML_CCACHE=OFF -DBUILD_SHARED_LIBS=OFF -DWHISPER_SDL2=ON -DCMAKE_BUILD_TYPE=Release -DGGML_STATIC=ON"
+
+                # - platform: "ubuntu-24.04"
+                #   name: "Ubuntu 24.04 - x86_64 - Vulkan"
+                #   cmake-args: "-DGGML_VULKAN=ON -DGGML_CCACHE=OFF -DBUILD_SHARED_LIBS=OFF -DCMAKE_BUILD_TYPE=${{ inputs.cmake_build_type }} -DGGML_STATIC=ON"
+      
+                # Windows
+                - platform: "windows-2022"
+                  name: "windows-x86_64-cpu-msbuild-1"
+                  build-name: "build-windows-x86_64-cpu-msbuild-1"
+                  cmake-args: "-DGGML_CCACHE=OFF -DBUILD_SHARED_LIBS=OFF -DCMAKE_BUILD_TYPE=Release -DGGML_STATIC=ON"
+
+                # Windows
+                - platform: "windows-2022"
+                  name: "windows-x86_64-cpu-msbuild-1-sdl2"
+                  build-name: "build-windows-x86_64-cpu-msbuild-1-sdl2"
+                  cmake-args: "-DGGML_CCACHE=OFF -DBUILD_SHARED_LIBS=OFF -DWHISPER_SDL2=ON -DCMAKE_BUILD_TYPE=Release -DGGML_STATIC=ON"
+                  s2ver: 2.30.7                  
+
+                # - platform: "windows-latest"
+                #   name: "Windows - x86_64 - Vulkan"
+                #   cmake-args: "-DGGML_VULKAN=ON -DGGML_CCACHE=OFF -DBUILD_SHARED_LIBS=OFF -DCMAKE_BUILD_TYPE=${{ inputs.cmake_build_type }} -DGGML_STATIC=ON"
+
+        runs-on: ${{ matrix.platform }}
+        name: ${{ matrix.name }}
+        steps:
+            - uses: actions/checkout@v4
+
+            - name: Set default env variables for Linux
+              if: contains(matrix.platform, 'windows') == false
+              run: |
+                echo "now=$(TZ="Asia/Hong_Kong" date +%Y%m%d-%H%M%S)" >> $GITHUB_ENV
+              # echo "CMAKE_BUILD_TYPE=${{ inputs.cmake_build_type || 'Release' }}" >> $GITHUB_ENV
+
+            - name: Set default env variables for Windows
+              if: contains(matrix.platform, 'windows')
+              run: |
+                $now =(Get-Date).ToUniversalTime().AddHours(8).ToString("yyyyMMdd-HHmmss")
+                echo "now=$now" >> $env:GITHUB_ENV
+              # echo "CMAKE_BUILD_TYPE=${{ inputs.cmake_build_type || 'Release' }}" >> $GITHUB_ENV
+
+              
+            - name: Ununtu Test 1
+              if: contains(matrix.platform, 'ubuntu')
+              run: |
+                echo -e "\nThe current runner of Github action is : ${{ matrix.platform }}"
+                echo -e "\nThe current build name is              : ${{ matrix.build-name }}_${{ env.now }}"
+                echo -e "\nThe Current Folder                     : $(pwd) \n"
+                ls -al
+                echo -e "\nThe path of GITHUB_ENV                 : "
+                echo $GITHUB_ENV
+                echo -e "\nThe variable of GITHUB_ENV : "
+                cat $GITHUB_ENV
+                echo -e "\nThe variable of PATH : "
+                echo $PATH
+                echo -e "\nThe variable of cmake-args : "
+                echo ${{ matrix.cmake-args }}
+                echo -e "\nThe variable of make-args  : "
+                echo ${{ matrix.make-args }}
