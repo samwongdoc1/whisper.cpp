@@ -138,6 +138,6 @@ jobs:
                 echo ${{ matrix.cmake-args }}
                 echo `n"The variable of make-args  : "
               # echo ${{ matrix.make-args }}
-              # Get-ChildItem env:
+                Get-ChildItem env:
 
 
