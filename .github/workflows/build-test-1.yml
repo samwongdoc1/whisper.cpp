@@ -180,18 +180,18 @@ jobs:
             - name: Ununtu Test 1
               if: contains(matrix.platform, 'ubuntu')
               run: |
-                echo -e "The  ${{ matrix.platform }}
-                echo ${{ matrix.build-name }}_${{ env.now }}
-                echo -e "\nCurrent Folder : $(pwd)"
+                echo -e "\nThe current runner of Github action is:  ${{ matrix.platform }}"
+                echo -e "\nThe current build name is:               ${{ matrix.build-name }}_${{ env.now }}"
+                echo -e "\nCurrent Folder : $(pwd) \n"
                 ls -al
-                echo -e "\nThe path of GITHUB_ENV : "$GITHUB_ENV" \n"
-                echo -e "\nThe variable of GITHUB_ENV : \n"
-                echo $GITHUB_ENV
-                echo -e "\nThe variable of PATH\n"
+                echo -e "\nThe path of GITHUB_ENV : "$GITHUB_ENV""
+                echo -e "\nThe variable of GITHUB_ENV : "
+                cat $GITHUB_ENV
+                echo -e "\nThe variable of PATH"
                 echo $PATH
-                echo -e "\nThe variable of cmake-args\n"
-                echo ${{ matrix.cmake-args }}
-                echo -e "\nThe variable of make-args\n"
+                echo -e "\nThe variable of cmake-args"
+                echo ${{ matrix.cmake-args }"
+                echo -e "\nThe variable of make-args"
                 echo ${{ matrix.make-args }}
 
             - name: Windows Test 1
