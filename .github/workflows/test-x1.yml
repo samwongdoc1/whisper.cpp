@@ -131,13 +131,13 @@ jobs:
                 echo `n"The path of GITHUB_ENV : "
                 echo $env:GITHUB_ENV
                 echo `n"The variable of GITHUB_ENV : "
-                $env:GITHUB_ENV         
+                cat -path '$env:GITHUB_ENV'         
                 echo `n"The variable of PATH : "
                 $env:PATH -split ';'
                 echo `n"The variable of cmake-args : "
                 echo ${{ matrix.cmake-args }}
                 echo `n"The variable of make-args  : "
-                echo ${{ matrix.make-args }}
-                Get-ChildItem env:
+              # echo ${{ matrix.make-args }}
+              # Get-ChildItem env:
 
 
