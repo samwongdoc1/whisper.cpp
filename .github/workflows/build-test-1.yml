@@ -85,7 +85,7 @@ jobs:
                 - platform: "windows-2022"
                   name: "windows-x86_64-cpu-msbuild-1-sdl2-openvino"
                   build-name: "build-windows-x86_64-cpu-msbuild-1-sdl2-openvino"
-                  cmake-args: "-DGGML_CCACHE=OFF -DBUILD_SHARED_LIBS=OFF -DWHISPER_SDL2=ON -DCMAKE_BUILD_TYPE=Release -DGGML_STATIC=ON -DWHISPER_OPENVINO=1 -DCMAKE_PREFIX_PATH="w_openvino_toolkit_windows_2023.0.0.10926.b4452d56304_x86_64\runtime\cmake""
+                  cmake-args: "-DGGML_CCACHE=OFF -DBUILD_SHARED_LIBS=OFF -DWHISPER_SDL2=ON -DCMAKE_BUILD_TYPE=Release -DGGML_STATIC=ON -DWHISPER_OPENVINO=1 -DCMAKE_PREFIX_PATH=w_openvino_toolkit_windows_2023.0.0.10926.b4452d56304_x86_64/runtime/cmake"
                   s2ver: 2.30.7 
 
                 # - platform: "windows-latest"
