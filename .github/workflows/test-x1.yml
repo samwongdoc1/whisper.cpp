@@ -131,7 +131,7 @@ jobs:
                 echo `n"The path of GITHUB_ENV : "
                 echo $env:GITHUB_ENV
                 echo `n"The variable of GITHUB_ENV : "
-                '$env:GITHUB_ENV'         
+                echo $env:GITHUB_ENV'         
                 echo `n"The variable of PATH : "
                 $env:PATH -split ';'
                 echo `n"The variable of cmake-args : "
@@ -139,6 +139,7 @@ jobs:
                 Get-ChildItem env:
                 echo `n"The current version of Powershell: "
                 $PSVersionTable
+                echo 
 
 
 

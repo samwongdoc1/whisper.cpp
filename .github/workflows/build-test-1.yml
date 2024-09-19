@@ -14,7 +14,7 @@ on:
 
 env:
   MODEL_URL: https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-tiny.bin
-  MODEL_FILENAME: ggml-tiny.bin
+  MODEL_FILENAME: ggml-base.bin
   AUDIO_URL: https://github.com/ggerganov/whisper.cpp/raw/master/samples/jfk.wav
   AUDIO_FILENAME: jfk.wav
   CMAKE_BUILD_TYPE: Release
@@ -68,18 +68,25 @@ jobs:
                 #   name: "Ubuntu 24.04 - x86_64 - Vulkan"
                 #   cmake-args: "-DGGML_VULKAN=ON -DGGML_CCACHE=OFF -DBUILD_SHARED_LIBS=OFF -DCMAKE_BUILD_TYPE=${{ inputs.cmake_build_type }} -DGGML_STATIC=ON"
       
-                # Windows
+                # Windows msbuild 1
                 - platform: "windows-2022"
                   name: "windows-x86_64-cpu-msbuild-1"
                   build-name: "build-windows-x86_64-cpu-msbuild-1"
                   cmake-args: "-DGGML_CCACHE=OFF -DBUILD_SHARED_LIBS=OFF -DCMAKE_BUILD_TYPE=Release -DGGML_STATIC=ON"
 
-                # Windows
+                # Windows msbuild 1 SDL2 Static
                 - platform: "windows-2022"
                   name: "windows-x86_64-cpu-msbuild-1-sdl2"
                   build-name: "build-windows-x86_64-cpu-msbuild-1-sdl2"
                   cmake-args: "-DGGML_CCACHE=OFF -DBUILD_SHARED_LIBS=OFF -DWHISPER_SDL2=ON -DCMAKE_BUILD_TYPE=Release -DGGML_STATIC=ON"
                   s2ver: 2.30.7                  
+
+                # Windows msbuild 1 SDL2 Static + OpenVINO
+                - platform: "windows-2022"
+                  name: "windows-x86_64-cpu-msbuild-1-sdl2-openvino"
+                  build-name: "build-windows-x86_64-cpu-msbuild-1-sdl2-openvino"
+                  cmake-args: "-DGGML_CCACHE=OFF -DBUILD_SHARED_LIBS=OFF -DWHISPER_SDL2=ON -DCMAKE_BUILD_TYPE=Release -DGGML_STATIC=ON -DWHISPER_OPENVINO=1"
+                  s2ver: 2.30.7 
 
                 # - platform: "windows-latest"
                 #   name: "Windows - x86_64 - Vulkan"
@@ -159,16 +166,25 @@ jobs:
                 sudo apt install -y libopenblas-dev
               if: ${{ contains(matrix.platform, 'ubuntu') && contains(matrix.make-args, 'GGML_OPENBLAS=1') }}              
 
+            - name: Prepare OpenVINO for Windows
+              run: |
+                C:\msys64\usr\bin\wget.exe -c https://storage.openvinotoolkit.org/repositories/openvino/packages/2023.0/windows/w_openvino_toolkit_windows_2023.0.0.10926.b4452d56304_x86_64.zip
+                7z x w_openvino_toolkit_windows_2023.0.0.10926.b4452d56304_x86_64.zip
+                .\w_openvino_toolkit_windows_2023.0.0.10926.b4452d56304_x86_64\setupvars.bat
+              if: ${{ contains(matrix.platform, 'windows') && contains(matrix.cmake-args, '-DWHISPER_OPENVINO=1') }}  
+
             - name: Download assets on Windows
               if: contains(matrix.platform, 'windows')
               run: |
-                C:\msys64\usr\bin\wget.exe ${{ env.MODEL_URL }}
+                C:\msys64\usr\bin\wget.exe https://huggingface.co/Intel/whisper.cpp-openvino-models/resolve/main/ggml-base-models.zip
+                7z x ggml-base-models.zip
                 C:\msys64\usr\bin\wget.exe ${{ env.AUDIO_URL }}
         
             - name: Download assets on Linux
               if: contains(matrix.platform, 'windows') == false
               run: |
-                wget ${{ env.MODEL_URL }}
+                wget -c https://huggingface.co/Intel/whisper.cpp-openvino-models/resolve/main/ggml-base-models.zip
+                7z x ggml-base-models.zip
                 wget ${{ env.AUDIO_URL }}
 
             - name: Platform Test 1
@@ -205,13 +221,15 @@ jobs:
                 echo ${{ matrix.build-name }}_${{ env.now }}
                 echo "`nCurrent Folder : $(pwd)`n"
                 ls
-                echo "`nThe path of GITHUB_ENV : $env:GITHUB_ENV `n"
-                echo "`nThe variable of GITHUB_ENV : `n"
+                echo `n"The path of GITHUB_ENV : "
                 echo $env:GITHUB_ENV
-                echo "`nThe variable of PATH"
-                echo $env:PATH
-                echo "`nThe variable of current environment"
-                Get-Variable
+                echo `n"The variable of GITHUB_ENV : "
+                echo $env:GITHUB_ENV'         
+                echo `n"The variable of PATH : "
+                $env:PATH -split ';'
+                echo `n"The variable of cmake-args : "
+                echo ${{ matrix.cmake-args }}
+                Get-ChildItem env:
 
             - name: Configure cmake for Ubuntu
               run: |
