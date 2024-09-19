@@ -6,17 +6,13 @@ on:
   workflow_dispatch:
 
 jobs:
-  check-bats-version:
+  build-ubuntu2204-x86-64:
     # runs-on: ubuntu-latest
     runs-on: ubuntu-22.04
-    name: Ununtu Test X1
     steps:
-      - uses: actions/checkout@v4
-      # - uses: actions/setup-node@v4
-      #   with:
-      #     node-version: '20'
-      - name: Ununtu Test 1
-      - run: |
+      
+      - name: Check system environment
+        run: |
           echo "now=$(TZ="Asia/Hong_Kong" date +%Y%m%d-%H%M%S)" >> $GITHUB_ENV
           echo -e "\nThe Current Folder                     : $(pwd) \n"
           ls -al
@@ -26,3 +22,6 @@ jobs:
           cat $GITHUB_ENV
           echo -e "\nThe variable of PATH : "
           echo $PATH
+
+
+
