@@ -277,7 +277,6 @@ jobs:
                       if file "$file" | grep -q "ELF"; then
                         echo -e "\n### "$file""
                         ./"$file" -h
-                        ldd $file
                         echo -e ""
                       fi
                     fi
@@ -304,7 +303,6 @@ jobs:
                       if file "$file" | grep -q "ELF"; then
                         echo -e "\n### "$file""
                         ./"$file" -h
-                        ldd $file
                         echo -e ""
                       fi
                     fi
