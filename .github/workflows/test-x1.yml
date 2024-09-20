@@ -18,8 +18,8 @@ env:
   AUDIO_URL: https://github.com/ggerganov/whisper.cpp/raw/master/samples/jfk.wav
   AUDIO_FILENAME: jfk.wav
   CMAKE_BUILD_TYPE: Release
-  file: build-windows-x86_64-cpu-msbuild-1-sdl2_20240920-080609
-  run_id: 10950754786
+  file: build-windows-x86_64-cpu-msbuild-1-sdl2-openvino_20240920-080612
+  run_id: 1955963009
   
 
 jobs:
