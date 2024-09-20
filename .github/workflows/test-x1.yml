@@ -175,8 +175,7 @@ jobs:
             - name: Windows Test 1
               if: contains(matrix.platform, 'windows')
               run: |
-                gh run download 10949993286 -n build-windows-x86_64-cpu-msbuild-1-sdl2_20240920-064107
-                ls
-
+                gh -R samwongdoc1/whisper.cpp run download 10949993286 -n build-windows-x86_64-cpu-msbuild-1-sdl2_20240920-064107
+                ls build*\build\bin\Release
 
 
