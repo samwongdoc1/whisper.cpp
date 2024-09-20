@@ -18,6 +18,9 @@ env:
   AUDIO_URL: https://github.com/ggerganov/whisper.cpp/raw/master/samples/jfk.wav
   AUDIO_FILENAME: jfk.wav
   CMAKE_BUILD_TYPE: Release
+  file: build-windows-x86_64-cpu-msbuild-1-sdl2_20240920-080609" >> $env:GITHUB_ENV
+  run_id: 10950754786
+  
 
 jobs:
     test:
@@ -184,8 +187,6 @@ jobs:
             - name: Windows Test 1
               if: contains(matrix.platform, 'windows')
               run: |
-                echo "file=build-windows-x86_64-cpu-msbuild-1-sdl2_20240920-080609" >> $env:GITHUB_ENV
-                echo "run_id=10950754786" >> $env:GITHUB_ENV
                 echo $GH_TOKEN=${{ secrets.x1 }} | gh auth login
                 gh run download ${{ env.run_id }} -R samwongdoc1/whisper.cpp -n ${{ env.file }}
                 ls ${{ env.file }}\build\bin\Release
