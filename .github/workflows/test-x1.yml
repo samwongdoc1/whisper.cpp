@@ -182,7 +182,8 @@ jobs:
             - name: Windows Test 1
               if: contains(matrix.platform, 'windows')
               run: |
-                nmake
+                msbuild.exe -v
+                nmake.exe -v
                 ls
 
 
