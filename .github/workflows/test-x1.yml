@@ -179,5 +179,12 @@ jobs:
                 ls
                 ls build*\build\bin\Release
 
+            # - name: Windows Test 1
+            #   if: contains(matrix.platform, 'windows')
+            #   run: |
+            #     gh -R samwongdoc1/whisper.cpp
+            #     ls
+            #     ls build*\build\bin\Release            
+
 
 
