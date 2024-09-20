@@ -95,17 +95,17 @@ jobs:
                 #   cmake-args: "-DGGML_VULKAN=ON -DGGML_CCACHE=OFF -DBUILD_SHARED_LIBS=OFF -DCMAKE_BUILD_TYPE=${{ inputs.cmake_build_type }} -DGGML_STATIC=ON"
       
                 # Windows
-                - platform: "windows-2022"
-                  name: "windows-x86_64-cpu-msbuild-1"
-                  build-name: "build-windows-x86_64-cpu-msbuild-1"
-                  cmake-args: "-DGGML_CCACHE=OFF -DBUILD_SHARED_LIBS=OFF -DCMAKE_BUILD_TYPE=Release -DGGML_STATIC=ON"
+                # - platform: "windows-2022"
+                #   name: "windows-x86_64-cpu-msbuild-1"
+                #   build-name: "build-windows-x86_64-cpu-msbuild-1"
+                #   cmake-args: "-DGGML_CCACHE=OFF -DBUILD_SHARED_LIBS=OFF -DCMAKE_BUILD_TYPE=Release -DGGML_STATIC=ON"
 
                 # # Windows
-                # - platform: "windows-2022"
-                #   name: "windows-x86_64-cpu-msbuild-1-sdl2"
-                #   build-name: "build-windows-x86_64-cpu-msbuild-1-sdl2"
-                #   cmake-args: "-DGGML_CCACHE=OFF -DBUILD_SHARED_LIBS=OFF -DWHISPER_SDL2=ON -DCMAKE_BUILD_TYPE=Release -DGGML_STATIC=ON"
-                #   s2ver: 2.30.7                  
+                - platform: "windows-2022"
+                  name: "windows-x86_64-cpu-nmake-1-sdl2"
+                  build-name: "build-windows-x86_64-cpu-nmake-1-sdl2"
+                  # nmake-args: "-DGGML_CCACHE=OFF -DBUILD_SHARED_LIBS=OFF -DWHISPER_SDL2=ON -DCMAKE_BUILD_TYPE=Release -DGGML_STATIC=ON"
+                  s2ver: 2.30.7                  
 
                 # - platform: "windows-latest"
                 #   name: "Windows - x86_64 - Vulkan"
@@ -114,7 +114,7 @@ jobs:
         runs-on: ${{ matrix.platform }}
         name: ${{ matrix.name }}
         steps:
-            # - uses: actions/checkout@v4
+            - uses: actions/checkout@v4
 
             - name: Set default env variables for Linux
               if: contains(matrix.platform, 'windows') == false
@@ -176,21 +176,20 @@ jobs:
             #     run-id: 10950754786
             #     run: ls
 
-            # - name: Windows Test 1
-            #   if: contains(matrix.platform, 'windows')
-            #   run: |
-            #     curl -v -H "Authorization: token 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" https://api.github.com/repos/endless-sky/endless-sky/actions/artifacts/1955963009/zip
-            #     ls
-                
-            #   ls build*\build\bin\Release
-
             - name: Windows Test 1
               if: contains(matrix.platform, 'windows')
               run: |
-                echo $GH_TOKEN=${{ secrets.x1 }} | gh auth login
-                gh run download ${{ env.run_id }} -R samwongdoc1/whisper.cpp -n ${{ env.file }}
-                ls ${{ env.file }}\build\bin\Release
-                .\${{ env.file }}\build\bin\Release\main -h
+                nmake
+                ls
+
+
+            # - name: Windows Test 1
+            #   if: contains(matrix.platform, 'windows')
+            #   run: |
+            #     echo $GH_TOKEN=${{ secrets.x1 }} | gh auth login
+            #     gh run download ${{ env.run_id }} -R samwongdoc1/whisper.cpp -n ${{ env.file }}
+            #     ls ${{ env.file }}\build\bin\Release
+            #     .\${{ env.file }}\build\bin\Release\main -h
 
 
               # ls build*\build\bin\Release            
