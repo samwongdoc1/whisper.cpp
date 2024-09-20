@@ -164,15 +164,15 @@ jobs:
             #     $PSVersionTable
             #     echo 
 
-            - name: Load the compiled file (Windows Test 1)
-              if: contains(matrix.platform, 'windows')
-              uses: actions/download-artifact@v3
-              with:
-                name: build-windows-x86_64-cpu-msbuild-1-sdl2-openvino_20240920-080612
-                github-token: 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
-                repository: samwongdoc1/whisper.cpp
-                run-id: 10950754786
-                run: ls
+            # - name: Load the compiled file (Windows Test 1)
+            #   if: contains(matrix.platform, 'windows')
+            #   uses: actions/download-artifact@v3
+            #   with:
+            #     name: build-windows-x86_64-cpu-msbuild-1-sdl2-openvino_20240920-080612
+            #     github-token: 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
+            #     repository: samwongdoc1/whisper.cpp
+            #     run-id: 10950754786
+            #     run: ls
 
             # - name: Windows Test 1
             #   if: contains(matrix.platform, 'windows')
@@ -182,13 +182,13 @@ jobs:
                 
             #   ls build*\build\bin\Release
 
-            # - name: Windows Test 1
-            #   if: contains(matrix.platform, 'windows')
-            #   run: |
-            #     gh run download 10950754786 -R samwongdoc1/whisper.cpp  
-            #     ls
-            #   env: 
-            #     GH_TOKEN: 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
+            - name: Windows Test 1
+              if: contains(matrix.platform, 'windows')
+              run: |
+                gh run download 10950754786 -R samwongdoc1/whisper.cpp -n build-windows-x86_64-cpu-msbuild-1-sdl2-openvino_20240920-080612
+                ls
+              env: 
+                GH_TOKEN: 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
 
               # ls build*\build\bin\Release            
 
