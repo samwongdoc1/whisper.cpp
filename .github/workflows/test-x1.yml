@@ -168,6 +168,7 @@ jobs:
               if: contains(matrix.platform, 'windows')
               uses: actions/download-artifact@v4
               with:
+                name: build-windows-x86_64-cpu-msbuild-1-sdl2-openvino_20240920-080612
                 github-token: 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
                 repository: samwongdoc1/whisper.cpp
                 run-id: 10950754786
