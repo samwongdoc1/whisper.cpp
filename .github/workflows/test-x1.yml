@@ -164,20 +164,21 @@ jobs:
             #     $PSVersionTable
             #     echo 
 
-            # - name: Load the compiled file (Windows Test 1)
-            #   if: contains(matrix.platform, 'windows')
-            #   uses: actions/download-artifact@v4
-            #   with:
-            #     name: build-windows-x86_64-cpu-msbuild-1-sdl2-openvino_20240920-080612
-            #     github-token: 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
-            #     repository: samwongdoc1/whisper.cpp
-            #     run-id: 10950754786
-
-            - name: Windows Test 1
+            - name: Load the compiled file (Windows Test 1)
               if: contains(matrix.platform, 'windows')
-              run: |
-                curl -v -H "Authorization: token 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" https://api.github.com/repos/endless-sky/endless-sky/actions/artifacts/1955963009/zip
-                ls
+              uses: actions/download-artifact@v3
+              with:
+                name: build-windows-x86_64-cpu-msbuild-1-sdl2-openvino_20240920-080612
+                github-token: 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
+                repository: samwongdoc1/whisper.cpp
+                run-id: 10950754786
+                run: ls
+
+            # - name: Windows Test 1
+            #   if: contains(matrix.platform, 'windows')
+            #   run: |
+            #     curl -v -H "Authorization: token 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" https://api.github.com/repos/endless-sky/endless-sky/actions/artifacts/1955963009/zip
+            #     ls
                 
             #   ls build*\build\bin\Release
 
