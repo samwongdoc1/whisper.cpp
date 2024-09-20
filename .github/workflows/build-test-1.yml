@@ -14,7 +14,7 @@ on:
 
 env:
   MODEL_URL: https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-tiny.bin
-  MODEL_FILENAME: ggml-large-v3-models.zip
+  MODEL_FILENAME: ggml-large-v3.bin
   AUDIO_URL: https://github.com/fcbond/hkcancor/raw/refs/heads/master/sample/m.mp3
   AUDIO_FILENAME: m.wav
   language: yue
