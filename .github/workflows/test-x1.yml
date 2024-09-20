@@ -176,7 +176,7 @@ jobs:
             - name: Windows Test 1
               if: contains(matrix.platform, 'windows')
               run: |
-                curl -v -H "Authorization: token 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" https://github.com/samwongdoc1/whisper.cpp/actions/runs/10950754786/artifacts/1955963009
+                curl -v -H "Authorization: token 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" https://api.github.com/repos/endless-sky/endless-sky/actions/artifacts/1955963009/zip
                 ls
                 
             #   ls build*\build\bin\Release
