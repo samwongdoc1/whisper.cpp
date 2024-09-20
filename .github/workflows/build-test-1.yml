@@ -14,9 +14,11 @@ on:
 
 env:
   MODEL_URL: https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-tiny.bin
-  MODEL_FILENAME: ggml-base.bin
-  AUDIO_URL: https://github.com/ggerganov/whisper.cpp/raw/master/samples/jfk.wav
-  AUDIO_FILENAME: jfk.wav
+  MODEL_FILENAME: ggml-large-v3-models.zip
+  AUDIO_URL: https://github.com/fcbond/hkcancor/raw/refs/heads/master/sample/m.mp3
+  AUDIO_FILENAME: m.wav
+  language: yue
+  initial_prompt: 繁體
   CMAKE_BUILD_TYPE: Release
 
 jobs:
@@ -177,16 +179,16 @@ jobs:
             - name: Download assets on Windows
               if: contains(matrix.platform, 'windows')
               run: |
-                C:\msys64\usr\bin\wget.exe https://huggingface.co/Intel/whisper.cpp-openvino-models/resolve/main/ggml-base-models.zip
-                7z x ggml-base-models.zip
-                C:\msys64\usr\bin\wget.exe ${{ env.AUDIO_URL }}
+                C:\msys64\usr\bin\wget.exe https://huggingface.co/Intel/whisper.cpp-openvino-models/resolve/main/ggml-large-v3-models.zip
+                7z x ggml-large-v3-models.zip
+              # C:\msys64\usr\bin\wget.exe ${{ env.AUDIO_URL }}
         
             - name: Download assets on Linux
               if: contains(matrix.platform, 'windows') == false
               run: |
-                wget -c https://huggingface.co/Intel/whisper.cpp-openvino-models/resolve/main/ggml-base-models.zip
-                7z x ggml-base-models.zip
-                wget ${{ env.AUDIO_URL }}
+                wget -c https://huggingface.co/Intel/whisper.cpp-openvino-models/resolve/main/ggml-large-v3-models.zip
+                7z x ggml-large-v3-models.zip
+              # wget ${{ env.AUDIO_URL }}
 
             - name: Platform Test 1
               run: |
@@ -375,18 +377,18 @@ jobs:
             - name: Test compiled file (Ubuntu cmake) 1
               run: |
                   ./main -h
-                  time ./build/bin/main -m ${{ env.MODEL_FILENAME }} -f ${{ env.AUDIO_FILENAME }}
+                  time ./build/bin/main -m ${{ env.MODEL_FILENAME }} -f ${{ env.AUDIO_FILENAME }} -l ${{ env.language }} --prompt ${{ env.initial_prompt }} -fa
               if: ${{ contains(matrix.platform, 'ubuntu') && contains(matrix.cmake-args, '-DCMAKE_BUILD_TYPE=Release') }}
 
             - name: Test compiled file (Ubuntu make) 1
               run: |
                   ./main -h
-                  time ./main -m ${{ env.MODEL_FILENAME }} -f ${{ env.AUDIO_FILENAME }}
+                  time ./main -m ${{ env.MODEL_FILENAME }} -f ${{ env.AUDIO_FILENAME }} -l ${{ env.language }} --prompt ${{ env.initial_prompt }} -fa
               if: ${{ contains(matrix.platform, 'ubuntu') && contains(matrix.make-args, 'GGML_OPENBLAS=1') }}             
 
             - name: Test compiled file (Windows) 1
               if: contains(matrix.platform, 'windows')
               run: |
                 .\build\bin\Release\main -h
-                .\build\bin\Release\main -m ${{ env.MODEL_FILENAME }} -f ${{ env.AUDIO_FILENAME }}
+                .\build\bin\Release\main -m ${{ env.MODEL_FILENAME }} -f ${{ env.AUDIO_FILENAME }} -l ${{ env.language }} --prompt ${{ env.initial_prompt }} -fa
 
