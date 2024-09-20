@@ -282,6 +282,13 @@ jobs:
                 ls build\bin\Release     
               if: ${{ contains(matrix.platform, 'windows') && contains(matrix.cmake-args, '-DCMAKE_BUILD_TYPE=Release') }}  
 
+            - name: Copy dll file of openvino 
+              run: |
+                cp w_openvino_toolkit_windows_2023.0.0.10926.b4452d56304_x86_64\runtime\bin\intel64\Release\*.dll build\bin\Release
+                cp w_openvino_toolkit_windows_2023.0.0.10926.b4452d56304_x86_64\runtime\3rdparty\tbb\bin\*.dll build\bin\Release
+                ls build\bin\Release     
+              if: ${{ contains(matrix.platform, 'windows') && contains(matrix.cmake-args, '-DWHISPER_OPENVINO=1') }}  
+
             # - name: Test Unix
             #   if: ${{ contains(matrix.platform, 'ubuntu') || contains(matrix.platform, 'macos') }}
             #   run: |
@@ -367,11 +374,13 @@ jobs:
 
             - name: Test compiled file (Ubuntu cmake) 1
               run: |
+                  ./main -h
                   time ./build/bin/main -m ${{ env.MODEL_FILENAME }} -f ${{ env.AUDIO_FILENAME }}
               if: ${{ contains(matrix.platform, 'ubuntu') && contains(matrix.cmake-args, '-DCMAKE_BUILD_TYPE=Release') }}
 
             - name: Test compiled file (Ubuntu make) 1
               run: |
+                  ./main -h
                   time ./main -m ${{ env.MODEL_FILENAME }} -f ${{ env.AUDIO_FILENAME }}
               if: ${{ contains(matrix.platform, 'ubuntu') && contains(matrix.make-args, 'GGML_OPENBLAS=1') }}             
 
@@ -379,3 +388,5 @@ jobs:
               if: contains(matrix.platform, 'windows')
               run: |
                 .\build\bin\Release\main -h
+                .\build\bin\Release\main -m ${{ env.MODEL_FILENAME }} -f ${{ env.AUDIO_FILENAME }}
+
