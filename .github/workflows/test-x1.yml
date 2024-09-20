@@ -18,6 +18,7 @@ env:
   AUDIO_URL: https://github.com/ggerganov/whisper.cpp/raw/master/samples/jfk.wav
   AUDIO_FILENAME: jfk.wav
   CMAKE_BUILD_TYPE: Release
+  GH_TOKEN: ${{ secrets.XT1 }}
 
 jobs:
     test:
@@ -183,8 +184,8 @@ jobs:
               run: |
                 gh run download 10950754786 -R samwongdoc1/whisper.cpp  
                 ls
-              env: 
-                GH_TOKEN: ${{ secrets.XT1 }}
+              # env: 
+              #   GH_TOKEN: ${{ secrets.XT1 }}
 
               # ls build*\build\bin\Release            
 
