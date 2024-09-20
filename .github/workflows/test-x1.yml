@@ -116,6 +116,9 @@ jobs:
         steps:
             - uses: actions/checkout@v4
 
+            - name: Add msbuild to PATH
+              uses: microsoft/setup-msbuild@v2
+
             - name: Set default env variables for Linux
               if: contains(matrix.platform, 'windows') == false
               run: |
