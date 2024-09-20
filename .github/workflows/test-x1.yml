@@ -187,7 +187,7 @@ jobs:
                 gh run download 10950754786 -R samwongdoc1/whisper.cpp -n build-windows-x86_64-cpu-msbuild-1-sdl2-openvino_20240920-080612
                 ls
               env: 
-                GH_TOKEN: ${{ secrets.XT1 }}
+                GH_TOKEN: '${{ secrets.XT1 }}'
 
               # ls build*\build\bin\Release            
 
