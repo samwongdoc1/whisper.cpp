@@ -181,11 +181,10 @@ jobs:
             - name: Windows Test 1
               if: contains(matrix.platform, 'windows')
               run: |
-                $GH_TOKEN=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
                 gh run download 10950754786 -R samwongdoc1/whisper.cpp  
                 ls
-              # env: 
-              #   GH_TOKEN: ${{ secrets.XT1 }}
+              env: 
+                GH_TOKEN: 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
 
               # ls build*\build\bin\Release            
 
