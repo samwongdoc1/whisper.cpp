@@ -55,7 +55,7 @@ jobs:
 
                 # Linux cmake SDL2 Static + OpenVINO
                 - platform: "ubuntu-22.04"
-                  name: "ubuntu-2204-x86_64-cpu-cmake-sdl2-static"
+                  name: "ubuntu-2204-x86_64-cpu-cmake-sdl2-openvino-static"
                   build-name: "build-ubuntu-2204-x86_64-cpu-cmake-sdl2-openvino-static"
                   cmake-args: "-DGGML_CCACHE=OFF -DBUILD_SHARED_LIBS=OFF -DWHISPER_SDL2=ON -DCMAKE_BUILD_TYPE=Release -DGGML_STATIC=ON -DWHISPER_OPENVINO=1"
                 
@@ -180,6 +180,7 @@ jobs:
                 tar -xvf l_openvino_toolkit_ubuntu22_2023.0.0.10926.b4452d56304_x86_64.tgz
                 sudo ./l_openvino_toolkit_ubuntu22_2023.0.0.10926.b4452d56304_x86_64/install_dependencies/install_openvino_dependencies.sh
                 source l_openvino_toolkit_ubuntu22_2023.0.0.10926.b4452d56304_x86_64/setupvars.sh
+                echo "OpenVINO_DIR=$GITHUB_WORKSPACE/l_openvino_toolkit_ubuntu22_2023.0.0.10926.b4452d56304_x86_64/runtime/cmake" >> $GITHUB_ENV
               if: ${{ contains(matrix.platform, 'ubuntu') && contains(matrix.cmake-args, '-DWHISPER_OPENVINO=1') }}  
 
             - name: Prepare OpenVINO for Windows
@@ -252,14 +253,15 @@ jobs:
               run: |
                 echo -e "\nThe cmake args are: ${{ matrix.cmake-args }}\n"
                 cmake -B build ${{ matrix.cmake-args }}
+                ls build
               if: ${{ contains(matrix.platform, 'ubuntu') && contains(matrix.cmake-args, '-DCMAKE_BUILD_TYPE=Release') }}  
 
             - name: Configure cmake for Windows
-              if: contains(matrix.platform, 'windows')
               run: |
                 echo "`nThe cmake args are: ${{ matrix.cmake-args }}`n"
                 cmake -B build ${{ matrix.cmake-args }}
-                ls ./build
+                ls build
+              if: ${{ contains(matrix.platform, 'windows') && contains(matrix.cmake-args, '-DCMAKE_BUILD_TYPE=Release') }} 
 
             # - name: Configure
             #   run: |
@@ -298,7 +300,7 @@ jobs:
                 ls build\bin\Release     
               if: ${{ contains(matrix.platform, 'windows') && contains(matrix.cmake-args, '-DCMAKE_BUILD_TYPE=Release') }}  
 
-            - name: Copy dll file of openvino 
+            - name: Copy dll file of openvino (Windows)
               run: |
                 cp w_openvino_toolkit_windows_2023.0.0.10926.b4452d56304_x86_64\runtime\bin\intel64\Release\*.dll build\bin\Release
                 cp w_openvino_toolkit_windows_2023.0.0.10926.b4452d56304_x86_64\runtime\3rdparty\tbb\bin\*.dll build\bin\Release
