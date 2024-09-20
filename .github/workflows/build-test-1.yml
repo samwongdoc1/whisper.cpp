@@ -376,7 +376,7 @@ jobs:
 
             - name: Test compiled file (Ubuntu cmake) 1
               run: |
-                  ./main -h
+                  ./build/bin/main -h
                   time ./build/bin/main -m ${{ env.MODEL_FILENAME }} -f ${{ env.AUDIO_FILENAME }} -l ${{ env.language }} --prompt ${{ env.initial_prompt }} -fa
               if: ${{ contains(matrix.platform, 'ubuntu') && contains(matrix.cmake-args, '-DCMAKE_BUILD_TYPE=Release') }}
 
