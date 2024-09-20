@@ -164,27 +164,27 @@ jobs:
             #     $PSVersionTable
             #     echo 
 
-            # - name: Load the compiled file (Windows Test 1)
-            #   if: contains(matrix.platform, 'windows')
-            #   uses: actions/download-artifact@v4
-            #   with:
-            #     github-token: ${{ secrets.XT1 }}
-            #     repository: samwongdoc1/whisper.cpp
-            #     run-id: 10950754786
-
-            # - name: Windows Test 1
-            #   if: contains(matrix.platform, 'windows')
-            #   run: |
-            #     ls
-            # #   ls build*\build\bin\Release
+            - name: Load the compiled file (Windows Test 1)
+              if: contains(matrix.platform, 'windows')
+              uses: actions/download-artifact@v4
+              with:
+                github-token: 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
+                repository: samwongdoc1/whisper.cpp
+                run-id: 10950754786
 
             - name: Windows Test 1
               if: contains(matrix.platform, 'windows')
               run: |
-                gh run download 10950754786 -R samwongdoc1/whisper.cpp  
                 ls
-              env: 
-                GH_TOKEN: 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
+            #   ls build*\build\bin\Release
+
+            # - name: Windows Test 1
+            #   if: contains(matrix.platform, 'windows')
+            #   run: |
+            #     gh run download 10950754786 -R samwongdoc1/whisper.cpp  
+            #     ls
+            #   env: 
+            #     GH_TOKEN: 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
 
               # ls build*\build\bin\Release            
 
