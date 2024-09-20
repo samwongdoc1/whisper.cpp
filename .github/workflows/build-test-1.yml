@@ -185,10 +185,10 @@ jobs:
 
             - name: Prepare OpenVINO for Windows
               run: |
-                C:\msys64\usr\bin\wget.exe -c https://storage.openvinotoolkit.org/repositories/openvino/packages/2023.0/windows/w_openvino_toolkit_windows_2023.0.0.10926.b4452d56304_x86_64.zip
-                7z x w_openvino_toolkit_windows_2023.0.0.10926.b4452d56304_x86_64.zip
-                .\w_openvino_toolkit_windows_2023.0.0.10926.b4452d56304_x86_64\setupvars.bat
-                echo "OpenVINO_DIR=$env:GITHUB_WORKSPACE/w_openvino_toolkit_windows_2023.0.0.10926.b4452d56304_x86_64/runtime/cmake" >> $env:GITHUB_ENV
+                C:\msys64\usr\bin\wget.exe -c https://storage.openvinotoolkit.org/repositories/openvino/packages/2024.4/windows/w_openvino_toolkit_windows_2024.4.0.16579.c3152d32c9c_x86_64.zip
+                7z x w_openvino_toolkit_windows_2024.4.0.16579.c3152d32c9c_x86_64.zip
+                .\w_openvino_toolkit_windows_2024.4.0.16579.c3152d32c9c_x86_64\setupvars.bat
+                echo "OpenVINO_DIR=$env:GITHUB_WORKSPACE/w_openvino_toolkit_windows_2024.4.0.16579.c3152d32c9c_x86_64/runtime/cmake" >> $env:GITHUB_ENV
               if: ${{ contains(matrix.platform, 'windows') && contains(matrix.cmake-args, '-DWHISPER_OPENVINO=1') }}  
 
             - name: Download assets on Windows
