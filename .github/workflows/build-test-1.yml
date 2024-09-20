@@ -14,6 +14,7 @@ on:
 
 env:
   MODEL_URL: https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-tiny.bin
+  MODEL_openvino_URL: https://huggingface.co/Intel/whisper.cpp-openvino-models/resolve/main/ggml-large-v3-models.zip
   MODEL_FILENAME: ggml-large-v3.bin
   AUDIO_URL: https://github.com/fcbond/hkcancor/raw/refs/heads/master/sample/m.mp3
   AUDIO_FILENAME: m.wav
@@ -58,7 +59,8 @@ jobs:
                   name: "ubuntu-2204-x86_64-cpu-cmake-sdl2-openvino-static"
                   build-name: "build-ubuntu-2204-x86_64-cpu-cmake-sdl2-openvino-static"
                   cmake-args: "-DGGML_CCACHE=OFF -DBUILD_SHARED_LIBS=OFF -DWHISPER_SDL2=ON -DCMAKE_BUILD_TYPE=Release -DGGML_STATIC=ON -DWHISPER_OPENVINO=1"
-                
+                  openvino_URL: https://storage.openvinotoolkit.org/repositories/openvino/packages/2023.0/linux/l_openvino_toolkit_ubuntu22_2023.0.0.10926.b4452d56304_x86_64.tgz
+
                   # Linux make SDL2 + OpenBLAS
                 - platform: "ubuntu-22.04"
                   name: "ubuntu-2204-x86_64-cpu-make-sdl2-openblas"
@@ -95,6 +97,7 @@ jobs:
                   build-name: "build-windows-x86_64-cpu-msbuild-1-sdl2-openvino"
                   cmake-args: "-DGGML_CCACHE=OFF -DBUILD_SHARED_LIBS=OFF -DWHISPER_SDL2=ON -DCMAKE_BUILD_TYPE=Release -DGGML_STATIC=ON -DWHISPER_OPENVINO=1"
                   s2ver: 2.30.7
+                  openvino_URL: https://storage.openvinotoolkit.org/repositories/openvino/packages/2024.4/windows/w_openvino_toolkit_windows_2024.4.0.16579.c3152d32c9c_x86_64.zip
 
                 # - platform: "windows-latest"
                 #   name: "Windows - x86_64 - Vulkan"
@@ -176,33 +179,33 @@ jobs:
 
             - name: Prepare OpenVINO for Linux
               run: |
-                wget -c https://storage.openvinotoolkit.org/repositories/openvino/packages/2023.0/linux/l_openvino_toolkit_ubuntu22_2023.0.0.10926.b4452d56304_x86_64.tgz
-                tar -xvf l_openvino_toolkit_ubuntu22_2023.0.0.10926.b4452d56304_x86_64.tgz
-                sudo ./l_openvino_toolkit_ubuntu22_2023.0.0.10926.b4452d56304_x86_64/install_dependencies/install_openvino_dependencies.sh
-                source l_openvino_toolkit_ubuntu22_2023.0.0.10926.b4452d56304_x86_64/setupvars.sh
-                echo "OpenVINO_DIR=$GITHUB_WORKSPACE/l_openvino_toolkit_ubuntu22_2023.0.0.10926.b4452d56304_x86_64/runtime/cmake" >> $GITHUB_ENV
+                wget -c ${{ env.openvino_URL }}
+                tar -xvf $(basename "${{ env.openvino_URL }}")
+                sudo ./$(basename "$(basename "$(basename "${{ env.openvino_URL }}")")" | cut -d '.' -f 1)/install_dependencies/install_openvino_dependencies.sh
+                source $(basename "$(basename "$(basename "${{ env.openvino_URL }}")")" | cut -d '.' -f 1)/setupvars.sh
+                echo "OpenVINO_DIR=$GITHUB_WORKSPACE/$(basename "$(basename "$(basename "${{ env.openvino_URL }}")")" | cut -d '.' -f 1)/runtime/cmake" >> $GITHUB_ENV
               if: ${{ contains(matrix.platform, 'ubuntu') && contains(matrix.cmake-args, '-DWHISPER_OPENVINO=1') }}  
 
             - name: Prepare OpenVINO for Windows
               run: |
-                C:\msys64\usr\bin\wget.exe -c https://storage.openvinotoolkit.org/repositories/openvino/packages/2024.4/windows/w_openvino_toolkit_windows_2024.4.0.16579.c3152d32c9c_x86_64.zip
-                7z x w_openvino_toolkit_windows_2024.4.0.16579.c3152d32c9c_x86_64.zip
-                .\w_openvino_toolkit_windows_2024.4.0.16579.c3152d32c9c_x86_64\setupvars.bat
-                echo "OpenVINO_DIR=$env:GITHUB_WORKSPACE/w_openvino_toolkit_windows_2024.4.0.16579.c3152d32c9c_x86_64/runtime/cmake" >> $env:GITHUB_ENV
+                C:\msys64\usr\bin\wget.exe -c ${{ env.openvino_URL }}
+                7z x $(${{ env.openvino_URL }} -split "/" | Select-Object -Last 1)
+                .\$($(${{ env.openvino_URL }} -split "/" | Select-Object -Last 1) | Split-Path -LeafBase)\setupvars.bat
+                echo "OpenVINO_DIR=$env:GITHUB_WORKSPACE/$($(${{ env.openvino_URL }} -split "/" | Select-Object -Last 1) | Split-Path -LeafBase)" >> $env:GITHUB_ENV
               if: ${{ contains(matrix.platform, 'windows') && contains(matrix.cmake-args, '-DWHISPER_OPENVINO=1') }}  
 
             - name: Download assets on Windows
               if: contains(matrix.platform, 'windows')
               run: |
-                C:\msys64\usr\bin\wget.exe https://huggingface.co/Intel/whisper.cpp-openvino-models/resolve/main/ggml-large-v3-models.zip
-                7z x ggml-large-v3-models.zip
+                C:\msys64\usr\bin\wget.exe ${{ env.MODEL_openvino_URL }}
+                7z x $(${{ env.MODEL_openvino_URL }} -split "/" | Select-Object -Last 1)
               # C:\msys64\usr\bin\wget.exe ${{ env.AUDIO_URL }}
         
             - name: Download assets on Linux
               if: contains(matrix.platform, 'windows') == false
               run: |
-                wget -c https://huggingface.co/Intel/whisper.cpp-openvino-models/resolve/main/ggml-large-v3-models.zip
-                7z x ggml-large-v3-models.zip
+                wget -c ${{ env.MODEL_openvino_URL }}
+                7z x $(basename "${{ env.MODEL_openvino_URL }}")
               # wget ${{ env.AUDIO_URL }}
 
             - name: Platform Test 1
@@ -302,8 +305,8 @@ jobs:
 
             - name: Copy dll file of openvino (Windows)
               run: |
-                cp w_openvino_toolkit_windows_2023.0.0.10926.b4452d56304_x86_64\runtime\bin\intel64\Release\*.dll build\bin\Release
-                cp w_openvino_toolkit_windows_2023.0.0.10926.b4452d56304_x86_64\runtime\3rdparty\tbb\bin\*.dll build\bin\Release
+                cp $($(${{ env.openvino_URL }} -split "/" | Select-Object -Last 1) | Split-Path -LeafBase)\runtime\bin\intel64\Release\*.dll build\bin\Release
+                cp $($(${{ env.openvino_URL }} -split "/" | Select-Object -Last 1) | Split-Path -LeafBase)\runtime\3rdparty\tbb\bin\*.dll build\bin\Release
                 ls build\bin\Release     
               if: ${{ contains(matrix.platform, 'windows') && contains(matrix.cmake-args, '-DWHISPER_OPENVINO=1') }}  
 
@@ -393,18 +396,18 @@ jobs:
             - name: Test compiled file (Ubuntu cmake) 1
               run: |
                   ./build/bin/main -h
-                  time ./build/bin/main -m ${{ env.MODEL_FILENAME }} -f ${{ env.AUDIO_FILENAME }} -l ${{ env.language }} --prompt ${{ env.initial_prompt }} -fa
+                  time ./build/bin/main -m "$(basename "$(basename "$(basename "${{ env.MODEL_openvino_URL }}")")" | cut -d '.' -f 1)" -f ${{ env.AUDIO_FILENAME }} -l ${{ env.language }} --prompt ${{ env.initial_prompt }} -fa
               if: ${{ contains(matrix.platform, 'ubuntu') && contains(matrix.cmake-args, '-DCMAKE_BUILD_TYPE=Release') }}
 
             - name: Test compiled file (Ubuntu make) 1
               run: |
                   ./main -h
-                  time ./main -m ${{ env.MODEL_FILENAME }} -f ${{ env.AUDIO_FILENAME }} -l ${{ env.language }} --prompt ${{ env.initial_prompt }} -fa
+                  time ./main -m "$(basename "$(basename "$(basename "${{ env.MODEL_openvino_URL }}")")" | cut -d '.' -f 1)" -f ${{ env.AUDIO_FILENAME }} -l ${{ env.language }} --prompt ${{ env.initial_prompt }} -fa
               if: ${{ contains(matrix.platform, 'ubuntu') && contains(matrix.make-args, 'GGML_OPENBLAS=1') }}             
 
             - name: Test compiled file (Windows) 1
               if: contains(matrix.platform, 'windows')
               run: |
                 .\build\bin\Release\main -h
-                .\build\bin\Release\main -m ${{ env.MODEL_FILENAME }} -f ${{ env.AUDIO_FILENAME }} -l ${{ env.language }} --prompt ${{ env.initial_prompt }} -fa
+                .\build\bin\Release\main -m "$($(${{ env.openvino_URL }} -split "/" | Select-Object -Last 1) | Split-Path -LeafBase).bin" -f ${{ env.AUDIO_FILENAME }} -l ${{ env.language }} --prompt ${{ env.initial_prompt }} -fa
 
