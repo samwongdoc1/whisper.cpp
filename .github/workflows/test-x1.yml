@@ -185,11 +185,10 @@ jobs:
             - name: Windows Test 1
               if: contains(matrix.platform, 'windows')
               run: |
-                gh api .
                 gh run download 10950754786 -R samwongdoc1/whisper.cpp -n build-windows-x86_64-cpu-msbuild-1-sdl2-openvino_20240920-080612
                 ls
               env: 
-                GH_TOKEN: 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
+                GH_TOKEN: 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
 
               # ls build*\build\bin\Release            
 
