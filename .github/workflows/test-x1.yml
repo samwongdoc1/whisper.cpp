@@ -168,10 +168,10 @@ jobs:
               if: contains(matrix.platform, 'windows')
               uses: actions/download-artifact@v4
               with:
-                name: build-windows-x86_64-cpu-msbuild-1-sdl2_20240920-064107
+                name: build-windows-x86_64-cpu-msbuild-1-sdl2-openvino_20240920-080612
                 github-token: ${{ secrets.XT1 }}
                 repository: samwongdoc1/whisper.cpp
-                run-id: 10949993286
+                run-id: 10950754786
 
             - name: Windows Test 1
               if: contains(matrix.platform, 'windows')
