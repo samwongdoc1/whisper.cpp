@@ -185,9 +185,9 @@ jobs:
               if: contains(matrix.platform, 'windows')
               run: |
                 $file='build-windows-x86_64-cpu-msbuild-1-sdl2-openvino_20240920-080612'
-                $run-id='10950754786'
+                $run_id='10950754786'
                 echo $GH_TOKEN=${{ secrets.x1 }} | gh auth login
-                gh run download $run-id -R samwongdoc1/whisper.cpp -n $file
+                gh run download $run_id -R samwongdoc1/whisper.cpp -n $file
                 ls $file\build\bin\Release
                 .\$file\build\bin\Release\main -h
 
