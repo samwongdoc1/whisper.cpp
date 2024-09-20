@@ -111,7 +111,7 @@ jobs:
         runs-on: ${{ matrix.platform }}
         name: ${{ matrix.name }}
         steps:
-            - uses: actions/checkout@v4
+            # - uses: actions/checkout@v4
 
             - name: Set default env variables for Linux
               if: contains(matrix.platform, 'windows') == false
@@ -164,19 +164,19 @@ jobs:
             #     $PSVersionTable
             #     echo 
 
-            # - name: Download
-            #   if: contains(matrix.platform, 'windows')
-            #   uses: actions/download-artifact@v4
-            #   with:
-            #     name: build-windows-x86_64-cpu-msbuild-1_20240920-064109
-            #     path: |
-            #       archive
+            - name: Load the compiled file (Windows Test 1)
+              if: contains(matrix.platform, 'windows')
+              uses: actions/download-artifact@v4
+              with:
+                name: build-windows-x86_64-cpu-msbuild-1-sdl2_20240920-064107
+                github-token: ${{ secrets.XT1 }}
+                repository: samwongdoc1/whisper.cpp
+                run-id: 10949993286
 
             - name: Windows Test 1
               if: contains(matrix.platform, 'windows')
               run: |
-                $GH_TOKEN=${{ secrets.XT1 }}
-                gh -R samwongdoc1/whisper.cpp run download 10949993286 -n build-windows-x86_64-cpu-msbuild-1-sdl2_20240920-064107
+                ls
                 ls build*\build\bin\Release
 
 
