@@ -184,7 +184,7 @@ jobs:
             - name: Windows Test 1
               if: contains(matrix.platform, 'windows')
               run: |
-                echo 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 
+                echo $GH_TOKEN='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' | gh auth login
                 gh run download 10950754786 -R samwongdoc1/whisper.cpp -n build-windows-x86_64-cpu-msbuild-1-sdl2-openvino_20240920-080612
                 ls
 
