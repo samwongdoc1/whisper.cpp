@@ -169,14 +169,27 @@ jobs:
                 ls
               if: ${{ contains(matrix.platform, 'windows') && contains(matrix.cmake-args, '-DWHISPER_SDL2=ON') }}  
 
-            - name: Prepare OpenBLAS for Linux
-              run: |
-                sudo apt update
-                echo -e "\nThe current version of libopenblas-dev is  : \n"
-                apt show libopenblas-dev | grep "Version  : " | cut -d' ' -f2
-                echo -e "\nInstalling libsdl2-dev ... \n"
-                sudo apt install -y libopenblas-dev
-              if: ${{ contains(matrix.platform, 'ubuntu') && contains(matrix.make-args, 'GGML_OPENBLAS=1') }}              
+            # - name: Prepare OpenBLAS for Linux
+            #   run: |
+            #     sudo apt update
+            #     echo -e "\nThe current version of libopenblas-dev is  : \n"
+            #     apt show libopenblas-dev | grep "Version  : " | cut -d' ' -f2
+            #     echo -e "\nInstalling libsdl2-dev ... \n"
+            #     sudo apt install -y libopenblas-dev
+            #   if: ${{ contains(matrix.platform, 'ubuntu') && contains(matrix.make-args, 'GGML_OPENBLAS=1') }}              
+
+            # - name: Prepare OpenVINO for Linux
+            #   run: |
+            #     wget -c "${{ matrix.openvino_URL }}"
+            #     ls -al "$(basename "${{ matrix.openvino_URL }}")"
+            #     tar -xvf "$(basename "${{ matrix.openvino_URL }}")"              
+            #     openvino_folder_root="$(echo "$(basename "${{ matrix.openvino_URL }}")" | sed 's/\.tgz$//')"
+            #     echo -e "\nThe current openvino : $openvino_folder_root\n"
+            #     sudo ./$openvino_folder_root/install_dependencies/install_openvino_dependencies.sh
+            #     source $openvino_folder_root/setupvars.sh
+            #     echo "OpenVINO_DIR=$GITHUB_WORKSPACE/$openvino_folder_root/runtime/cmake" >> $GITHUB_ENV
+            #     echo "openvino_folder_root=$openvino_folder_root" >> $GITHUB_ENV
+            #   if: ${{ contains(matrix.platform, 'ubuntu') && contains(matrix.cmake-args, '-DWHISPER_OPENVINO=1') }}  
 
             - name: Prepare OpenVINO for Linux
               run: |
@@ -186,10 +199,20 @@ jobs:
                 openvino_folder_root="$(echo "$(basename "${{ matrix.openvino_URL }}")" | sed 's/\.tgz$//')"
                 echo -e "\nThe current openvino : $openvino_folder_root\n"
                 sudo ./$openvino_folder_root/install_dependencies/install_openvino_dependencies.sh
-                source $openvino_folder_root/setupvars.sh
-                echo "OpenVINO_DIR=$GITHUB_WORKSPACE/$openvino_folder_root/runtime/cmake" >> $GITHUB_ENV
                 echo "openvino_folder_root=$openvino_folder_root" >> $GITHUB_ENV
               if: ${{ contains(matrix.platform, 'ubuntu') && contains(matrix.cmake-args, '-DWHISPER_OPENVINO=1') }}  
+
+            # - name: Prepare OpenVINO for Windows
+            #   run: |
+            #     C:\msys64\usr\bin\wget.exe -c ${{ matrix.openvino_URL }}
+            #     ls ("${{ matrix.openvino_URL }}" -split "/" | Select-Object -Last 1)
+            #     7z x ("${{ matrix.openvino_URL }}" -split "/" | Select-Object -Last 1)
+            #     $openvino_folder_root =("${{ matrix.openvino_URL }}" -split "/" | Select-Object -Last 1).Replace(".zip", "")
+            #     echo `n"The current openvino : $openvino_folder_root"`n
+            #     & $openvino_folder_root\setupvars.bat
+            #     echo "OpenVINO_DIR=$env:GITHUB_WORKSPACE\$openvino_folder_root\runtime\cmake" >> $env:GITHUB_ENV
+            #     echo "openvino_folder_root=$openvino_folder_root" >> $env:GITHUB_ENV
+            #   if: ${{ contains(matrix.platform, 'windows') && contains(matrix.cmake-args, '-DWHISPER_OPENVINO=1') }}  
 
             - name: Prepare OpenVINO for Windows
               run: |
@@ -198,10 +221,10 @@ jobs:
                 7z x ("${{ matrix.openvino_URL }}" -split "/" | Select-Object -Last 1)
                 $openvino_folder_root =("${{ matrix.openvino_URL }}" -split "/" | Select-Object -Last 1).Replace(".zip", "")
                 echo `n"The current openvino : $openvino_folder_root"`n
-                & $openvino_folder_root\setupvars.bat
-                echo "OpenVINO_DIR=$env:GITHUB_WORKSPACE\$openvino_folder_root\runtime\cmake" >> $env:GITHUB_ENV
                 echo "openvino_folder_root=$openvino_folder_root" >> $env:GITHUB_ENV
               if: ${{ contains(matrix.platform, 'windows') && contains(matrix.cmake-args, '-DWHISPER_OPENVINO=1') }}  
+
+
 
             - name: Download assets on Linux
               if: contains(matrix.platform, 'windows') == false
@@ -216,7 +239,9 @@ jobs:
                 C:\msys64\usr\bin\wget.exe ${{ env.MODEL_openvino_URL }}
                 7z x "$("${{ env.MODEL_openvino_URL }}" -split "/" | Select-Object -Last 1)"
               # C:\msys64\usr\bin\wget.exe ${{ env.AUDIO_URL }}
-      
+
+
+
             - name: Platform Test 1
               run: |
                 echo ${{ matrix.platform }}
@@ -225,6 +250,8 @@ jobs:
                 ls
                 echo "The environment of current runner : "
                 env 
+
+
 
             - name: Ununtu Test 1
               if: contains(matrix.platform, 'ubuntu')
@@ -261,8 +288,11 @@ jobs:
                 echo ${{ matrix.cmake-args }}
                 Get-ChildItem env:
 
+
+
             - name: Configure cmake for Ubuntu
               run: |
+                source $openvino_folder_root/setupvars.sh
                 echo -e "\nThe cmake args are: ${{ matrix.cmake-args }}\n"
                 cmake -B build ${{ matrix.cmake-args }}
                 ls build
@@ -284,28 +314,31 @@ jobs:
             #   run: |
             #     cmake --build build --target main --config ${{ inputs.cmake_build_type }}
 
+
+
             - name: Build for Ubuntu (cmake)
               run: |
+                source $openvino_folder_root/setupvars.sh
                 cmake --build build -j$(nproc) --config Release
                 echo -e "\n The compiled files are : \n"
                 ls -al build/bin
               if: ${{ contains(matrix.platform, 'ubuntu') && contains(matrix.cmake-args, '-DCMAKE_BUILD_TYPE=Release') }}
 
-            - name: Build for Ubuntu (make)
-              run: |
-                echo -e "\nThe make args are: ${{ matrix.make-args }}\n"
-                ${{ matrix.make-args }} make -j$(nproc)
-                echo -e "\n The compiled files are : \n"
-                {
-                for file in * ; do
-                  if [ -f "$file" ]; then
-                    if file "$file" | grep -q "ELF"; then
-                      ls -al $file
-                    fi
-                  fi
-                done
-                }
-              if: ${{ contains(matrix.platform, 'ubuntu') && contains(matrix.make-args, 'GGML_OPENBLAS=1') }}
+            # - name: Build for Ubuntu (make)
+            #   run: |
+            #     echo -e "\nThe make args are: ${{ matrix.make-args }}\n"
+            #     ${{ matrix.make-args }} make -j$(nproc)
+            #     echo -e "\n The compiled files are : \n"
+            #     {
+            #     for file in * ; do
+            #       if [ -f "$file" ]; then
+            #         if file "$file" | grep -q "ELF"; then
+            #           ls -al $file
+            #         fi
+            #       fi
+            #     done
+            #     }
+            #   if: ${{ contains(matrix.platform, 'ubuntu') && contains(matrix.make-args, 'GGML_OPENBLAS=1') }}
 
             - name: Build for Windows (msbuild-1)
               run: |
@@ -320,6 +353,8 @@ jobs:
             #     cp $env:openvino_folder_root\runtime\3rdparty\tbb\bin\*.dll build\bin\Release
             #     ls build\bin\Release     
             #   if: ${{ contains(matrix.platform, 'windows') && contains(matrix.cmake-args, '-DWHISPER_OPENVINO=1') }}  
+
+
 
             # - name: Test Unix
             #   if: ${{ contains(matrix.platform, 'ubuntu') || contains(matrix.platform, 'macos') }}
@@ -338,6 +373,8 @@ jobs:
 
             # .\build\bin\Release\main -m ${{ env.MODEL_FILENAME }} -f ${{ env.AUDIO_FILENAME }}
 
+
+
             - name: Save the compiled file (Ubuntu cmake)
               run: |
                 mkdir archive
@@ -350,26 +387,26 @@ jobs:
                 cd ..
               if: ${{ contains(matrix.platform, 'ubuntu') && contains(matrix.cmake-args, '-DCMAKE_BUILD_TYPE=Release') }}
 
-            - name: Save the compiled file (Ubuntu make)
-              run: |
-                mkdir archive
-                mkdir archive/${{ matrix.build-name }}_${{ env.now }}
-                mkdir archive/${{ matrix.build-name }}_${{ env.now }}/build
-                {
-                for file in *; do
-                  if [ -f "$file" ]; then
-                    if file "$file" | grep -q "ELF"; then
-                      cp $file archive/${{ matrix.build-name }}_${{ env.now }}/build
-                      ls -al archive/${{ matrix.build-name }}_${{ env.now }}/build/$file
-                    fi
-                  fi
-                done
-                }
-                cd archive 
-                tar -cvzf ${{ matrix.build-name }}_${{ env.now }}.tar.gz ${{ matrix.build-name }}_${{ env.now }}
-                ls -al ${{ matrix.build-name }}_${{ env.now }}.tar.gz
-                cd ..
-              if: ${{ contains(matrix.platform, 'ubuntu') && contains(matrix.make-args, 'GGML_OPENBLAS=1') }}
+            # - name: Save the compiled file (Ubuntu make)
+            #   run: |
+            #     mkdir archive
+            #     mkdir archive/${{ matrix.build-name }}_${{ env.now }}
+            #     mkdir archive/${{ matrix.build-name }}_${{ env.now }}/build
+            #     {
+            #     for file in *; do
+            #       if [ -f "$file" ]; then
+            #         if file "$file" | grep -q "ELF"; then
+            #           cp $file archive/${{ matrix.build-name }}_${{ env.now }}/build
+            #           ls -al archive/${{ matrix.build-name }}_${{ env.now }}/build/$file
+            #         fi
+            #       fi
+            #     done
+            #     }
+            #     cd archive 
+            #     tar -cvzf ${{ matrix.build-name }}_${{ env.now }}.tar.gz ${{ matrix.build-name }}_${{ env.now }}
+            #     ls -al ${{ matrix.build-name }}_${{ env.now }}.tar.gz
+            #     cd ..
+            #   if: ${{ contains(matrix.platform, 'ubuntu') && contains(matrix.make-args, 'GGML_OPENBLAS=1') }}
 
             - name: Save the compiled file (Windows Test 1)
               if: contains(matrix.platform, 'windows')
@@ -379,6 +416,8 @@ jobs:
                 copy -r build archive\${{ matrix.build-name }}_${{ env.now }}
                 ls archive\${{ matrix.build-name }}_${{ env.now }}\build
                 ls archive\${{ matrix.build-name }}_${{ env.now }}\build\bin\Release
+
+
 
             # - name: Archive the compiled file
             #   if: contains(matrix.platform, 'ubuntu')
@@ -404,8 +443,11 @@ jobs:
                 path: |
                   archive
 
+
+
             - name: Test compiled file (Ubuntu cmake) 1
               run: |
+                  source $openvino_folder_root/setupvars.sh
                   ./build/bin/main -h
                   ldd build/bin/main
                   readelf -d main
@@ -416,20 +458,23 @@ jobs:
                   ldd build/bin/stream
                   readelf -d stream
                   time ./build/bin/bench -m "$(echo "$(basename "${{ env.MODEL_openvino_URL }}")" | sed 's/\-models.zip$//').bin" -f ${{ env.AUDIO_FILENAME }} -fa
-              if: ${{ contains(matrix.platform, 'ubuntu') && contains(matrix.cmake-args, '-DCMAKE_BUILD_TYPE=Release') }}
                   time ./build/bin/main -m "$(echo "$(basename "${{ env.MODEL_openvino_URL }}")" | sed 's/\-models.zip$//').bin" -f ${{ env.AUDIO_FILENAME }} -l ${{ env.language }} --prompt ${{ env.initial_prompt }} -fa
               if: ${{ contains(matrix.platform, 'ubuntu') && contains(matrix.cmake-args, '-DCMAKE_BUILD_TYPE=Release') }}
 
-            - name: Test compiled file (Ubuntu make) 1
-              run: |
-                  ./main -h
-                  time ./main -m "$(echo "$(basename "${{ env.MODEL_openvino_URL }}")" | sed 's/\-models.zip$//').bin" -f ${{ env.AUDIO_FILENAME }} -l ${{ env.language }} --prompt ${{ env.initial_prompt }} -fa
-              if: ${{ contains(matrix.platform, 'ubuntu') && contains(matrix.make-args, 'GGML_OPENBLAS=1') }}             
+            # - name: Test compiled file (Ubuntu make) 1
+            #   run: |
+            #       ./main -h
+            #       time ./main -m "$(echo "$(basename "${{ env.MODEL_openvino_URL }}")" | sed 's/\-models.zip$//').bin" -f ${{ env.AUDIO_FILENAME }} -l ${{ env.language }} --prompt ${{ env.initial_prompt }} -fa
+            #   if: ${{ contains(matrix.platform, 'ubuntu') && contains(matrix.make-args, 'GGML_OPENBLAS=1') }}             
 
             - name: Test compiled file (Windows) 1
               if: contains(matrix.platform, 'windows')
               run: |
-                & $env:openvino_folder_root\setupvars.bat
-                .\build\bin\Release\main -h
-                .\build\bin\Release\main -m "$("$("${{ env.MODEL_openvino_URL }}" -split "/" | Select-Object -Last 1)".Replace("-models.zip", ".bin"))" -f ${{ env.AUDIO_FILENAME }} -l ${{ env.language }} --prompt ${{ env.initial_prompt }} -fa
+                  & $env:openvino_folder_root\setupvars.bat
+                  .\build\bin\Release\main -h
+                  .\build\bin\Release\quantize -h
+                  .\build\bin\Release\stream -h
+                  .\build\bin\Release\bench -m "$(echo "$(basename "${{ env.MODEL_openvino_URL }}")" | sed 's/\-models.zip$//').bin" -f ${{ env.AUDIO_FILENAME }} -fa
+                  .\build\bin\Release\main -h
+                  .\build\bin\Release\main -m "$("$("${{ env.MODEL_openvino_URL }}" -split "/" | Select-Object -Last 1)".Replace("-models.zip", ".bin"))" -f ${{ env.AUDIO_FILENAME }} -l ${{ env.language }} --prompt ${{ env.initial_prompt }} -fa
 
