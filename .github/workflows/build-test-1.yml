@@ -179,33 +179,33 @@ jobs:
 
             - name: Prepare OpenVINO for Linux
               run: |
-                wget -c ${{ matrix.openvino_URL }}
-                tar -xvf $(basename "${{ matrix.openvino_URL }}")
-                sudo ./$(basename "$(basename "$(basename "${{ matrix.openvino_URL }}")")" | cut -d '.' -f 1)/install_dependencies/install_openvino_dependencies.sh
-                source $(basename "$(basename "$(basename "${{ matrix.openvino_URL }}")")" | cut -d '.' -f 1)/setupvars.sh
-                echo "OpenVINO_DIR=$GITHUB_WORKSPACE/$(basename "$(basename "$(basename "${{ matrix.openvino_URL }}")")" | cut -d '.' -f 1)/runtime/cmake" >> $GITHUB_ENV
+                wget -c "${{ matrix.openvino_URL }}"
+                tar -xvf "$(basename "${{ matrix.openvino_URL }}")"                
+                sudo ./"$(basename "$(basename "$(basename "${{ matrix.openvino_URL }}")")" | cut -d '.' -f 1)"/install_dependencies/install_openvino_dependencies.sh
+                source "$(basename "$(basename "$(basename "${{ matrix.openvino_URL }}")")" | cut -d '.' -f 1)"/setupvars.sh
+                echo "OpenVINO_DIR=$GITHUB_WORKSPACE/"$(basename "$(basename "$(basename "${{ matrix.openvino_URL }}")")" | cut -d '.' -f 1)"/runtime/cmake" >> $GITHUB_ENV
               if: ${{ contains(matrix.platform, 'ubuntu') && contains(matrix.cmake-args, '-DWHISPER_OPENVINO=1') }}  
 
             - name: Prepare OpenVINO for Windows
               run: |
                 C:\msys64\usr\bin\wget.exe -c ${{ matrix.openvino_URL }}
-                7z x $(${{ matrix.openvino_URL }} -split "/" | Select-Object -Last 1)
-                .\$($(${{ matrix.openvino_URL }} -split "/" | Select-Object -Last 1) | Split-Path -LeafBase)\setupvars.bat
-                echo "OpenVINO_DIR=$env:GITHUB_WORKSPACE/$($(${{ matrix.openvino_URL }} -split "/" | Select-Object -Last 1) | Split-Path -LeafBase)" >> $env:GITHUB_ENV
+                7z x "$("${{ matrix.openvino_URL }}" -split "/" | Select-Object -Last 1)"
+                .\"$($(${{ matrix.openvino_URL }} -split "/" | Select-Object -Last 1) | Split-Path -LeafBase)"\setupvars.bat
+                echo "OpenVINO_DIR=$env:GITHUB_WORKSPACE/"$($(${{ matrix.openvino_URL }} -split "/" | Select-Object -Last 1) | Split-Path -LeafBase)" >> $env:GITHUB_ENV
               if: ${{ contains(matrix.platform, 'windows') && contains(matrix.cmake-args, '-DWHISPER_OPENVINO=1') }}  
 
             - name: Download assets on Windows
               if: contains(matrix.platform, 'windows')
               run: |
                 C:\msys64\usr\bin\wget.exe ${{ env.MODEL_openvino_URL }}
-                7z x $(${{ env.MODEL_openvino_URL }} -split "/" | Select-Object -Last 1)
+                7z x "$("${{ env.MODEL_openvino_URL }}" -split "/" | Select-Object -Last 1)"
               # C:\msys64\usr\bin\wget.exe ${{ env.AUDIO_URL }}
         
             - name: Download assets on Linux
               if: contains(matrix.platform, 'windows') == false
               run: |
                 wget -c ${{ env.MODEL_openvino_URL }}
-                7z x $(basename "${{ env.MODEL_openvino_URL }}")
+                7z x "$(basename "${{ env.MODEL_openvino_URL }}")"
               # wget ${{ env.AUDIO_URL }}
 
             - name: Platform Test 1
@@ -396,13 +396,13 @@ jobs:
             - name: Test compiled file (Ubuntu cmake) 1
               run: |
                   ./build/bin/main -h
-                  time ./build/bin/main -m "$(basename "$(basename "$(basename "${{ env.MODEL_openvino_URL }}")")" | cut -d '.' -f 1)" -f ${{ env.AUDIO_FILENAME }} -l ${{ env.language }} --prompt ${{ env.initial_prompt }} -fa
+                  time ./build/bin/main -m "$(basename "$(basename "$(basename "${{ env.MODEL_openvino_URL }}")")" | cut -d '.' -f 1).bin" -f ${{ env.AUDIO_FILENAME }} -l ${{ env.language }} --prompt ${{ env.initial_prompt }} -fa
               if: ${{ contains(matrix.platform, 'ubuntu') && contains(matrix.cmake-args, '-DCMAKE_BUILD_TYPE=Release') }}
 
             - name: Test compiled file (Ubuntu make) 1
               run: |
                   ./main -h
-                  time ./main -m "$(basename "$(basename "$(basename "${{ env.MODEL_openvino_URL }}")")" | cut -d '.' -f 1)" -f ${{ env.AUDIO_FILENAME }} -l ${{ env.language }} --prompt ${{ env.initial_prompt }} -fa
+                  time ./main -m "$(basename "$(basename "$(basename "${{ env.MODEL_openvino_URL }}")")" | cut -d '.' -f 1).bin" -f ${{ env.AUDIO_FILENAME }} -l ${{ env.language }} --prompt ${{ env.initial_prompt }} -fa
               if: ${{ contains(matrix.platform, 'ubuntu') && contains(matrix.make-args, 'GGML_OPENBLAS=1') }}             
 
             - name: Test compiled file (Windows) 1
