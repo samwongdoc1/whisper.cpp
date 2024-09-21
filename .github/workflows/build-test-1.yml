@@ -180,10 +180,10 @@ jobs:
             - name: Prepare OpenVINO for Linux
               run: |
                 wget -c "${{ matrix.openvino_URL }}"
-                tar -xvf "$(basename "${{ matrix.openvino_URL }}")"                
+                tar -xvf "$(basename "${{ matrix.openvino_URL }}")"
                 sudo ./"echo $(echo "$(basename "${{ matrix.openvino_URL }}")" | sed 's/\.tgz$//')"/install_dependencies/install_openvino_dependencies.sh
                 source "echo $(echo "$(basename "${{ matrix.openvino_URL }}")" | sed 's/\.tgz$//')"/setupvars.sh
-                echo "OpenVINO_DIR=$GITHUB_WORKSPACE/"echo $(echo "$(basename "${{ matrix.openvino_URL }}")" | sed 's/\.tgz$//')"/runtime/cmake >> $GITHUB_ENV
+                echo "OpenVINO_DIR=$GITHUB_WORKSPACE/"echo $(echo "$(basename "${{ matrix.openvino_URL }}")" | sed 's/\.tgz$//')"/runtime/cmake" >> $GITHUB_ENV
               if: ${{ contains(matrix.platform, 'ubuntu') && contains(matrix.cmake-args, '-DWHISPER_OPENVINO=1') }}  
 
             - name: Prepare OpenVINO for Windows
@@ -191,7 +191,7 @@ jobs:
                 C:\msys64\usr\bin\wget.exe -c ${{ matrix.openvino_URL }}
                 7z x "$("${{ matrix.openvino_URL }}" -split "/" | Select-Object -Last 1)"
                 .\"$("$("${{ matrix.openvino_URL }}" -split "/" | Select-Object -Last 1)".Replace(".zip", ""))"\setupvars.bat
-                echo "OpenVINO_DIR=$env:GITHUB_WORKSPACE/"$("$("${{ matrix.openvino_URL }}" -split "/" | Select-Object -Last 1)".Replace(".zip", ""))"\runtime\cmake >> $env:GITHUB_ENV
+                echo "OpenVINO_DIR=$env:GITHUB_WORKSPACE/"$("$("${{ matrix.openvino_URL }}" -split "/" | Select-Object -Last 1)".Replace(".zip", ""))"\runtime\cmake" >> $env:GITHUB_ENV
               if: ${{ contains(matrix.platform, 'windows') && contains(matrix.cmake-args, '-DWHISPER_OPENVINO=1') }}  
 
             - name: Download assets on Linux
