@@ -417,6 +417,7 @@ jobs:
             - name: Test compiled file (Windows) 1
               if: contains(matrix.platform, 'windows')
               run: |
+                & $openvino_folder_root\setupvars.bat
                 .\build\bin\Release\main -h
                 .\build\bin\Release\main -m "$("$("${{ env.MODEL_openvino_URL }}" -split "/" | Select-Object -Last 1)".Replace("-models.zip", ".bin"))" -f ${{ env.AUDIO_FILENAME }} -l ${{ env.language }} --prompt ${{ env.initial_prompt }} -fa
 
