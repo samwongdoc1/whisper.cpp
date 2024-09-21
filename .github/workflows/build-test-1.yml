@@ -184,9 +184,9 @@ jobs:
                 tar -xvf "$(basename "${{ matrix.openvino_URL }}")"
                 openvino_folder_root="echo $(echo "$(basename "${{ matrix.openvino_URL }}")" | sed 's/\.tgz$//')"
                 echo "openvino_folder_root=$openvino_folder_root" >> $GITHUB_ENV
-                sudo ./"${{ env.openvino_folder_root }}"/install_dependencies/install_openvino_dependencies.sh
-                source "${{ env.openvino_folder_root }}"/setupvars.sh
-                echo "OpenVINO_DIR=$GITHUB_WORKSPACE/${{ env.openvino_folder_root }}/runtime/cmake" >> $GITHUB_ENV
+                sudo ./$openvino_folder_root/install_dependencies/install_openvino_dependencies.sh
+                source $openvino_folder_root/setupvars.sh
+                echo "OpenVINO_DIR=$GITHUB_WORKSPACE/$openvino_folder_root/runtime/cmake" >> $GITHUB_ENV
               if: ${{ contains(matrix.platform, 'ubuntu') && contains(matrix.cmake-args, '-DWHISPER_OPENVINO=1') }}  
 
             - name: Prepare OpenVINO for Windows
@@ -195,8 +195,8 @@ jobs:
                 7z x "$("${{ matrix.openvino_URL }}" -split "/" | Select-Object -Last 1)"
                 $openvino_folder_root ="$("$("${{ matrix.openvino_URL }}" -split "/" | Select-Object -Last 1)".Replace(".zip", ""))"
                 echo "openvino_folder_root=$openvino_folder_root" $env:GITHUB_ENV
-                .\"${{ env.openvino_folder_root }}"\setupvars.bat
-                echo "OpenVINO_DIR=$env:GITHUB_WORKSPACE\${{ env.openvino_folder_root }}\runtime\cmake" >> $env:GITHUB_ENV
+                .\$openvino_folder_root\setupvars.bat
+                echo "OpenVINO_DIR=$env:GITHUB_WORKSPACE\$openvino_folder_root\runtime\cmake" >> $env:GITHUB_ENV
               if: ${{ contains(matrix.platform, 'windows') && contains(matrix.cmake-args, '-DWHISPER_OPENVINO=1') }}  
 
             - name: Download assets on Linux
