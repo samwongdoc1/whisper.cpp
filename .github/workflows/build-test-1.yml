@@ -180,14 +180,11 @@ jobs:
 
             - name: Prepare OpenVINO for Linux
               run: |
-                wget -c "${{ matrix.openvino_URL }}"
-                tar -xvf "$(basename "${{ matrix.openvino_URL }}")"
+                wget "${{ matrix.openvino_URL }}"
                 ls -al "$(basename "${{ matrix.openvino_URL }}")"
-                openvino_folder_root="echo $(echo "$(basename "${{ matrix.openvino_URL }}")" | sed 's/\.tgz$//')"
-                echo -e "\n$openvino_folder_root"
-
-
-
+                tar -xvf "$(basename "${{ matrix.openvino_URL }}")"              
+                openvino_folder_root="$(echo "$(basename "${{ matrix.openvino_URL }}")" | sed 's/\.tgz$//')"
+                echo -e "\nThe current openvino : $openvino_folder_root\n"
                 echo "openvino_folder_root=$openvino_folder_root" >> $GITHUB_ENV
                 ./$openvino_folder_root/install_dependencies/install_openvino_dependencies.sh
                 source $openvino_folder_root/setupvars.sh
@@ -197,10 +194,10 @@ jobs:
             - name: Prepare OpenVINO for Windows
               run: |
                 C:\msys64\usr\bin\wget.exe -c ${{ matrix.openvino_URL }}
+                ls (${{ matrix.openvino_URL }} -split "/" | Select-Object -Last 1)
                 7z x "$("${{ matrix.openvino_URL }}" -split "/" | Select-Object -Last 1)"
-                ls "$("${{ matrix.openvino_URL }}" -split "/" | Select-Object -Last 1)"
-                $openvino_folder_root =$(${{ matrix.openvino_URL }} -split "/" | Select-Object -Last 1)).Replace(".zip", "")
-                echo $openvino_folder_root
+                $openvino_folder_root =(${{ matrix.openvino_URL }} -split "/" | Select-Object -Last 1).Replace(".zip", "")
+                echo `n"The current openvino : $openvino_folder_root"`n
                 echo "openvino_folder_root=$openvino_folder_root" >> $env:GITHUB_ENV
                 .\$openvino_folder_root\setupvars.bat
                 echo "OpenVINO_DIR=$env:GITHUB_WORKSPACE\$openvino_folder_root\runtime\cmake" >> $env:GITHUB_ENV
