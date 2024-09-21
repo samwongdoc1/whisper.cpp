@@ -119,6 +119,7 @@ jobs:
               run: |
                 $now =(Get-Date).ToUniversalTime().AddHours(8).ToString("yyyyMMdd-HHmmss")
                 echo "now=$now" >> $env:GITHUB_ENV
+
               # echo "CMAKE_BUILD_TYPE=${{ inputs.cmake_build_type || 'Release' }}" >> $GITHUB_ENV
 
             # - name: Prepare Vulkan SDK for Windows
@@ -181,17 +182,21 @@ jobs:
               run: |
                 wget -c "${{ matrix.openvino_URL }}"
                 tar -xvf "$(basename "${{ matrix.openvino_URL }}")"
-                sudo ./"echo $(echo "$(basename "${{ matrix.openvino_URL }}")" | sed 's/\.tgz$//')"/install_dependencies/install_openvino_dependencies.sh
-                source "echo $(echo "$(basename "${{ matrix.openvino_URL }}")" | sed 's/\.tgz$//')"/setupvars.sh
-                echo "OpenVINO_DIR=$GITHUB_WORKSPACE/"echo $(echo "$(basename "${{ matrix.openvino_URL }}")" | sed 's/\.tgz$//')"/runtime/cmake" >> $GITHUB_ENV
+                openvino_folder_root="echo $(echo "$(basename "${{ matrix.openvino_URL }}")" | sed 's/\.tgz$//')"
+                echo "openvino_folder_root=$openvino_folder_root" >> $GITHUB_ENV
+                sudo ./"${{ env.openvino_folder_root }}"/install_dependencies/install_openvino_dependencies.sh
+                source "${{ env.openvino_folder_root }}"/setupvars.sh
+                echo "OpenVINO_DIR=$GITHUB_WORKSPACE/${{ env.openvino_folder_root }}/runtime/cmake" >> $GITHUB_ENV
               if: ${{ contains(matrix.platform, 'ubuntu') && contains(matrix.cmake-args, '-DWHISPER_OPENVINO=1') }}  
 
             - name: Prepare OpenVINO for Windows
               run: |
                 C:\msys64\usr\bin\wget.exe -c ${{ matrix.openvino_URL }}
                 7z x "$("${{ matrix.openvino_URL }}" -split "/" | Select-Object -Last 1)"
-                .\"$("$("${{ matrix.openvino_URL }}" -split "/" | Select-Object -Last 1)".Replace(".zip", ""))"\setupvars.bat
-                echo "OpenVINO_DIR=$env:GITHUB_WORKSPACE/"$("$("${{ matrix.openvino_URL }}" -split "/" | Select-Object -Last 1)".Replace(".zip", ""))"\runtime\cmake" >> $env:GITHUB_ENV
+                $openvino_folder_root ="$("$("${{ matrix.openvino_URL }}" -split "/" | Select-Object -Last 1)".Replace(".zip", ""))"
+                echo "openvino_folder_root=$openvino_folder_root" $env:GITHUB_ENV
+                .\"${{ env.openvino_folder_root }}"\setupvars.bat
+                echo "OpenVINO_DIR=$env:GITHUB_WORKSPACE\${{ env.openvino_folder_root }}\runtime\cmake" >> $env:GITHUB_ENV
               if: ${{ contains(matrix.platform, 'windows') && contains(matrix.cmake-args, '-DWHISPER_OPENVINO=1') }}  
 
             - name: Download assets on Linux
