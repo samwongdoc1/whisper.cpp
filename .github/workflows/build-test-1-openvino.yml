@@ -199,7 +199,7 @@ jobs:
                 tar -xvf "$(basename "${{ matrix.openvino_URL }}")"              
                 openvino_folder_root="$(echo "$(basename "${{ matrix.openvino_URL }}")" | sed 's/\.tgz$//')"
                 echo -e "\nThe current openvino : $openvino_folder_root\n"
-                sudo ./$openvino_folder_root/install_dependencies/install_openvino_dependencies.sh
+                sudo -E ./$openvino_folder_root/install_dependencies/install_openvino_dependencies.sh
                 echo "openvino_folder_root=$openvino_folder_root" >> $GITHUB_ENV
               if: ${{ contains(matrix.platform, 'ubuntu') && contains(matrix.cmake-args, '-DWHISPER_OPENVINO=1') }}  
 
@@ -224,22 +224,6 @@ jobs:
                 echo `n"The current openvino : $openvino_folder_root"`n
                 echo "openvino_folder_root=$openvino_folder_root" >> $env:GITHUB_ENV
               if: ${{ contains(matrix.platform, 'windows') && contains(matrix.cmake-args, '-DWHISPER_OPENVINO=1') }}  
-
-
-
-            - name: Download assets on Linux
-              if: contains(matrix.platform, 'windows') == false
-              run: |
-                wget -c ${{ env.MODEL_openvino_URL }}
-                7z x "$(basename "${{ env.MODEL_openvino_URL }}")"
-              # wget ${{ env.AUDIO_URL }}
-
-            - name: Download assets on Windows
-              if: contains(matrix.platform, 'windows')
-              run: |
-                C:\msys64\usr\bin\wget.exe ${{ env.MODEL_openvino_URL }}
-                7z x "$("${{ env.MODEL_openvino_URL }}" -split "/" | Select-Object -Last 1)"
-              # C:\msys64\usr\bin\wget.exe ${{ env.AUDIO_URL }}
 
 
 
@@ -447,6 +431,22 @@ jobs:
                 name: ${{ matrix.build-name }}_${{ env.now }}
                 path: |
                   archive
+
+
+
+            - name: Download assets on Linux
+              if: contains(matrix.platform, 'windows') == false
+              run: |
+                wget -c ${{ env.MODEL_openvino_URL }}
+                7z x "$(basename "${{ env.MODEL_openvino_URL }}")"
+              # wget ${{ env.AUDIO_URL }}
+
+            - name: Download assets on Windows
+              if: contains(matrix.platform, 'windows')
+              run: |
+                C:\msys64\usr\bin\wget.exe ${{ env.MODEL_openvino_URL }}
+                7z x "$("${{ env.MODEL_openvino_URL }}" -split "/" | Select-Object -Last 1)"
+              # C:\msys64\usr\bin\wget.exe ${{ env.AUDIO_URL }}
 
 
 
