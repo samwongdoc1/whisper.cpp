@@ -182,6 +182,7 @@ jobs:
               run: |
                 wget -c "${{ matrix.openvino_URL }}"
                 tar -xvf "$(basename "${{ matrix.openvino_URL }}")"
+                ls -al "$(basename "${{ matrix.openvino_URL }}")"
                 openvino_folder_root="echo $(echo "$(basename "${{ matrix.openvino_URL }}")" | sed 's/\.tgz$//')"
                 echo $openvino_folder_root
                 echo "openvino_folder_root=$openvino_folder_root" >> $GITHUB_ENV
@@ -194,6 +195,7 @@ jobs:
               run: |
                 C:\msys64\usr\bin\wget.exe -c ${{ matrix.openvino_URL }}
                 7z x "$("${{ matrix.openvino_URL }}" -split "/" | Select-Object -Last 1)"
+                ls "$("${{ matrix.openvino_URL }}" -split "/" | Select-Object -Last 1)"
                 $openvino_folder_root =$(${{ matrix.openvino_URL }} -split "/" | Select-Object -Last 1)).Replace(".zip", "")
                 echo $openvino_folder_root
                 echo "openvino_folder_root=$openvino_folder_root" >> $env:GITHUB_ENV
