@@ -312,12 +312,12 @@ jobs:
                 ls build\bin\Release     
               if: ${{ contains(matrix.platform, 'windows') && contains(matrix.cmake-args, '-DCMAKE_BUILD_TYPE=Release') }}  
 
-            # - name: Copy dll file of openvino (Windows)
-            #   run: |
-            #     cp $openvino_folder_root\runtime\bin\intel64\Release\*.dll build\bin\Release
-            #     cp $openvino_folder_root\runtime\3rdparty\tbb\bin\*.dll build\bin\Release
-            #     ls build\bin\Release     
-            #   if: ${{ contains(matrix.platform, 'windows') && contains(matrix.cmake-args, '-DWHISPER_OPENVINO=1') }}  
+            - name: Copy dll file of openvino (Windows)
+              run: |
+                cp $env:openvino_folder_root\runtime\bin\intel64\Release\*.dll build\bin\Release
+                cp $env:$openvino_folder_root\runtime\3rdparty\tbb\bin\*.dll build\bin\Release
+                ls build\bin\Release     
+              if: ${{ contains(matrix.platform, 'windows') && contains(matrix.cmake-args, '-DWHISPER_OPENVINO=1') }}  
 
             # - name: Test Unix
             #   if: ${{ contains(matrix.platform, 'ubuntu') || contains(matrix.platform, 'macos') }}
@@ -417,7 +417,6 @@ jobs:
             - name: Test compiled file (Windows) 1
               if: contains(matrix.platform, 'windows')
               run: |
-                & $env:openvino_folder_root\setupvars.bat
                 .\build\bin\Release\main -h
                 .\build\bin\Release\main -m "$("$("${{ env.MODEL_openvino_URL }}" -split "/" | Select-Object -Last 1)".Replace("-models.zip", ".bin"))" -f ${{ env.AUDIO_FILENAME }} -l ${{ env.language }} --prompt ${{ env.initial_prompt }} -fa
 
