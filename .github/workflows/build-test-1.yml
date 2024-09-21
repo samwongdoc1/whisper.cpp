@@ -312,12 +312,12 @@ jobs:
                 ls build\bin\Release     
               if: ${{ contains(matrix.platform, 'windows') && contains(matrix.cmake-args, '-DCMAKE_BUILD_TYPE=Release') }}  
 
-            - name: Copy dll file of openvino (Windows)
-              run: |
-                cp "$("$("${{ matrix.openvino_URL }}" -split "/" | Select-Object -Last 1)".Replace(".zip", ""))"\runtime\bin\intel64\Release\*.dll build\bin\Release
-                cp "$("$("${{ matrix.openvino_URL }}" -split "/" | Select-Object -Last 1)".Replace(".zip", ""))"\runtime\3rdparty\tbb\bin\*.dll build\bin\Release
-                ls build\bin\Release     
-              if: ${{ contains(matrix.platform, 'windows') && contains(matrix.cmake-args, '-DWHISPER_OPENVINO=1') }}  
+            # - name: Copy dll file of openvino (Windows)
+            #   run: |
+            #     cp $openvino_folder_root\runtime\bin\intel64\Release\*.dll build\bin\Release
+            #     cp $openvino_folder_root\runtime\3rdparty\tbb\bin\*.dll build\bin\Release
+            #     ls build\bin\Release     
+            #   if: ${{ contains(matrix.platform, 'windows') && contains(matrix.cmake-args, '-DWHISPER_OPENVINO=1') }}  
 
             # - name: Test Unix
             #   if: ${{ contains(matrix.platform, 'ubuntu') || contains(matrix.platform, 'macos') }}
