@@ -179,19 +179,19 @@ jobs:
 
             - name: Prepare OpenVINO for Linux
               run: |
-                wget -c ${{ env.openvino_URL }}
-                tar -xvf $(basename "${{ env.openvino_URL }}")
-                sudo ./$(basename "$(basename "$(basename "${{ env.openvino_URL }}")")" | cut -d '.' -f 1)/install_dependencies/install_openvino_dependencies.sh
-                source $(basename "$(basename "$(basename "${{ env.openvino_URL }}")")" | cut -d '.' -f 1)/setupvars.sh
-                echo "OpenVINO_DIR=$GITHUB_WORKSPACE/$(basename "$(basename "$(basename "${{ env.openvino_URL }}")")" | cut -d '.' -f 1)/runtime/cmake" >> $GITHUB_ENV
+                wget -c ${{ matrix.openvino_URL }}
+                tar -xvf $(basename "${{ matrix.openvino_URL }}")
+                sudo ./$(basename "$(basename "$(basename "${{ matrix.openvino_URL }}")")" | cut -d '.' -f 1)/install_dependencies/install_openvino_dependencies.sh
+                source $(basename "$(basename "$(basename "${{ matrix.openvino_URL }}")")" | cut -d '.' -f 1)/setupvars.sh
+                echo "OpenVINO_DIR=$GITHUB_WORKSPACE/$(basename "$(basename "$(basename "${{ matrix.openvino_URL }}")")" | cut -d '.' -f 1)/runtime/cmake" >> $GITHUB_ENV
               if: ${{ contains(matrix.platform, 'ubuntu') && contains(matrix.cmake-args, '-DWHISPER_OPENVINO=1') }}  
 
             - name: Prepare OpenVINO for Windows
               run: |
-                C:\msys64\usr\bin\wget.exe -c ${{ env.openvino_URL }}
-                7z x $(${{ env.openvino_URL }} -split "/" | Select-Object -Last 1)
-                .\$($(${{ env.openvino_URL }} -split "/" | Select-Object -Last 1) | Split-Path -LeafBase)\setupvars.bat
-                echo "OpenVINO_DIR=$env:GITHUB_WORKSPACE/$($(${{ env.openvino_URL }} -split "/" | Select-Object -Last 1) | Split-Path -LeafBase)" >> $env:GITHUB_ENV
+                C:\msys64\usr\bin\wget.exe -c ${{ matrix.openvino_URL }}
+                7z x $(${{ matrix.openvino_URL }} -split "/" | Select-Object -Last 1)
+                .\$($(${{ matrix.openvino_URL }} -split "/" | Select-Object -Last 1) | Split-Path -LeafBase)\setupvars.bat
+                echo "OpenVINO_DIR=$env:GITHUB_WORKSPACE/$($(${{ matrix.openvino_URL }} -split "/" | Select-Object -Last 1) | Split-Path -LeafBase)" >> $env:GITHUB_ENV
               if: ${{ contains(matrix.platform, 'windows') && contains(matrix.cmake-args, '-DWHISPER_OPENVINO=1') }}  
 
             - name: Download assets on Windows
@@ -305,8 +305,8 @@ jobs:
 
             - name: Copy dll file of openvino (Windows)
               run: |
-                cp $($(${{ env.openvino_URL }} -split "/" | Select-Object -Last 1) | Split-Path -LeafBase)\runtime\bin\intel64\Release\*.dll build\bin\Release
-                cp $($(${{ env.openvino_URL }} -split "/" | Select-Object -Last 1) | Split-Path -LeafBase)\runtime\3rdparty\tbb\bin\*.dll build\bin\Release
+                cp $($(${{ matrix.openvino_URL }} -split "/" | Select-Object -Last 1) | Split-Path -LeafBase)\runtime\bin\intel64\Release\*.dll build\bin\Release
+                cp $($(${{ matrix.openvino_URL }} -split "/" | Select-Object -Last 1) | Split-Path -LeafBase)\runtime\3rdparty\tbb\bin\*.dll build\bin\Release
                 ls build\bin\Release     
               if: ${{ contains(matrix.platform, 'windows') && contains(matrix.cmake-args, '-DWHISPER_OPENVINO=1') }}  
 
@@ -409,5 +409,5 @@ jobs:
               if: contains(matrix.platform, 'windows')
               run: |
                 .\build\bin\Release\main -h
-                .\build\bin\Release\main -m "$($(${{ env.openvino_URL }} -split "/" | Select-Object -Last 1) | Split-Path -LeafBase).bin" -f ${{ env.AUDIO_FILENAME }} -l ${{ env.language }} --prompt ${{ env.initial_prompt }} -fa
+                .\build\bin\Release\main -m "$($(${{ matrix.openvino_URL }} -split "/" | Select-Object -Last 1) | Split-Path -LeafBase).bin" -f ${{ env.AUDIO_FILENAME }} -l ${{ env.language }} --prompt ${{ env.initial_prompt }} -fa
 
