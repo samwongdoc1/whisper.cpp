@@ -315,7 +315,7 @@ jobs:
             - name: Copy dll file of openvino (Windows)
               run: |
                 cp $env:openvino_folder_root\runtime\bin\intel64\Release\*.dll build\bin\Release
-                cp $env:$openvino_folder_root\runtime\3rdparty\tbb\bin\*.dll build\bin\Release
+                cp $env:openvino_folder_root\runtime\3rdparty\tbb\bin\*.dll build\bin\Release
                 ls build\bin\Release     
               if: ${{ contains(matrix.platform, 'windows') && contains(matrix.cmake-args, '-DWHISPER_OPENVINO=1') }}  
 
