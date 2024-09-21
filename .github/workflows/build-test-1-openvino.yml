@@ -301,7 +301,7 @@ jobs:
 
             - name: Configure cmake for Windows
               run: |
-                & $pwd\$env:openvino_folder_root\setupvars.bat
+                call "$pwd\$env:openvino_folder_root\setupvars.bat"
                 echo "`nThe cmake args are: ${{ matrix.cmake-args }}`n"
                 cmake -B build ${{ matrix.cmake-args }}
                 ls build
@@ -343,7 +343,7 @@ jobs:
 
             - name: Build for Windows (msbuild-1)
               run: |
-                & $pwd\$env:openvino_folder_root\setupvars.bat
+                call "$pwd\$env:openvino_folder_root\setupvars.bat"
                 cmake --build build --config Release
                 ls build\bin\Release     
               if: ${{ contains(matrix.platform, 'windows') && contains(matrix.cmake-args, '-DCMAKE_BUILD_TYPE=Release') }}  
@@ -477,7 +477,7 @@ jobs:
             - name: Test compiled file (Windows) 1
               if: contains(matrix.platform, 'windows')
               run: |
-                  & $pwd\$env:openvino_folder_root\setupvars.bat
+                  call "$pwd\$env:openvino_folder_root\setupvars.bat"
                   echo `n"Testing 1 : main.exe"`n
                   .\build\bin\Release\main -h
                   echo `n"Testing 1 : stream.exe"`n
