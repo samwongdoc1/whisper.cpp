@@ -300,7 +300,7 @@ jobs:
 
             - name: Configure cmake for Windows
               run: |
-                & $env:openvino_folder_root\setupvars.bat
+                $env:openvino_folder_root\setupvars.ps1
                 echo "`nThe cmake args are: ${{ matrix.cmake-args }}`n"
                 cmake -B build ${{ matrix.cmake-args }}
                 ls build
@@ -342,7 +342,7 @@ jobs:
 
             - name: Build for Windows (msbuild-1)
               run: |
-                & $env:openvino_folder_root\setupvars.bat
+                $env:openvino_folder_root\setupvars.ps1
                 cmake --build build --config Release
                 ls build\bin\Release     
               if: ${{ contains(matrix.platform, 'windows') && contains(matrix.cmake-args, '-DCMAKE_BUILD_TYPE=Release') }}  
@@ -450,13 +450,13 @@ jobs:
                   source $openvino_folder_root/setupvars.sh
                   ./build/bin/main -h
                   ldd build/bin/main
-                  readelf -d main
+                  readelf -d build/bin/main
                   ./build/bin/quantize -h
                   ldd build/bin/quantize
-                  readelf -d quantize
+                  readelf -d build/bin/quantize
                   ./build/bin/stream -h
                   ldd build/bin/stream
-                  readelf -d stream
+                  readelf -d build/bin/stream
                   time ./build/bin/bench -m "$(echo "$(basename "${{ env.MODEL_openvino_URL }}")" | sed 's/\-models.zip$//').bin" -f ${{ env.AUDIO_FILENAME }} -fa
                   time ./build/bin/main -m "$(echo "$(basename "${{ env.MODEL_openvino_URL }}")" | sed 's/\-models.zip$//').bin" -f ${{ env.AUDIO_FILENAME }} -l ${{ env.language }} --prompt ${{ env.initial_prompt }} -fa
               if: ${{ contains(matrix.platform, 'ubuntu') && contains(matrix.cmake-args, '-DCMAKE_BUILD_TYPE=Release') }}
@@ -470,7 +470,7 @@ jobs:
             - name: Test compiled file (Windows) 1
               if: contains(matrix.platform, 'windows')
               run: |
-                  & $env:openvino_folder_root\setupvars.bat
+                  $env:openvino_folder_root\setupvars.ps1
                   .\build\bin\Release\main -h
                   .\build\bin\Release\quantize -h
                   .\build\bin\Release\stream -h
