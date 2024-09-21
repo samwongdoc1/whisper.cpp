@@ -278,7 +278,7 @@ jobs:
             - name: Configure cmake for Ubuntu
               run: |
                 source $openvino_folder_root/setupvars.sh
-                echo $OpenVINO_DIR
+                echo -e "\ncheck OpenVINO_DIR : $OpenVINO_DIR"
                 echo -e "\nThe cmake args are: ${{ matrix.cmake-args }}\n"
                 cmake -B build ${{ matrix.cmake-args }}
                 ls build
@@ -287,7 +287,7 @@ jobs:
             - name: Configure cmake for Windows
               run: |
                 cmd.exe /c "$pwd\$env:openvino_folder_root\setupvars.bat"
-                echo $OpenVINO_DIR
+                echo `n"check OpenVINO_DIR : $OpenVINO_DIR"
                 echo "`nThe cmake args are: ${{ matrix.cmake-args }}`n"
                 cmake -B build ${{ matrix.cmake-args }}
                 ls build
@@ -306,7 +306,7 @@ jobs:
             - name: Build for Ubuntu (cmake)
               run: |
                 source $openvino_folder_root/setupvars.sh
-                echo $OpenVINO_DIR
+                echo -e "\ncheck OpenVINO_DIR : $OpenVINO_DIR"
                 cmake --build build -j$(nproc) --config Release
                 echo -e "\n The compiled files are : \n"
                 ls -al build/bin
@@ -331,7 +331,7 @@ jobs:
             - name: Build for Windows (msbuild-1)
               run: |
                 cmd.exe /c "$pwd\$env:openvino_folder_root\setupvars.bat"
-                echo $OpenVINO_DIR
+                echo `n"check OpenVINO_DIR : $OpenVINO_DIR"
                 cmake --build build --config Release
                 ls build\bin\Release     
               if: ${{ contains(matrix.platform, 'windows') && contains(matrix.cmake-args, '-DCMAKE_BUILD_TYPE=Release') }}  
@@ -453,7 +453,7 @@ jobs:
             - name: Test compiled file (Ubuntu cmake) 1
               run: |
                   source $openvino_folder_root/setupvars.sh
-                  echo $OpenVINO_DIR
+                  echo -e "\ncheck OpenVINO_DIR : $OpenVINO_DIR"
                   echo -e "\nTesting 1 : main \n"
                   ./build/bin/main -h
                   ldd build/bin/main
@@ -470,7 +470,7 @@ jobs:
             - name: Test compiled file (Ubuntu cmake) 2
               run: |
                   source $openvino_folder_root/setupvars.sh
-                  echo $OpenVINO_DIR
+                  echo -e "\ncheck OpenVINO_DIR : $OpenVINO_DIR"
                   time ./build/bin/main -m "$(echo "$(basename "${{ env.MODEL_openvino_URL }}")" | sed 's/\-models.zip$//').bin" -f ${{ env.AUDIO_FILENAME }} -l ${{ env.language }} --prompt ${{ env.initial_prompt }} -fa
               if: ${{ contains(matrix.platform, 'ubuntu') && contains(matrix.cmake-args, '-DCMAKE_BUILD_TYPE=Release') }}
 
@@ -484,7 +484,7 @@ jobs:
               if: contains(matrix.platform, 'windows')
               run: |
                   cmd.exe /c "$pwd\$env:openvino_folder_root\setupvars.bat"
-                  echo $OpenVINO_DIR
+                  echo `n"check OpenVINO_DIR : $OpenVINO_DIR"
                   echo `n"Testing 1 : main.exe"`n
                   .\build\bin\Release\main -h
                   echo `n"Testing 1 : stream.exe"`n
@@ -497,7 +497,7 @@ jobs:
               if: contains(matrix.platform, 'windows')
               run: |
                   cmd.exe /c "$pwd\$env:openvino_folder_root\setupvars.bat"
-                  echo $OpenVINO_DIR
+                  echo `n"check OpenVINO_DIR : $OpenVINO_DIR"
                   echo `n"Testing 2 : main.exe"`n
                   .\build\bin\Release\main -m "$("$("${{ env.MODEL_openvino_URL }}" -split "/" | Select-Object -Last 1)".Replace("-models.zip", ".bin"))" -f ${{ env.AUDIO_FILENAME }} -l ${{ env.language }} --prompt ${{ env.initial_prompt }} -fa
 
