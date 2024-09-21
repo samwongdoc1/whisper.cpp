@@ -54,12 +54,12 @@ jobs:
                 #   build-name: "build-ubuntu-2204-x86_64-cpu-cmake-sdl2-static"
                 #   cmake-args: "-DGGML_CCACHE=OFF -DBUILD_SHARED_LIBS=OFF -DWHISPER_SDL2=ON -DCMAKE_BUILD_TYPE=Release -DGGML_STATIC=ON"
 
-                # Linux cmake SDL2 Static + OpenVINO
-                - platform: "ubuntu-22.04"
-                  name: "ubuntu-2204-x86_64-cpu-cmake-sdl2-openvino-static"
-                  build-name: "build-ubuntu-2204-x86_64-cpu-cmake-sdl2-openvino-static"
-                  cmake-args: "-DGGML_CCACHE=OFF -DBUILD_SHARED_LIBS=OFF -DWHISPER_SDL2=ON -DCMAKE_BUILD_TYPE=Release -DGGML_STATIC=ON -DWHISPER_OPENVINO=1"
-                  openvino_URL: https://storage.openvinotoolkit.org/repositories/openvino/packages/2023.0/linux/l_openvino_toolkit_ubuntu22_2023.0.0.10926.b4452d56304_x86_64.tgz
+                # # Linux cmake SDL2 Static + OpenVINO
+                # - platform: "ubuntu-22.04"
+                #   name: "ubuntu-2204-x86_64-cpu-cmake-sdl2-openvino-static"
+                #   build-name: "build-ubuntu-2204-x86_64-cpu-cmake-sdl2-openvino-static"
+                #   cmake-args: "-DGGML_CCACHE=OFF -DBUILD_SHARED_LIBS=OFF -DWHISPER_SDL2=ON -DCMAKE_BUILD_TYPE=Release -DGGML_STATIC=ON -DWHISPER_OPENVINO=1"
+                #   openvino_URL: https://storage.openvinotoolkit.org/repositories/openvino/packages/2023.0/linux/l_openvino_toolkit_ubuntu22_2023.0.0.10926.b4452d56304_x86_64.tgz
 
                 #   # Linux make SDL2 + OpenBLAS
                 # - platform: "ubuntu-22.04"
