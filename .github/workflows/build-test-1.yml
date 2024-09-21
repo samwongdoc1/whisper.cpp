@@ -263,6 +263,7 @@ jobs:
 
             - name: Configure cmake for Ubuntu
               run: |
+                source $openvino_folder_root/setupvars.sh
                 echo -e "\nThe cmake args are: ${{ matrix.cmake-args }}\n"
                 cmake -B build ${{ matrix.cmake-args }}
                 ls build
@@ -270,6 +271,7 @@ jobs:
 
             - name: Configure cmake for Windows
               run: |
+                & $env:openvino_folder_root\setupvars.bat
                 echo "`nThe cmake args are: ${{ matrix.cmake-args }}`n"
                 cmake -B build ${{ matrix.cmake-args }}
                 ls build
@@ -285,6 +287,7 @@ jobs:
 
             - name: Build for Ubuntu (cmake)
               run: |
+                source $openvino_folder_root/setupvars.sh
                 cmake --build build -j$(nproc) --config Release
                 echo -e "\n The compiled files are : \n"
                 ls -al build/bin
@@ -308,16 +311,17 @@ jobs:
 
             - name: Build for Windows (msbuild-1)
               run: |
+                & $env:openvino_folder_root\setupvars.bat
                 cmake --build build --config Release
                 ls build\bin\Release     
               if: ${{ contains(matrix.platform, 'windows') && contains(matrix.cmake-args, '-DCMAKE_BUILD_TYPE=Release') }}  
 
-            - name: Copy dll file of openvino (Windows)
-              run: |
-                cp $env:openvino_folder_root\runtime\bin\intel64\Release\*.dll build\bin\Release
-                cp $env:openvino_folder_root\runtime\3rdparty\tbb\bin\*.dll build\bin\Release
-                ls build\bin\Release     
-              if: ${{ contains(matrix.platform, 'windows') && contains(matrix.cmake-args, '-DWHISPER_OPENVINO=1') }}  
+            # - name: Copy dll file of openvino (Windows)
+            #   run: |
+            #     cp $env:openvino_folder_root\runtime\bin\intel64\Release\*.dll build\bin\Release
+            #     cp $env:openvino_folder_root\runtime\3rdparty\tbb\bin\*.dll build\bin\Release
+            #     ls build\bin\Release     
+            #   if: ${{ contains(matrix.platform, 'windows') && contains(matrix.cmake-args, '-DWHISPER_OPENVINO=1') }}  
 
             # - name: Test Unix
             #   if: ${{ contains(matrix.platform, 'ubuntu') || contains(matrix.platform, 'macos') }}
