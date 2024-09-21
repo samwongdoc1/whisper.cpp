@@ -263,7 +263,6 @@ jobs:
 
             - name: Configure cmake for Ubuntu
               run: |
-                source $openvino_folder_root/setupvars.sh
                 echo -e "\nThe cmake args are: ${{ matrix.cmake-args }}\n"
                 cmake -B build ${{ matrix.cmake-args }}
                 ls build
@@ -287,7 +286,6 @@ jobs:
 
             - name: Build for Ubuntu (cmake)
               run: |
-                source $openvino_folder_root/setupvars.sh
                 cmake --build build -j$(nproc) --config Release
                 echo -e "\n The compiled files are : \n"
                 ls -al build/bin
@@ -409,6 +407,16 @@ jobs:
             - name: Test compiled file (Ubuntu cmake) 1
               run: |
                   ./build/bin/main -h
+                  ldd build/bin/main
+                  readelf -d main
+                  ./build/bin/quantize -h
+                  ldd build/bin/quantize
+                  readelf -d quantize
+                  ./build/bin/stream -h
+                  ldd build/bin/stream
+                  readelf -d stream
+                  time ./build/bin/bench -m "$(echo "$(basename "${{ env.MODEL_openvino_URL }}")" | sed 's/\-models.zip$//').bin" -f ${{ env.AUDIO_FILENAME }} -fa
+              if: ${{ contains(matrix.platform, 'ubuntu') && contains(matrix.cmake-args, '-DCMAKE_BUILD_TYPE=Release') }}
                   time ./build/bin/main -m "$(echo "$(basename "${{ env.MODEL_openvino_URL }}")" | sed 's/\-models.zip$//').bin" -f ${{ env.AUDIO_FILENAME }} -l ${{ env.language }} --prompt ${{ env.initial_prompt }} -fa
               if: ${{ contains(matrix.platform, 'ubuntu') && contains(matrix.cmake-args, '-DCMAKE_BUILD_TYPE=Release') }}
 
@@ -421,6 +429,7 @@ jobs:
             - name: Test compiled file (Windows) 1
               if: contains(matrix.platform, 'windows')
               run: |
+                & $env:openvino_folder_root\setupvars.bat
                 .\build\bin\Release\main -h
                 .\build\bin\Release\main -m "$("$("${{ env.MODEL_openvino_URL }}" -split "/" | Select-Object -Last 1)".Replace("-models.zip", ".bin"))" -f ${{ env.AUDIO_FILENAME }} -l ${{ env.language }} --prompt ${{ env.initial_prompt }} -fa
 
