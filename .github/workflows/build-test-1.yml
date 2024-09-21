@@ -185,10 +185,10 @@ jobs:
                 tar -xvf "$(basename "${{ matrix.openvino_URL }}")"              
                 openvino_folder_root="$(echo "$(basename "${{ matrix.openvino_URL }}")" | sed 's/\.tgz$//')"
                 echo -e "\nThe current openvino : $openvino_folder_root\n"
-                echo "openvino_folder_root=$openvino_folder_root" >> $GITHUB_ENV
                 sudo ./$openvino_folder_root/install_dependencies/install_openvino_dependencies.sh
                 source $openvino_folder_root/setupvars.sh
                 echo "OpenVINO_DIR=$GITHUB_WORKSPACE/$openvino_folder_root/runtime/cmake" >> $GITHUB_ENV
+                echo "openvino_folder_root=$openvino_folder_root" >> $GITHUB_ENV
               if: ${{ contains(matrix.platform, 'ubuntu') && contains(matrix.cmake-args, '-DWHISPER_OPENVINO=1') }}  
 
             - name: Prepare OpenVINO for Windows
@@ -198,7 +198,7 @@ jobs:
                 7z x ("${{ matrix.openvino_URL }}" -split "/" | Select-Object -Last 1)
                 $openvino_folder_root =("${{ matrix.openvino_URL }}" -split "/" | Select-Object -Last 1).Replace(".zip", "")
                 echo `n"The current openvino : $openvino_folder_root"`n
-                .\$openvino_folder_root\setupvars.bat
+                & $openvino_folder_root\setupvars.bat
                 echo "OpenVINO_DIR=$env:GITHUB_WORKSPACE\$openvino_folder_root\runtime\cmake" >> $env:GITHUB_ENV
                 echo "openvino_folder_root=$openvino_folder_root" >> $env:GITHUB_ENV
               if: ${{ contains(matrix.platform, 'windows') && contains(matrix.cmake-args, '-DWHISPER_OPENVINO=1') }}  
