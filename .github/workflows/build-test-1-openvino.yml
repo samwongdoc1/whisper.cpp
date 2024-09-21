@@ -1,4 +1,4 @@
-name: Build Test 1
+name: Build Test 1 (OpenVINO)
 on: 
   # push:
   # pull_request:
@@ -42,31 +42,31 @@ jobs:
                 #   build-name: "build-ubuntu-2204-x86_64-cpu-cmake"
                 #   cmake-args: "-DGGML_CCACHE=OFF -DBUILD_SHARED_LIBS=OFF -DCMAKE_BUILD_TYPE=${{ inputs.cmake_build_type }} -DGGML_STATIC=ON"
 
-                # Linux cmake SDL2
-                - platform: "ubuntu-22.04"
-                  name: "ubuntu-2204-x86_64-cpu-cmake-sdl2"
-                  build-name: "build-ubuntu-2204-x86_64-cpu-cmake-sdl2"
-                  cmake-args: "-DWHISPER_SDL2=ON -DCMAKE_BUILD_TYPE=Release"
-
-                # Linux cmake SDL2 Static
-                - platform: "ubuntu-22.04"
-                  name: "ubuntu-2204-x86_64-cpu-cmake-sdl2-static"
-                  build-name: "build-ubuntu-2204-x86_64-cpu-cmake-sdl2-static"
-                  cmake-args: "-DGGML_CCACHE=OFF -DBUILD_SHARED_LIBS=OFF -DWHISPER_SDL2=ON -DCMAKE_BUILD_TYPE=Release -DGGML_STATIC=ON"
-
-                # # Linux cmake SDL2 Static + OpenVINO
+                # # Linux cmake SDL2
                 # - platform: "ubuntu-22.04"
-                #   name: "ubuntu-2204-x86_64-cpu-cmake-sdl2-openvino-static"
-                #   build-name: "build-ubuntu-2204-x86_64-cpu-cmake-sdl2-openvino-static"
-                #   cmake-args: "-DGGML_CCACHE=OFF -DBUILD_SHARED_LIBS=OFF -DWHISPER_SDL2=ON -DCMAKE_BUILD_TYPE=Release -DGGML_STATIC=ON -DWHISPER_OPENVINO=1"
-                #   openvino_URL: https://storage.openvinotoolkit.org/repositories/openvino/packages/2023.0/linux/l_openvino_toolkit_ubuntu22_2023.0.0.10926.b4452d56304_x86_64.tgz
+                #   name: "ubuntu-2204-x86_64-cpu-cmake-sdl2"
+                #   build-name: "build-ubuntu-2204-x86_64-cpu-cmake-sdl2"
+                #   cmake-args: "-DWHISPER_SDL2=ON -DCMAKE_BUILD_TYPE=Release"
 
-                  # Linux make SDL2 + OpenBLAS
+                # # Linux cmake SDL2 Static
+                # - platform: "ubuntu-22.04"
+                #   name: "ubuntu-2204-x86_64-cpu-cmake-sdl2-static"
+                #   build-name: "build-ubuntu-2204-x86_64-cpu-cmake-sdl2-static"
+                #   cmake-args: "-DGGML_CCACHE=OFF -DBUILD_SHARED_LIBS=OFF -DWHISPER_SDL2=ON -DCMAKE_BUILD_TYPE=Release -DGGML_STATIC=ON"
+
+                # Linux cmake SDL2 Static + OpenVINO
                 - platform: "ubuntu-22.04"
-                  name: "ubuntu-2204-x86_64-cpu-make-sdl2-openblas"
-                  build-name: "build-ubuntu-2204-x86_64-cpu-make-sdl2-openblas"
-                  make-args: "GGML_OPENBLAS=1"
-                  # cmake-args: "-DGGML_CCACHE=OFF -DBUILD_SHARED_LIBS=OFF -DWHISPER_SDL2=ON -DCMAKE_BUILD_TYPE=Release -DGGML_STATIC=ON -DGGML_OPENBLAS=ON"
+                  name: "ubuntu-2204-x86_64-cpu-cmake-sdl2-openvino-static"
+                  build-name: "build-ubuntu-2204-x86_64-cpu-cmake-sdl2-openvino-static"
+                  cmake-args: "-DGGML_CCACHE=OFF -DBUILD_SHARED_LIBS=OFF -DWHISPER_SDL2=ON -DCMAKE_BUILD_TYPE=Release -DGGML_STATIC=ON -DWHISPER_OPENVINO=1"
+                  openvino_URL: https://storage.openvinotoolkit.org/repositories/openvino/packages/2023.0/linux/l_openvino_toolkit_ubuntu22_2023.0.0.10926.b4452d56304_x86_64.tgz
+
+                #   # Linux make SDL2 + OpenBLAS
+                # - platform: "ubuntu-22.04"
+                #   name: "ubuntu-2204-x86_64-cpu-make-sdl2-openblas"
+                #   build-name: "build-ubuntu-2204-x86_64-cpu-make-sdl2-openblas"
+                #   make-args: "GGML_OPENBLAS=1"
+                #   # cmake-args: "-DGGML_CCACHE=OFF -DBUILD_SHARED_LIBS=OFF -DWHISPER_SDL2=ON -DCMAKE_BUILD_TYPE=Release -DGGML_STATIC=ON -DGGML_OPENBLAS=ON"
 
                 # # Linux cmake SDL2 Static
                 # - platform: "ubuntu-24.04"
@@ -84,20 +84,20 @@ jobs:
                 #   build-name: "build-windows-x86_64-cpu-msbuild-1"
                 #   cmake-args: "-DGGML_CCACHE=OFF -DBUILD_SHARED_LIBS=OFF -DCMAKE_BUILD_TYPE=Release -DGGML_STATIC=ON"
 
-                # Windows msbuild 1 SDL2 Static
-                - platform: "windows-2022"
-                  name: "windows-x86_64-cpu-msbuild-1-sdl2"
-                  build-name: "build-windows-x86_64-cpu-msbuild-1-sdl2"
-                  cmake-args: "-DGGML_CCACHE=OFF -DBUILD_SHARED_LIBS=OFF -DWHISPER_SDL2=ON -DCMAKE_BUILD_TYPE=Release -DGGML_STATIC=ON"
-                  s2ver: 2.30.7                  
-
-                # # Windows msbuild 1 SDL2 Static + OpenVINO
+                # # Windows msbuild 1 SDL2 Static
                 # - platform: "windows-2022"
-                #   name: "windows-x86_64-cpu-msbuild-1-sdl2-openvino"
-                #   build-name: "build-windows-x86_64-cpu-msbuild-1-sdl2-openvino"
-                #   cmake-args: "-DGGML_CCACHE=OFF -DBUILD_SHARED_LIBS=OFF -DWHISPER_SDL2=ON -DCMAKE_BUILD_TYPE=Release -DGGML_STATIC=ON -DWHISPER_OPENVINO=1"
-                #   s2ver: 2.30.7
-                #   openvino_URL: https://storage.openvinotoolkit.org/repositories/openvino/packages/2024.4/windows/w_openvino_toolkit_windows_2024.4.0.16579.c3152d32c9c_x86_64.zip
+                #   name: "windows-x86_64-cpu-msbuild-1-sdl2"
+                #   build-name: "build-windows-x86_64-cpu-msbuild-1-sdl2"
+                #   cmake-args: "-DGGML_CCACHE=OFF -DBUILD_SHARED_LIBS=OFF -DWHISPER_SDL2=ON -DCMAKE_BUILD_TYPE=Release -DGGML_STATIC=ON"
+                #   s2ver: 2.30.7                  
+
+                # Windows msbuild 1 SDL2 Static + OpenVINO
+                - platform: "windows-2022"
+                  name: "windows-x86_64-cpu-msbuild-1-sdl2-openvino"
+                  build-name: "build-windows-x86_64-cpu-msbuild-1-sdl2-openvino"
+                  cmake-args: "-DGGML_CCACHE=OFF -DBUILD_SHARED_LIBS=OFF -DWHISPER_SDL2=ON -DCMAKE_BUILD_TYPE=Release -DGGML_STATIC=ON -DWHISPER_OPENVINO=1"
+                  s2ver: 2.30.7
+                  openvino_URL: https://storage.openvinotoolkit.org/repositories/openvino/packages/2024.4/windows/w_openvino_toolkit_windows_2024.4.0.16579.c3152d32c9c_x86_64.zip
 
                 # - platform: "windows-latest"
                 #   name: "Windows - x86_64 - Vulkan"
@@ -178,30 +178,30 @@ jobs:
                 sudo apt install -y libopenblas-dev
               if: ${{ contains(matrix.platform, 'ubuntu') && contains(matrix.make-args, 'GGML_OPENBLAS=1') }}              
 
-            # - name: Prepare OpenVINO for Linux
-            #   run: |
-            #     wget -c "${{ matrix.openvino_URL }}"
-            #     ls -al "$(basename "${{ matrix.openvino_URL }}")"
-            #     tar -xvf "$(basename "${{ matrix.openvino_URL }}")"              
-            #     openvino_folder_root="$(echo "$(basename "${{ matrix.openvino_URL }}")" | sed 's/\.tgz$//')"
-            #     echo -e "\nThe current openvino : $openvino_folder_root\n"
-            #     sudo ./$openvino_folder_root/install_dependencies/install_openvino_dependencies.sh
-            #     source $openvino_folder_root/setupvars.sh
-            #     echo "OpenVINO_DIR=$GITHUB_WORKSPACE/$openvino_folder_root/runtime/cmake" >> $GITHUB_ENV
-            #     echo "openvino_folder_root=$openvino_folder_root" >> $GITHUB_ENV
-            #   if: ${{ contains(matrix.platform, 'ubuntu') && contains(matrix.cmake-args, '-DWHISPER_OPENVINO=1') }}  
+            - name: Prepare OpenVINO for Linux
+              run: |
+                wget -c "${{ matrix.openvino_URL }}"
+                ls -al "$(basename "${{ matrix.openvino_URL }}")"
+                tar -xvf "$(basename "${{ matrix.openvino_URL }}")"              
+                openvino_folder_root="$(echo "$(basename "${{ matrix.openvino_URL }}")" | sed 's/\.tgz$//')"
+                echo -e "\nThe current openvino : $openvino_folder_root\n"
+                sudo ./$openvino_folder_root/install_dependencies/install_openvino_dependencies.sh
+                source $openvino_folder_root/setupvars.sh
+                echo "OpenVINO_DIR=$GITHUB_WORKSPACE/$openvino_folder_root/runtime/cmake" >> $GITHUB_ENV
+                echo "openvino_folder_root=$openvino_folder_root" >> $GITHUB_ENV
+              if: ${{ contains(matrix.platform, 'ubuntu') && contains(matrix.cmake-args, '-DWHISPER_OPENVINO=1') }}  
 
-            # - name: Prepare OpenVINO for Windows
-            #   run: |
-            #     C:\msys64\usr\bin\wget.exe -c ${{ matrix.openvino_URL }}
-            #     ls ("${{ matrix.openvino_URL }}" -split "/" | Select-Object -Last 1)
-            #     7z x ("${{ matrix.openvino_URL }}" -split "/" | Select-Object -Last 1)
-            #     $openvino_folder_root =("${{ matrix.openvino_URL }}" -split "/" | Select-Object -Last 1).Replace(".zip", "")
-            #     echo `n"The current openvino : $openvino_folder_root"`n
-            #     & $openvino_folder_root\setupvars.bat
-            #     echo "OpenVINO_DIR=$env:GITHUB_WORKSPACE\$openvino_folder_root\runtime\cmake" >> $env:GITHUB_ENV
-            #     echo "openvino_folder_root=$openvino_folder_root" >> $env:GITHUB_ENV
-            #   if: ${{ contains(matrix.platform, 'windows') && contains(matrix.cmake-args, '-DWHISPER_OPENVINO=1') }}  
+            - name: Prepare OpenVINO for Windows
+              run: |
+                C:\msys64\usr\bin\wget.exe -c ${{ matrix.openvino_URL }}
+                ls ("${{ matrix.openvino_URL }}" -split "/" | Select-Object -Last 1)
+                7z x ("${{ matrix.openvino_URL }}" -split "/" | Select-Object -Last 1)
+                $openvino_folder_root =("${{ matrix.openvino_URL }}" -split "/" | Select-Object -Last 1).Replace(".zip", "")
+                echo `n"The current openvino : $openvino_folder_root"`n
+                & $openvino_folder_root\setupvars.bat
+                echo "OpenVINO_DIR=$env:GITHUB_WORKSPACE\$openvino_folder_root\runtime\cmake" >> $env:GITHUB_ENV
+                echo "openvino_folder_root=$openvino_folder_root" >> $env:GITHUB_ENV
+              if: ${{ contains(matrix.platform, 'windows') && contains(matrix.cmake-args, '-DWHISPER_OPENVINO=1') }}  
 
             - name: Download assets on Linux
               if: contains(matrix.platform, 'windows') == false
@@ -263,6 +263,7 @@ jobs:
 
             - name: Configure cmake for Ubuntu
               run: |
+                source $openvino_folder_root/setupvars.sh
                 echo -e "\nThe cmake args are: ${{ matrix.cmake-args }}\n"
                 cmake -B build ${{ matrix.cmake-args }}
                 ls build
@@ -270,6 +271,7 @@ jobs:
 
             - name: Configure cmake for Windows
               run: |
+                & $env:openvino_folder_root\setupvars.bat
                 echo "`nThe cmake args are: ${{ matrix.cmake-args }}`n"
                 cmake -B build ${{ matrix.cmake-args }}
                 ls build
@@ -285,6 +287,7 @@ jobs:
 
             - name: Build for Ubuntu (cmake)
               run: |
+                source $openvino_folder_root/setupvars.sh
                 cmake --build build -j$(nproc) --config Release
                 echo -e "\n The compiled files are : \n"
                 ls -al build/bin
@@ -308,6 +311,7 @@ jobs:
 
             - name: Build for Windows (msbuild-1)
               run: |
+                & $env:openvino_folder_root\setupvars.bat
                 cmake --build build --config Release
                 ls build\bin\Release     
               if: ${{ contains(matrix.platform, 'windows') && contains(matrix.cmake-args, '-DCMAKE_BUILD_TYPE=Release') }}  
