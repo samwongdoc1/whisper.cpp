@@ -192,7 +192,7 @@ jobs:
               run: |
                 cmake --version
                 vcpkg list
-                vcpkg install sdl2[core,x11,alsa]:x64-windows
+                vcpkg install sdl2:x64-windows
                 vcpkg list
                 ls
 
@@ -277,17 +277,17 @@ jobs:
             #   if: ${{ contains(matrix.platform, 'windows') && contains(matrix.cmake-args, '-DCMAKE_BUILD_TYPE=Release') }}   
 
 
-            - name: Save the compiled file (Ubuntu cmake)
-              run: |
-                mkdir archive
-                mkdir archive/${{ matrix.build-name }}_${{ env.now }}
-                cp -r build archive/${{ matrix.build-name }}_${{ env.now }}
-                ls -al archive/${{ matrix.build-name }}_${{ env.now }}/build
-                cd archive 
-                tar -cvzf ${{ matrix.build-name }}_${{ env.now }}.tar.gz ${{ matrix.build-name }}_${{ env.now }}
-                ls -al ${{ matrix.build-name }}_${{ env.now }}.tar.gz
-                cd ..
-              if: ${{ contains(matrix.platform, 'ubuntu') && contains(matrix.cmake-args, '-DCMAKE_BUILD_TYPE=Release') }}
+            # - name: Save the compiled file (Ubuntu cmake)
+            #   run: |
+            #     mkdir archive
+            #     mkdir archive/${{ matrix.build-name }}_${{ env.now }}
+            #     cp -r build archive/${{ matrix.build-name }}_${{ env.now }}
+            #     ls -al archive/${{ matrix.build-name }}_${{ env.now }}/build
+            #     cd archive 
+            #     tar -cvzf ${{ matrix.build-name }}_${{ env.now }}.tar.gz ${{ matrix.build-name }}_${{ env.now }}
+            #     ls -al ${{ matrix.build-name }}_${{ env.now }}.tar.gz
+            #     cd ..
+            #   if: ${{ contains(matrix.platform, 'ubuntu') && contains(matrix.cmake-args, '-DCMAKE_BUILD_TYPE=Release') }}
 
             # - name: Save the compiled file (Ubuntu make)
             #   run: |
@@ -310,14 +310,14 @@ jobs:
             #     cd ..
             #   if: ${{ contains(matrix.platform, 'ubuntu') && contains(matrix.make-args, 'GGML_OPENBLAS=1') }}
 
-            - name: Save the compiled file (Windows Test 1)
-              if: contains(matrix.platform, 'windows')
-              run: |
-                mkdir archive
-                mkdir archive\${{ matrix.build-name }}_${{ env.now }}
-                copy -r build archive\${{ matrix.build-name }}_${{ env.now }}
-                ls archive\${{ matrix.build-name }}_${{ env.now }}\build
-                ls archive\${{ matrix.build-name }}_${{ env.now }}\build\bin\Release
+            # - name: Save the compiled file (Windows Test 1)
+            #   if: contains(matrix.platform, 'windows')
+            #   run: |
+            #     mkdir archive
+            #     mkdir archive\${{ matrix.build-name }}_${{ env.now }}
+            #     copy -r build archive\${{ matrix.build-name }}_${{ env.now }}
+            #     ls archive\${{ matrix.build-name }}_${{ env.now }}\build
+            #     ls archive\${{ matrix.build-name }}_${{ env.now }}\build\bin\Release
 
 
 
@@ -329,21 +329,21 @@ jobs:
             #     path: |
             #       archive
 
-            - name: Archive the compiled file (Ubuntu Test 1)
-              if: contains(matrix.platform, 'ubuntu')
-              uses: actions/upload-artifact@v4
-              with:
-                name: ${{ matrix.build-name }}_${{ env.now }}
-                path: |
-                  archive/${{ matrix.build-name }}_${{ env.now }}.tar.gz
+            # - name: Archive the compiled file (Ubuntu Test 1)
+            #   if: contains(matrix.platform, 'ubuntu')
+            #   uses: actions/upload-artifact@v4
+            #   with:
+            #     name: ${{ matrix.build-name }}_${{ env.now }}
+            #     path: |
+            #       archive/${{ matrix.build-name }}_${{ env.now }}.tar.gz
 
-            - name: Archive the compiled file (Windows Test 1)
-              if: contains(matrix.platform, 'windows')
-              uses: actions/upload-artifact@v4
-              with:
-                name: ${{ matrix.build-name }}_${{ env.now }}
-                path: |
-                  archive
+            # - name: Archive the compiled file (Windows Test 1)
+            #   if: contains(matrix.platform, 'windows')
+            #   uses: actions/upload-artifact@v4
+            #   with:
+            #     name: ${{ matrix.build-name }}_${{ env.now }}
+            #     path: |
+            #       archive
 
 
 
