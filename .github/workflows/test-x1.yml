@@ -187,12 +187,21 @@ jobs:
                       core.exportVariable('ACTIONS_CACHE_URL', process.env.ACTIONS_CACHE_URL || '');
                       core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
 
-            - name: Ubuntu Test 1
+            - name: vcpkg Test 1
               if: contains(matrix.platform, 'ubuntu')
               run: |
                 cmake --version
                 vcpkg list
                 vcpkg install sdl2[core,x11,alsa]:x64-linux
+                vcpkg list
+                ls
+
+            - name: vcpkg Test 2
+              if: contains(matrix.platform, 'ubuntu')
+              run: |
+                cmake --version
+                vcpkg list
+                vcpkg install openvino:x64-linux
                 vcpkg list
                 ls
 
