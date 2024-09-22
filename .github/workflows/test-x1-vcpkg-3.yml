@@ -1,4 +1,4 @@
-name: VCPKG Test 1 Windows
+name: VCPKG Test 2 Windows
 on: 
   # push:
   # pull_request:
