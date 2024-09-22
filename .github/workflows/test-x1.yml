@@ -183,6 +183,7 @@ jobs:
               if: contains(matrix.platform, 'ubuntu')
               run: |
                 cmake --version
+                echo $VCPKG_ROOT
                 vcpkg list
                 vcpkg install sdl2[core,x11,alsa]:x64-linux
                 vcpkg list
