@@ -196,6 +196,15 @@ jobs:
                 vcpkg list
                 ls
 
+            - name: vcpkg Test 2
+              if: contains(matrix.platform, 'windows')
+              run: |
+                cmake --version
+                vcpkg list
+                vcpkg install openvino:x64-windows
+                vcpkg list
+                ls
+
             # - name: vcpkg Test 2
             #   if: contains(matrix.platform, 'windows')
             #   run: |
