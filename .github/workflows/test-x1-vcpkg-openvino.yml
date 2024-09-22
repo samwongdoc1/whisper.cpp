@@ -1,4 +1,4 @@
-name: VCPKG Test 1 Windows
+name: VCPKG Test 1 Windows (openvino)
 on: 
   # push:
   # pull_request:
