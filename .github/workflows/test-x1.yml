@@ -18,8 +18,9 @@ env:
   AUDIO_URL: https://github.com/ggerganov/whisper.cpp/raw/master/samples/jfk.wav
   AUDIO_FILENAME: jfk.wav
   CMAKE_BUILD_TYPE: Release
-  file: build-windows-x86_64-cpu-msbuild-1-sdl2-openvino_20240920-080612
-  run_id: 10950754786
+  VCPKG_BINARY_SOURCES: "clear;x-gha,readwrite"
+  # file: build-windows-x86_64-cpu-msbuild-1-sdl2-openvino_20240920-080612
+  # run_id: 10950754786
   
 
 jobs:
@@ -178,6 +179,13 @@ jobs:
             #     repository: samwongdoc1/whisper.cpp
             #     run-id: 10950754786
             #     run: ls
+
+            - name: Export GitHub Actions cache environment variables
+              uses: actions/github-script@v7
+              with:
+                script: |
+                      core.exportVariable('ACTIONS_CACHE_URL', process.env.ACTIONS_CACHE_URL || '');
+                      core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
 
             - name: Ubuntu Test 1
               if: contains(matrix.platform, 'ubuntu')
