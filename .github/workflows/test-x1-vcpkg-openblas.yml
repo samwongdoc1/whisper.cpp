@@ -284,7 +284,7 @@ jobs:
             - name: Build for Windows (make)
               run: |
                 echo "`nThe make args are: ${{ matrix.make-args }}"`n
-                ${{ matrix.make-args }} make -j2
+                make -j ${{ matrix.make-args }}
                 echo "`nThe compiled files are : "`n
                 ls 
               if: ${{ contains(matrix.platform, 'windows') && contains(matrix.make-args, 'GGML_OPENBLAS=1') }}
