@@ -1,4 +1,4 @@
-name: VCPKG Test 3 Windows
+name: VCPKG Windows 3 (openblas)
 on: 
   # push:
   # pull_request:
@@ -115,7 +115,7 @@ jobs:
         runs-on: ${{ matrix.platform }}
         name: ${{ matrix.name }}
         steps:
-            # - uses: actions/checkout@v4
+            - uses: actions/checkout@v4
 
             # - name: Add msbuild to PATH
             #   uses: microsoft/setup-msbuild@v2
