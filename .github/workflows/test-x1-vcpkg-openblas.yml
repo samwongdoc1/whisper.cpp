@@ -1,4 +1,4 @@
-name: VCPKG Windows 3 (openblas)
+name: VCPKG Test Windows 3 (openblas)
 on: 
   # push:
   # pull_request:
