@@ -1,4 +1,4 @@
-name: VCPKG Test 2 Windows
+name: VCPKG Test 2 Windows (intel-mkl)
 on: 
   # push:
   # pull_request:
@@ -103,9 +103,9 @@ jobs:
 
                 # # Windows
                 - platform: "windows-2022"
-                  name: "windows-x86_64-cpu-sdl2-vcpkg-1"
-                  build-name: "build-windows-x86_64-cpu-sdl2-vcpkg-1"
-                  cmake-args: "-DGGML_CCACHE=OFF -DBUILD_SHARED_LIBS=OFF -DWHISPER_SDL2=ON -DCMAKE_BUILD_TYPE=Release -DGGML_STATIC=ON"
+                  name: "windows-x86_64-cpu-sdl2-intelmkl-vcpkg-1"
+                  build-name: "build-windows-x86_64-cpu-sdl2-intelmkl-vcpkg-1"
+                  cmake-args: "-DGGML_CCACHE=OFF -DBUILD_SHARED_LIBS=OFF -DWHISPER_SDL2=ON -DWHISPER_MKL=ON -DCMAKE_BUILD_TYPE=Release -DGGML_STATIC=ON"
                   # s2ver: 2.30.7                  
 
                 # - platform: "windows-latest"
@@ -115,7 +115,7 @@ jobs:
         runs-on: ${{ matrix.platform }}
         name: ${{ matrix.name }}
         steps:
-            # - uses: actions/checkout@v4
+            - uses: actions/checkout@v4
 
             # - name: Add msbuild to PATH
             #   uses: microsoft/setup-msbuild@v2
