@@ -184,7 +184,7 @@ jobs:
               run: |
                 cmake --version
                 vcpkg list
-                vcpkg install SDL2:x64-list
+                vcpkg install SDL2:x64-linux
                 vcpkg list
                 ls
 
