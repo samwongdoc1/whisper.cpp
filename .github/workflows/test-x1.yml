@@ -184,7 +184,7 @@ jobs:
               run: |
                 cmake --version
                 vcpkg list
-                vcpkg install SDL2:x64-linux
+                vcpkg install sdl2[core,x11,alsa]:x64-linux
                 vcpkg list
                 ls
 
@@ -204,7 +204,58 @@ jobs:
             #     .\${{ env.file }}\build\bin\Release\main -h
 
 
-              # ls build*\build\bin\Release            
+              # ls build*\build\bin\Release           
+
+            - name: Configure cmake for Ubuntu
+              run: |
+                echo -e "\nThe cmake args are: ${{ matrix.cmake-args }}\n"
+                cmake -B build ${{ matrix.cmake-args }}
+                ls build
+              if: ${{ contains(matrix.platform, 'ubuntu') && contains(matrix.cmake-args, '-DCMAKE_BUILD_TYPE=Release') }}  
+
+            # - name: Configure cmake for Windows
+            #   run: |
+            #     echo "`nThe cmake args are: ${{ matrix.cmake-args }}`n"
+            #     cmake -B build ${{ matrix.cmake-args }}
+            #     ls build
+            #   if: ${{ contains(matrix.platform, 'windows') && contains(matrix.cmake-args, '-DCMAKE_BUILD_TYPE=Release') }} 
+
+            # - name: Configure
+            #   run: |
+            #     cmake -B build ${{ matrix.cmake-args }}
+
+            # - name: Build
+            #   run: |
+            #     cmake --build build --target main --config ${{ inputs.cmake_build_type }}
+
+            - name: Build for Ubuntu (cmake)
+              run: |
+                cmake --build build -j$(nproc) --config Release
+                echo -e "\n The compiled files are : \n"
+                ls -al build/bin
+              if: ${{ contains(matrix.platform, 'ubuntu') && contains(matrix.cmake-args, '-DCMAKE_BUILD_TYPE=Release') }}
+
+            # - name: Build for Ubuntu (make)
+            #   run: |
+            #     echo -e "\nThe make args are: ${{ matrix.make-args }}\n"
+            #     ${{ matrix.make-args }} make -j$(nproc)
+            #     echo -e "\n The compiled files are : \n"
+            #     {
+            #     for file in * ; do
+            #       if [ -f "$file" ]; then
+            #         if file "$file" | grep -q "ELF"; then
+            #           ls -al $file
+            #         fi
+            #       fi
+            #     done
+            #     }
+            #   if: ${{ contains(matrix.platform, 'ubuntu') && contains(matrix.make-args, 'GGML_OPENBLAS=1') }}
+
+            # - name: Build for Windows (msbuild-1)
+            #   run: |
+            #     cmake --build build --config Release
+            #     ls build\bin\Release     
+            #   if: ${{ contains(matrix.platform, 'windows') && contains(matrix.cmake-args, '-DCMAKE_BUILD_TYPE=Release') }}   
 
 
 
