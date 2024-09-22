@@ -115,7 +115,7 @@ jobs:
         runs-on: ${{ matrix.platform }}
         name: ${{ matrix.name }}
         steps:
-            - uses: actions/checkout@v4
+            # - uses: actions/checkout@v4
 
             # - name: Add msbuild to PATH
             #   uses: microsoft/setup-msbuild@v2
