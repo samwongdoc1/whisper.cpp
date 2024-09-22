@@ -105,7 +105,7 @@ jobs:
                 - platform: "windows-2022"
                   name: "windows-x86_64-cpu-sdl2-vcpkg-1"
                   build-name: "build-windows-x86_64-cpu-sdl2-vcpkg-1"
-                  # nmake-args: "-DGGML_CCACHE=OFF -DBUILD_SHARED_LIBS=OFF -DWHISPER_SDL2=ON -DCMAKE_BUILD_TYPE=Release -DGGML_STATIC=ON"
+                  # cmake-args: "-DGGML_CCACHE=OFF -DBUILD_SHARED_LIBS=OFF -DWHISPER_SDL2=ON -DCMAKE_BUILD_TYPE=Release -DGGML_STATIC=ON"
                   # s2ver: 2.30.7                  
 
                 # - platform: "windows-latest"
@@ -235,7 +235,7 @@ jobs:
             - name: Configure cmake for Windows  (vcpkg)
               run: |
                 echo "`nThe cmake args are: ${{ matrix.cmake-args }}`n"
-                cmake -B build ${{ matrix.cmake-args }}
+                cmake -B build ${{ matrix.cmake-args }} -DCMAKE_TOOLCHAIN_FILE=C:\vcpkg\scripts\buildsystems\vcpkg.cmake
                 ls build
               if: ${{ contains(matrix.platform, 'windows') && contains(matrix.cmake-args, '-DCMAKE_BUILD_TYPE=Release') }} 
 
