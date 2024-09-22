@@ -212,7 +212,7 @@ jobs:
                 cmake -B build ${{ matrix.cmake-args }} -DCMAKE_TOOLCHAIN_FILE=/usr/local/share/vcpkg/scripts/buildsystems/vcpkg.cmake
                 ls build
                 build-name="${{ matrix.build-name }}"-vcpkg
-                echo "build-name=$build-name" >> $env:GITHUB_ENV
+                echo "build-name=$build-name" >> $GITHUB_ENV
               if: ${{ contains(matrix.platform, 'ubuntu') && contains(matrix.cmake-args, '-DCMAKE_BUILD_TYPE=Release') }}
 
             # - name: Configure cmake for Windows
