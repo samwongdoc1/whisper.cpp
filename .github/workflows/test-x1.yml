@@ -211,6 +211,8 @@ jobs:
                 echo -e "\nThe cmake args are: ${{ matrix.cmake-args }}\n"
                 cmake -B build ${{ matrix.cmake-args }} -DCMAKE_TOOLCHAIN_FILE=/usr/local/share/vcpkg/scripts/buildsystems/vcpkg.cmake
                 ls build
+                build-name="${{ matrix.build-name }}"-vcpkg
+                echo "build-name=$build-name" >> $env:GITHUB_ENV
               if: ${{ contains(matrix.platform, 'ubuntu') && contains(matrix.cmake-args, '-DCMAKE_BUILD_TYPE=Release') }}
 
             # - name: Configure cmake for Windows
@@ -256,6 +258,144 @@ jobs:
             #     cmake --build build --config Release
             #     ls build\bin\Release     
             #   if: ${{ contains(matrix.platform, 'windows') && contains(matrix.cmake-args, '-DCMAKE_BUILD_TYPE=Release') }}   
+
+
+            - name: Save the compiled file (Ubuntu cmake)
+              run: |
+                mkdir archive
+                mkdir archive/${{ matrix.build-name }}_${{ env.now }}
+                cp -r build archive/${{ matrix.build-name }}_${{ env.now }}
+                ls -al archive/${{ matrix.build-name }}_${{ env.now }}/build
+                cd archive 
+                tar -cvzf ${{ matrix.build-name }}_${{ env.now }}.tar.gz ${{ matrix.build-name }}_${{ env.now }}
+                ls -al ${{ matrix.build-name }}_${{ env.now }}.tar.gz
+                cd ..
+              if: ${{ contains(matrix.platform, 'ubuntu') && contains(matrix.cmake-args, '-DCMAKE_BUILD_TYPE=Release') }}
+
+            # - name: Save the compiled file (Ubuntu make)
+            #   run: |
+            #     mkdir archive
+            #     mkdir archive/${{ matrix.build-name }}_${{ env.now }}
+            #     mkdir archive/${{ matrix.build-name }}_${{ env.now }}/build
+            #     {
+            #     for file in *; do
+            #       if [ -f "$file" ]; then
+            #         if file "$file" | grep -q "ELF"; then
+            #           cp $file archive/${{ matrix.build-name }}_${{ env.now }}/build
+            #           ls -al archive/${{ matrix.build-name }}_${{ env.now }}/build/$file
+            #         fi
+            #       fi
+            #     done
+            #     }
+            #     cd archive 
+            #     tar -cvzf ${{ matrix.build-name }}_${{ env.now }}.tar.gz ${{ matrix.build-name }}_${{ env.now }}
+            #     ls -al ${{ matrix.build-name }}_${{ env.now }}.tar.gz
+            #     cd ..
+            #   if: ${{ contains(matrix.platform, 'ubuntu') && contains(matrix.make-args, 'GGML_OPENBLAS=1') }}
+
+            - name: Save the compiled file (Windows Test 1)
+              if: contains(matrix.platform, 'windows')
+              run: |
+                mkdir archive
+                mkdir archive\${{ matrix.build-name }}_${{ env.now }}
+                copy -r build archive\${{ matrix.build-name }}_${{ env.now }}
+                ls archive\${{ matrix.build-name }}_${{ env.now }}\build
+                ls archive\${{ matrix.build-name }}_${{ env.now }}\build\bin\Release
+
+
+
+            # - name: Archive the compiled file
+            #   if: contains(matrix.platform, 'ubuntu')
+            #   uses: actions/upload-artifact@v4
+            #   with:
+            #     name: ${{ matrix.build-name }}_${{ env.now }}
+            #     path: |
+            #       archive
+
+            - name: Archive the compiled file (Ubuntu Test 1)
+              if: contains(matrix.platform, 'ubuntu')
+              uses: actions/upload-artifact@v4
+              with:
+                name: ${{ matrix.build-name }}_${{ env.now }}
+                path: |
+                  archive/${{ matrix.build-name }}_${{ env.now }}.tar.gz
+
+            - name: Archive the compiled file (Windows Test 1)
+              if: contains(matrix.platform, 'windows')
+              uses: actions/upload-artifact@v4
+              with:
+                name: ${{ matrix.build-name }}_${{ env.now }}
+                path: |
+                  archive
+
+
+
+            # - name: Download assets on Linux
+            #   if: contains(matrix.platform, 'windows') == false
+            #   run: |
+            #     wget -c ${{ env.MODEL_openvino_URL }}
+            #     7z x "$(basename "${{ env.MODEL_openvino_URL }}")"
+            #   # wget ${{ env.AUDIO_URL }}
+
+            # - name: Download assets on Windows
+            #   if: contains(matrix.platform, 'windows')
+            #   run: |
+            #     C:\msys64\usr\bin\wget.exe ${{ env.MODEL_openvino_URL }}
+            #     7z x "$("${{ env.MODEL_openvino_URL }}" -split "/" | Select-Object -Last 1)"
+            #   # C:\msys64\usr\bin\wget.exe ${{ env.AUDIO_URL }}
+
+
+
+            # - name: Test compiled file (Ubuntu cmake) 1
+            #   run: |
+            #       source $openvino_folder_root/setupvars.sh
+            #       echo -e "\ncheck OpenVINO_DIR : $OpenVINO_DIR"
+            #       echo -e "\nTesting 1 : main \n"
+            #       ./build/bin/main -h
+            #       ldd build/bin/main
+            #       readelf -d build/bin/main
+            #       echo -e "\nTesting 1 : stream \n"
+            #       ./build/bin/stream -h
+            #       ldd build/bin/stream
+            #       readelf -d build/bin/stream
+            #       echo -e "\nTesting 1 : bench \n"
+            #       ./build/bin/bench -h
+            #       time ./build/bin/bench -m "$(echo "$(basename "${{ env.MODEL_openvino_URL }}")" | sed 's/\-models.zip$//').bin" -fa
+            #   if: ${{ contains(matrix.platform, 'ubuntu') && contains(matrix.cmake-args, '-DCMAKE_BUILD_TYPE=Release') }}
+
+            # - name: Test compiled file (Ubuntu cmake) 2
+            #   run: |
+            #       source $openvino_folder_root/setupvars.sh
+            #       echo -e "\ncheck OpenVINO_DIR : $OpenVINO_DIR"
+            #       time ./build/bin/main -m "$(echo "$(basename "${{ env.MODEL_openvino_URL }}")" | sed 's/\-models.zip$//').bin" -f ${{ env.AUDIO_FILENAME }} -l ${{ env.language }} --prompt ${{ env.initial_prompt }} -fa
+            #   if: ${{ contains(matrix.platform, 'ubuntu') && contains(matrix.cmake-args, '-DCMAKE_BUILD_TYPE=Release') }}
+
+            # - name: Test compiled file (Ubuntu make) 1
+            #   run: |
+            #       ./main -h
+            #       time ./main -m "$(echo "$(basename "${{ env.MODEL_openvino_URL }}")" | sed 's/\-models.zip$//').bin" -f ${{ env.AUDIO_FILENAME }} -l ${{ env.language }} --prompt ${{ env.initial_prompt }} -fa
+            #   if: ${{ contains(matrix.platform, 'ubuntu') && contains(matrix.make-args, 'GGML_OPENBLAS=1') }}             
+
+            # - name: Test compiled file (Windows) 1
+            #   if: contains(matrix.platform, 'windows')
+            #   run: |
+            #       cmd.exe /c "$pwd\$env:openvino_folder_root\setupvars.bat"
+            #       echo `n"check OpenVINO_DIR : $OpenVINO_DIR"
+            #       echo `n"Testing 1 : main.exe"`n
+            #       .\build\bin\Release\main -h
+            #       echo `n"Testing 1 : stream.exe"`n
+            #       .\build\bin\Release\stream -h
+            #       echo `n"Testing 1 : bench.exe"`n
+            #       .\build\bin\Release\bench -h
+            #       .\build\bin\Release\bench -m "$("$("${{ env.MODEL_openvino_URL }}" -split "/" | Select-Object -Last 1)".Replace("-models.zip", ".bin"))" -fa
+
+            # - name: Test compiled file (Windows) 2
+            #   if: contains(matrix.platform, 'windows')
+            #   run: |
+            #       cmd.exe /c "$pwd\$env:openvino_folder_root\setupvars.bat"
+            #       echo `n"check OpenVINO_DIR : $OpenVINO_DIR"
+            #       echo `n"Testing 2 : main.exe"`n
+            #       .\build\bin\Release\main -m "$("$("${{ env.MODEL_openvino_URL }}" -split "/" | Select-Object -Last 1)".Replace("-models.zip", ".bin"))" -f ${{ env.AUDIO_FILENAME }} -l ${{ env.language }} --prompt ${{ env.initial_prompt }} -fa
 
 
 
