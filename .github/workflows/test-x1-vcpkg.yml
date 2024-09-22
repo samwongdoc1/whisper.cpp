@@ -232,12 +232,12 @@ jobs:
             #     ls build
             #   if: ${{ contains(matrix.platform, 'ubuntu') && contains(matrix.cmake-args, '-DCMAKE_BUILD_TYPE=Release') }}
 
-            # - name: Configure cmake for Windows
-            #   run: |
-            #     echo "`nThe cmake args are: ${{ matrix.cmake-args }}`n"
-            #     cmake -B build ${{ matrix.cmake-args }}
-            #     ls build
-            #   if: ${{ contains(matrix.platform, 'windows') && contains(matrix.cmake-args, '-DCMAKE_BUILD_TYPE=Release') }} 
+            - name: Configure cmake for Windows  (vcpkg)
+              run: |
+                echo "`nThe cmake args are: ${{ matrix.cmake-args }}`n"
+                cmake -B build ${{ matrix.cmake-args }}
+                ls build
+              if: ${{ contains(matrix.platform, 'windows') && contains(matrix.cmake-args, '-DCMAKE_BUILD_TYPE=Release') }} 
 
             # - name: Configure
             #   run: |
@@ -270,11 +270,14 @@ jobs:
             #     }
             #   if: ${{ contains(matrix.platform, 'ubuntu') && contains(matrix.make-args, 'GGML_OPENBLAS=1') }}
 
-            # - name: Build for Windows (msbuild-1)
-            #   run: |
-            #     cmake --build build --config Release
-            #     ls build\bin\Release     
-            #   if: ${{ contains(matrix.platform, 'windows') && contains(matrix.cmake-args, '-DCMAKE_BUILD_TYPE=Release') }}   
+
+
+            - name: Build for Windows (msbuild-1)
+              run: |
+                cmake --build build --config Release
+                ls build\bin\Release     
+              if: ${{ contains(matrix.platform, 'windows') && contains(matrix.cmake-args, '-DCMAKE_BUILD_TYPE=Release') }}   
+
 
 
             # - name: Save the compiled file (Ubuntu cmake)
@@ -310,14 +313,14 @@ jobs:
             #     cd ..
             #   if: ${{ contains(matrix.platform, 'ubuntu') && contains(matrix.make-args, 'GGML_OPENBLAS=1') }}
 
-            # - name: Save the compiled file (Windows Test 1)
-            #   if: contains(matrix.platform, 'windows')
-            #   run: |
-            #     mkdir archive
-            #     mkdir archive\${{ matrix.build-name }}_${{ env.now }}
-            #     copy -r build archive\${{ matrix.build-name }}_${{ env.now }}
-            #     ls archive\${{ matrix.build-name }}_${{ env.now }}\build
-            #     ls archive\${{ matrix.build-name }}_${{ env.now }}\build\bin\Release
+            - name: Save the compiled file (Windows Test 1)
+              if: contains(matrix.platform, 'windows')
+              run: |
+                mkdir archive
+                mkdir archive\${{ matrix.build-name }}_${{ env.now }}
+                copy -r build archive\${{ matrix.build-name }}_${{ env.now }}
+                ls archive\${{ matrix.build-name }}_${{ env.now }}\build
+                ls archive\${{ matrix.build-name }}_${{ env.now }}\build\bin\Release
 
 
 
@@ -337,13 +340,13 @@ jobs:
             #     path: |
             #       archive/${{ matrix.build-name }}_${{ env.now }}.tar.gz
 
-            # - name: Archive the compiled file (Windows Test 1)
-            #   if: contains(matrix.platform, 'windows')
-            #   uses: actions/upload-artifact@v4
-            #   with:
-            #     name: ${{ matrix.build-name }}_${{ env.now }}
-            #     path: |
-            #       archive
+            - name: Archive the compiled file (Windows Test 1)
+              if: contains(matrix.platform, 'windows')
+              uses: actions/upload-artifact@v4
+              with:
+                name: ${{ matrix.build-name }}_${{ env.now }}
+                path: |
+                  archive
 
 
 
