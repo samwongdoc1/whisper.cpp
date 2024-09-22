@@ -238,7 +238,7 @@ jobs:
 
 
 
-            - name: Ununtu Test 1
+            - name: Ubuntu Test 1
               if: contains(matrix.platform, 'ubuntu')
               run: |
                 echo -e "\nThe current runner of Github action is : ${{ matrix.platform }}"
