@@ -105,7 +105,7 @@ jobs:
                 - platform: "windows-2022"
                   name: "windows-x86_64-cpu-sdl2-vcpkg-1"
                   build-name: "build-windows-x86_64-cpu-sdl2-vcpkg-1"
-                  # cmake-args: "-DGGML_CCACHE=OFF -DBUILD_SHARED_LIBS=OFF -DWHISPER_SDL2=ON -DCMAKE_BUILD_TYPE=Release -DGGML_STATIC=ON"
+                  cmake-args: "-DGGML_CCACHE=OFF -DBUILD_SHARED_LIBS=OFF -DWHISPER_SDL2=ON -DCMAKE_BUILD_TYPE=Release -DGGML_STATIC=ON"
                   # s2ver: 2.30.7                  
 
                 # - platform: "windows-latest"
@@ -115,7 +115,7 @@ jobs:
         runs-on: ${{ matrix.platform }}
         name: ${{ matrix.name }}
         steps:
-            # - uses: actions/checkout@v4
+            - uses: actions/checkout@v4
 
             # - name: Add msbuild to PATH
             #   uses: microsoft/setup-msbuild@v2
