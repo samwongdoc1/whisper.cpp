@@ -48,11 +48,11 @@ jobs:
                 #   build-name: "build-ubuntu-2204-x86_64-cpu-cmake-sdl2"
                 #   cmake-args: "-DWHISPER_SDL2=ON -DCMAKE_BUILD_TYPE=Release"
 
-                # # Linux cmake SDL2 Static
-                # - platform: "ubuntu-22.04"
-                #   name: "ubuntu-2204-x86_64-cpu-cmake-sdl2-static"
-                #   build-name: "build-ubuntu-2204-x86_64-cpu-cmake-sdl2-static"
-                #   cmake-args: "-DGGML_CCACHE=OFF -DBUILD_SHARED_LIBS=OFF -DWHISPER_SDL2=ON -DCMAKE_BUILD_TYPE=Release -DGGML_STATIC=ON"
+                # Linux cmake SDL2 Static
+                - platform: "ubuntu-22.04"
+                  name: "ubuntu-2204-x86_64-cpu-cmake-sdl2-static"
+                  build-name: "build-ubuntu-2204-x86_64-cpu-cmake-sdl2-static"
+                  cmake-args: "-DGGML_CCACHE=OFF -DBUILD_SHARED_LIBS=OFF -DWHISPER_SDL2=ON -DCMAKE_BUILD_TYPE=Release -DGGML_STATIC=ON"
                 
                 #   # Linux make SDL2 + OpenBLAS
                 # - platform: "ubuntu-22                # # Linux cmake SDL2
@@ -100,12 +100,12 @@ jobs:
                 #   build-name: "build-windows-x86_64-cpu-msbuild-1"
                 #   cmake-args: "-DGGML_CCACHE=OFF -DBUILD_SHARED_LIBS=OFF -DCMAKE_BUILD_TYPE=Release -DGGML_STATIC=ON"
 
-                # # Windows
-                - platform: "windows-2022"
-                  name: "windows-x86_64-cpu-nmake-1-sdl2"
-                  build-name: "build-windows-x86_64-cpu-nmake-1-sdl2"
-                  # nmake-args: "-DGGML_CCACHE=OFF -DBUILD_SHARED_LIBS=OFF -DWHISPER_SDL2=ON -DCMAKE_BUILD_TYPE=Release -DGGML_STATIC=ON"
-                  s2ver: 2.30.7                  
+                # # # Windows
+                # - platform: "windows-2022"
+                #   name: "windows-x86_64-cpu-nmake-1-sdl2"
+                #   build-name: "build-windows-x86_64-cpu-nmake-1-sdl2"
+                #   # nmake-args: "-DGGML_CCACHE=OFF -DBUILD_SHARED_LIBS=OFF -DWHISPER_SDL2=ON -DCMAKE_BUILD_TYPE=Release -DGGML_STATIC=ON"
+                #   s2ver: 2.30.7                  
 
                 # - platform: "windows-latest"
                 #   name: "Windows - x86_64 - Vulkan"
@@ -116,8 +116,8 @@ jobs:
         steps:
             - uses: actions/checkout@v4
 
-            - name: Add msbuild to PATH
-              uses: microsoft/setup-msbuild@v2
+            # - name: Add msbuild to PATH
+            #   uses: microsoft/setup-msbuild@v2
 
             - name: Set default env variables for Linux
               if: contains(matrix.platform, 'windows') == false
@@ -179,13 +179,19 @@ jobs:
             #     run-id: 10950754786
             #     run: ls
 
+            - name: Ubuntu Test 1
+              if: contains(matrix.platform, 'ubuntu')
+              run: |
+                cmake --version
+                vcpkg list
+                ls
+
             - name: Windows Test 1
               if: contains(matrix.platform, 'windows')
               run: |
                 msbuild.exe -v
                 nmake.exe -v
                 ls
-
 
             # - name: Windows Test 1
             #   if: contains(matrix.platform, 'windows')
