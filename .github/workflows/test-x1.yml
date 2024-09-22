@@ -183,7 +183,6 @@ jobs:
               if: contains(matrix.platform, 'ubuntu')
               run: |
                 cmake --version
-                echo $VCPKG_ROOT
                 vcpkg list
                 vcpkg install sdl2[core,x11,alsa]:x64-linux
                 vcpkg list
@@ -210,7 +209,7 @@ jobs:
             - name: Configure cmake for Ubuntu (vcpkg)
               run: |
                 echo -e "\nThe cmake args are: ${{ matrix.cmake-args }}\n"
-                cmake -B build ${{ matrix.cmake-args }} -DCMAKE_TOOLCHAIN_FILE=$VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake
+                cmake -B build ${{ matrix.cmake-args }} -DCMAKE_TOOLCHAIN_FILE=/usr/local/share/vcpkg/scripts/buildsystems/vcpkg.cmake
                 ls build
               if: ${{ contains(matrix.platform, 'ubuntu') && contains(matrix.cmake-args, '-DCMAKE_BUILD_TYPE=Release') }}
 
