@@ -1,4 +1,4 @@
-name: VCPKG Test 1 Ubuntu
+name: VCPKG Test 1
 on: 
   # push:
   # pull_request:
@@ -107,12 +107,12 @@ jobs:
                 #   build-name: "build-windows-x86_64-cpu-msbuild-1"
                 #   cmake-args: "-DGGML_CCACHE=OFF -DBUILD_SHARED_LIBS=OFF -DCMAKE_BUILD_TYPE=Release -DGGML_STATIC=ON"
 
-                # # # Windows
-                # - platform: "windows-2022"
-                #   name: "windows-x86_64-cpu-nmake-1-sdl2"
-                #   build-name: "build-windows-x86_64-cpu-nmake-1-sdl2"
-                #   # nmake-args: "-DGGML_CCACHE=OFF -DBUILD_SHARED_LIBS=OFF -DWHISPER_SDL2=ON -DCMAKE_BUILD_TYPE=Release -DGGML_STATIC=ON"
-                #   s2ver: 2.30.7                  
+                # # Windows
+                - platform: "windows-2022"
+                  name: "windows-x86_64-cpu-msbuild-1-sdl2-vcpkg"
+                  build-name: "build-windows-x86_64-cpu-nmake-1-sdl2-vcpkg"
+                  # nmake-args: "-DGGML_CCACHE=OFF -DBUILD_SHARED_LIBS=OFF -DWHISPER_SDL2=ON -DCMAKE_BUILD_TYPE=Release -DGGML_STATIC=ON"
+                  s2ver: 2.30.7                  
 
                 # - platform: "windows-latest"
                 #   name: "Windows - x86_64 - Vulkan"
@@ -193,7 +193,7 @@ jobs:
                       core.exportVariable('ACTIONS_CACHE_URL', process.env.ACTIONS_CACHE_URL || '');
                       core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
 
-            - name: vcpkg Test 1
+            - name: vcpkg Test 1 (ubuntu)
               if: contains(matrix.platform, 'ubuntu')
               run: |
                 cmake --version
@@ -201,6 +201,16 @@ jobs:
                 vcpkg install sdl2[core,x11,alsa]:x64-linux
                 vcpkg list
                 ls
+
+            - name: vcpkg Test 1 (Windows)
+              if: contains(matrix.platform, 'windows')
+              run: |
+                cmake --version
+                vcpkg list
+                vcpkg install sdl2:x64-windows
+                vcpkg list
+                ls
+                make -v
 
             # - name: vcpkg Test 2
             #   if: contains(matrix.platform, 'ubuntu')
@@ -238,12 +248,12 @@ jobs:
                 ls build
               if: ${{ contains(matrix.platform, 'ubuntu') && contains(matrix.cmake-args, '-DCMAKE_BUILD_TYPE=Release') }}
 
-            # - name: Configure cmake for Windows
-            #   run: |
-            #     echo "`nThe cmake args are: ${{ matrix.cmake-args }}`n"
-            #     cmake -B build ${{ matrix.cmake-args }}
-            #     ls build
-            #   if: ${{ contains(matrix.platform, 'windows') && contains(matrix.cmake-args, '-DCMAKE_BUILD_TYPE=Release') }} 
+            - name: Configure cmake for Windows (vcpkg)
+              run: |
+                echo "`nThe cmake args are: ${{ matrix.cmake-args }}`n" -DCMAKE_TOOLCHAIN_FILE=C:\vcpkg\scripts\buildsystems\vcpkg.cmake
+                cmake -B build ${{ matrix.cmake-args }}
+                ls build
+              if: ${{ contains(matrix.platform, 'windows') && contains(matrix.cmake-args, '-DCMAKE_BUILD_TYPE=Release') }} 
 
             # - name: Configure
             #   run: |
@@ -276,11 +286,11 @@ jobs:
             #     }
             #   if: ${{ contains(matrix.platform, 'ubuntu') && contains(matrix.make-args, 'GGML_OPENBLAS=1') }}
 
-            # - name: Build for Windows (msbuild-1)
-            #   run: |
-            #     cmake --build build --config Release
-            #     ls build\bin\Release     
-            #   if: ${{ contains(matrix.platform, 'windows') && contains(matrix.cmake-args, '-DCMAKE_BUILD_TYPE=Release') }}   
+            - name: Build for Windows (msbuild-1)
+              run: |
+                cmake --build build --config Release
+                ls build\bin\Release     
+              if: ${{ contains(matrix.platform, 'windows') && contains(matrix.cmake-args, '-DCMAKE_BUILD_TYPE=Release') }}   
 
 
             - name: Save the compiled file (Ubuntu cmake)
