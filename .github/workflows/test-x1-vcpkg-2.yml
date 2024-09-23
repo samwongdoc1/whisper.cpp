@@ -202,16 +202,16 @@ jobs:
                 vcpkg list
                 ls
 
-            - name: vcpkg Test 2
-              if: contains(matrix.platform, 'ubuntu')
-              run: |
-                sudo apt update
-                sudo apt install autoconf automake autoconf-archive -y
-                cmake --version
-                vcpkg list
-                vcpkg install openvino:x64-linux
-                vcpkg list
-                ls
+            # - name: vcpkg Test 2
+            #   if: contains(matrix.platform, 'ubuntu')
+            #   run: |
+            #     sudo apt update
+            #     sudo apt install autoconf automake autoconf-archive -y
+            #     cmake --version
+            #     vcpkg list
+            #     vcpkg install openvino:x64-linux
+            #     vcpkg list
+            #     ls
 
             # - name: Windows Test 1
             #   if: contains(matrix.platform, 'windows')
