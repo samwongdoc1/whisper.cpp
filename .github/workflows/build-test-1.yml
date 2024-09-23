@@ -68,11 +68,11 @@ jobs:
                   make-args: "GGML_OPENBLAS=1"
                   # cmake-args: "-DGGML_CCACHE=OFF -DBUILD_SHARED_LIBS=OFF -DWHISPER_SDL2=ON -DCMAKE_BUILD_TYPE=Release -DGGML_STATIC=ON -DGGML_OPENBLAS=ON"
 
-                # # Linux cmake SDL2 Static
-                # - platform: "ubuntu-24.04"
-                #   name: "ubuntu-2404-x86_64-cpu-cmake-sdl2-static"
-                #   build-name: "build-ubuntu-2404-x86_64-cpu-cmake-sdl2-static"
-                #   cmake-args: "-DGGML_CCACHE=OFF -DBUILD_SHARED_LIBS=OFF -DWHISPER_SDL2=ON -DCMAKE_BUILD_TYPE=Release -DGGML_STATIC=ON"
+                # Linux cmake SDL2 Static
+                - platform: "ubuntu-24.04"
+                  name: "ubuntu-2404-x86_64-cpu-cmake-sdl2-static"
+                  build-name: "build-ubuntu-2404-x86_64-cpu-cmake-sdl2-static"
+                  cmake-args: "-DGGML_CCACHE=OFF -DBUILD_SHARED_LIBS=OFF -DWHISPER_SDL2=ON -DCMAKE_BUILD_TYPE=Release -DGGML_STATIC=ON"
 
                 # - platform: "ubuntu-24.04"
                 #   name: "Ubuntu 24.04 - x86_64 - Vulkan"
