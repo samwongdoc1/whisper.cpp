@@ -200,7 +200,9 @@ jobs:
                 vcpkg list
                 vcpkg install sdl2[core,x11,alsa]:x64-linux
                 vcpkg list
+                echo "\nSearch for "manual-link" \n"
                 vcpkg owns manual-link
+                echo "\nSearch for "sdl2" \n"
                 vcpkg owns sdl2
                 vcpkg export --x-all-installed --zip
                 ls
@@ -213,7 +215,9 @@ jobs:
                 vcpkg list
                 vcpkg install sdl2:x64-windows
                 vcpkg list
+                echo `n"Search for "manual-link" "`n
                 vcpkg owns manual-link
+                echo `n""Search for "sdl2" "`n
                 vcpkg owns sdl2
                 vcpkg export --x-all-installed --zip
                 ls
@@ -267,15 +271,15 @@ jobs:
 
             - name: Configure cmake for Ubuntu (vcpkg)
               run: |
-                echo -e "\nThe cmake args are: ${{ matrix.cmake-args }}\n"
+                echo -e "\nThe cmake args are: ${{ matrix.cmake-args }} -DCMAKE_TOOLCHAIN_FILE=/usr/local/share/vcpkg/scripts/buildsystems/vcpkg.cmake \n"
                 cmake -B build ${{ matrix.cmake-args }} -DCMAKE_TOOLCHAIN_FILE=/usr/local/share/vcpkg/scripts/buildsystems/vcpkg.cmake
                 ls build
               if: ${{ contains(matrix.platform, 'ubuntu') && contains(matrix.cmake-args, '-DCMAKE_BUILD_TYPE=Release') }}
 
             - name: Configure cmake for Windows (vcpkg)
               run: |
-                echo "`nThe cmake args are: ${{ matrix.cmake-args }}`n" -DCMAKE_TOOLCHAIN_FILE=C:\vcpkg\scripts\buildsystems\vcpkg.cmake
-                cmake -B build ${{ matrix.cmake-args }}
+                echo `n"The cmake args are: ${{ matrix.cmake-args }} -DCMAKE_TOOLCHAIN_FILE=C:\vcpkg\scripts\buildsystems\vcpkg.cmake "`n 
+                cmake -B build ${{ matrix.cmake-args }} -DCMAKE_TOOLCHAIN_FILE=C:\vcpkg\scripts\buildsystems\vcpkg.cmake
                 ls build
               if: ${{ contains(matrix.platform, 'windows') && contains(matrix.cmake-args, '-DCMAKE_BUILD_TYPE=Release') }} 
 
