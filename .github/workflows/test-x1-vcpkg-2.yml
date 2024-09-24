@@ -208,8 +208,9 @@ jobs:
                 cmake --version
                 vcpkg list
                 vcpkg install sdl2:x64-windows
-                vcpkg integrate install
+                vcpkg integrate instal
                 vcpkg list
+                vcpkg export --x-all-installed --zip
                 ls
                 make -v
 
@@ -217,9 +218,9 @@ jobs:
               if: contains(matrix.platform, 'windows')
               uses: actions/upload-artifact@v4
               with:
-                name: vcpkg
+                name: vcpkg-export
                 path: |
-                  C:\vcpkg
+                  C:\vcpkg\*.zip
 
             # - name: vcpkg Test 2
             #   if: contains(matrix.platform, 'ubuntu')
