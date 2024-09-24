@@ -200,7 +200,11 @@ jobs:
                 vcpkg list
                 vcpkg install sdl2[core,x11,alsa]:x64-linux
                 vcpkg list
+                vcpkg owns manual-link
+                vcpkg owns sdl2
+                vcpkg export --x-all-installed --zip
                 ls
+                make -v
 
             - name: vcpkg Test 1 (Windows)
               if: contains(matrix.platform, 'windows')
@@ -208,19 +212,29 @@ jobs:
                 cmake --version
                 vcpkg list
                 vcpkg install sdl2:x64-windows
-                vcpkg integrate instal
                 vcpkg list
+                vcpkg owns manual-link
+                vcpkg owns sdl2
                 vcpkg export --x-all-installed --zip
                 ls
                 make -v
+              # vcpkg integrate instal
 
             - name: Archive the compiled file (Windows Test 0)
               if: contains(matrix.platform, 'windows')
               uses: actions/upload-artifact@v4
               with:
-                name: vcpkg-export
+                name: vcpkg-export_${{ env.now }}
                 path: |
                   C:\vcpkg\*.zip
+
+            - name: Archive the compiled file (Ubuntu Test 0)
+              if: contains(matrix.platform, 'ubuntu')
+              uses: actions/upload-artifact@v4
+              with:
+                name: vcpkg-export_${{ env.now }}
+                path: |
+                  /usr/local/share/vcpkg/*.zip
 
             # - name: vcpkg Test 2
             #   if: contains(matrix.platform, 'ubuntu')
