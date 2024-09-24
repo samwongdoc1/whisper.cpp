@@ -1,4 +1,4 @@
-name: VCPKG Test 1 (SDL2)
+name: VCPKG Test 1 (sdl2)
 on: 
   # push:
   # pull_request:
@@ -224,7 +224,7 @@ jobs:
               if: contains(matrix.platform, 'windows')
               uses: actions/upload-artifact@v4
               with:
-                name: vcpkg-export_${{ env.now }}
+                name: vcpkg-export-windows_${{ env.now }}
                 path: |
                   C:\vcpkg\*.zip
 
@@ -232,7 +232,7 @@ jobs:
               if: contains(matrix.platform, 'ubuntu')
               uses: actions/upload-artifact@v4
               with:
-                name: vcpkg-export_${{ env.now }}
+                name: vcpkg-export-ubuntu_${{ env.now }}
                 path: |
                   /usr/local/share/vcpkg/*.zip
 
