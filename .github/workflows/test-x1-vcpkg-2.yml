@@ -208,6 +208,7 @@ jobs:
                 cmake --version
                 vcpkg list
                 vcpkg install sdl2:x64-windows
+                vcpkg integrate install
                 vcpkg list
                 ls
                 make -v
