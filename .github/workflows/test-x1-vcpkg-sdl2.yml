@@ -200,9 +200,9 @@ jobs:
                 vcpkg list
                 vcpkg install sdl2[core,x11,alsa]:x64-linux
                 vcpkg list
-                echo "\nSearch for "manual-link" \n"
+                echo -e "\nSearch for "manual-link" \n"
                 vcpkg owns manual-link
-                echo "\nSearch for "sdl2" \n"
+                echo -e "\nSearch for "sdl2" \n"
                 vcpkg owns sdl2
                 vcpkg export --x-all-installed --zip
                 ls
@@ -217,7 +217,7 @@ jobs:
                 vcpkg list
                 echo `n"Search for "manual-link" "`n
                 vcpkg owns manual-link
-                echo `n""Search for "sdl2" "`n
+                echo `n"Search for "sdl2" "`n
                 vcpkg owns sdl2
                 vcpkg export --x-all-installed --zip
                 ls
