@@ -175,7 +175,6 @@ jobs:
                 Get-ChildItem env:
                 echo `n"The current version of Powershell: "
                 $PSVersionTable
-                echo 
 
 
 
