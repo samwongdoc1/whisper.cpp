@@ -14,13 +14,13 @@ on:
 
 env:
   MODEL_URL: https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-tiny.bin
-  MODEL_FILENAME: ggml-tiny.bin
-  AUDIO_URL: https://github.com/ggerganov/whisper.cpp/raw/master/samples/jfk.wav
-  AUDIO_FILENAME: jfk.wav
+  MODEL_openvino_URL: https://huggingface.co/Intel/whisper.cpp-openvino-models/resolve/main/ggml-large-v3-models.zip
+  MODEL_FILENAME: ggml-large-v3.bin
+  AUDIO_URL: https://github.com/fcbond/hkcancor/raw/refs/heads/master/sample/m.mp3
+  AUDIO_FILENAME: m.wav
+  language: yue
+  initial_prompt: 繁體
   CMAKE_BUILD_TYPE: Release
-  VCPKG_BINARY_SOURCES: "clear;x-gha,readwrite"
-  # file: build-windows-x86_64-cpu-msbuild-1-sdl2-openvino_20240920-080612
-  # run_id: 10950754786
   
 
 jobs:
@@ -139,43 +139,43 @@ jobs:
                 echo "now=$now" >> $env:GITHUB_ENV
               # echo "CMAKE_BUILD_TYPE=${{ inputs.cmake_build_type || 'Release' }}" >> $GITHUB_ENV
 
-            # - name: Ubuntu Test 1
-            #   if: contains(matrix.platform, 'ubuntu')
-            #   run: |
-            #     echo -e "\nThe current runner of Github action is : ${{ matrix.platform }}"
-            #     echo -e "\nThe current build name is              : ${{ matrix.build-name }}_${{ env.now }}"
-            #     echo -e "\nThe Current Folder                     : $(pwd) \n"
-            #     ls -al
-            #     echo -e "\nThe path of GITHUB_ENV : "
-            #     echo $GITHUB_ENV
-            #     echo -e "\nThe variable of GITHUB_ENV : "
-            #     cat "$GITHUB_ENV"         
-            #     echo -e "\nThe variable of PATH : "
-            #     echo $PATH
-            #     echo -e "\nThe variable of cmake-args : "
-            #     echo ${{ matrix.cmake-args }}
-            #     echo -e "\nThe variable of make-args  : "
-            #     echo ${{ matrix.make-args }}
+            - name: Ubuntu Test 1
+              if: contains(matrix.platform, 'ubuntu')
+              run: |
+                echo -e "\nThe current runner of Github action is : ${{ matrix.platform }}"
+                echo -e "\nThe current build name is              : ${{ matrix.build-name }}_${{ env.now }}"
+                echo -e "\nThe Current Folder                     : $(pwd) \n"
+                ls -al
+                echo -e "\nThe path of GITHUB_ENV : "
+                echo $GITHUB_ENV
+                echo -e "\nThe variable of GITHUB_ENV : "
+                cat "$GITHUB_ENV"         
+                echo -e "\nThe variable of PATH : "
+                echo $PATH
+                echo -e "\nThe variable of cmake-args : "
+                echo ${{ matrix.cmake-args }}
+                echo -e "\nThe variable of make-args  : "
+                echo ${{ matrix.make-args }}
 
-            # - name: Windows Test 1
-            #   if: contains(matrix.platform, 'windows')
-            #   run: |
-            #     echo `n"The current runner of Github action is : ${{ matrix.platform }}"
-            #     echo `n"The current build name is              : ${{ matrix.build-name }}_${{ env.now }}"
-            #     echo `n"The Current Folder                     : $(pwd) \n"
-            #     ls
-            #     echo `n"The path of GITHUB_ENV : "
-            #     echo $env:GITHUB_ENV
-            #     echo `n"The variable of GITHUB_ENV : "
-            #     echo $env:GITHUB_ENV'         
-            #     echo `n"The variable of PATH : "
-            #     $env:PATH -split ';'
-            #     echo `n"The variable of cmake-args : "
-            #     echo ${{ matrix.cmake-args }}
-            #     Get-ChildItem env:
-            #     echo `n"The current version of Powershell: "
-            #     $PSVersionTable
-            #     echo 
+            - name: Windows Test 1
+              if: contains(matrix.platform, 'windows')
+              run: |
+                echo `n"The current runner of Github action is : ${{ matrix.platform }}"
+                echo `n"The current build name is              : ${{ matrix.build-name }}_${{ env.now }}"
+                echo `n"The Current Folder                     : $(pwd) \n"
+                ls
+                echo `n"The path of GITHUB_ENV : "
+                echo $env:GITHUB_ENV
+                echo `n"The variable of GITHUB_ENV : "
+                echo $env:GITHUB_ENV'         
+                echo `n"The variable of PATH : "
+                $env:PATH -split ';'
+                echo `n"The variable of cmake-args : "
+                echo ${{ matrix.cmake-args }}
+                Get-ChildItem env:
+                echo `n"The current version of Powershell: "
+                $PSVersionTable
+                echo 
 
             # - name: Load the compiled file (Windows Test 1)
             #   if: contains(matrix.platform, 'windows')
@@ -193,7 +193,7 @@ jobs:
                       core.exportVariable('ACTIONS_CACHE_URL', process.env.ACTIONS_CACHE_URL || '');
                       core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
 
-            - name: vcpkg Test 1 (ubuntu)
+            - name: Prepare SDL2 for Linux (vcpkg) Test 1
               if: contains(matrix.platform, 'ubuntu')
               run: |
                 cmake --version
@@ -208,7 +208,7 @@ jobs:
                 ls
                 make -v
 
-            - name: vcpkg Test 1 (Windows)
+            - name: Prepare SDL2 for Windows (vcpkg) Test 1
               if: contains(matrix.platform, 'windows')
               run: |
                 cmake --version
@@ -269,6 +269,8 @@ jobs:
 
               # ls build*\build\bin\Release           
 
+
+
             - name: Configure cmake for Ubuntu (vcpkg)
               run: |
                 echo -e "\nThe cmake args are: ${{ matrix.cmake-args }} -DCMAKE_TOOLCHAIN_FILE=/usr/local/share/vcpkg/scripts/buildsystems/vcpkg.cmake \n"
@@ -283,13 +285,7 @@ jobs:
                 ls build
               if: ${{ contains(matrix.platform, 'windows') && contains(matrix.cmake-args, '-DCMAKE_BUILD_TYPE=Release') }} 
 
-            # - name: Configure
-            #   run: |
-            #     cmake -B build ${{ matrix.cmake-args }}
 
-            # - name: Build
-            #   run: |
-            #     cmake --build build --target main --config ${{ inputs.cmake_build_type }}
 
             - name: Build for Ubuntu (cmake)
               run: |
@@ -319,6 +315,7 @@ jobs:
                 cmake --build build --config Release
                 ls build\bin\Release     
               if: ${{ contains(matrix.platform, 'windows') && contains(matrix.cmake-args, '-DCMAKE_BUILD_TYPE=Release') }}   
+
 
 
             - name: Save the compiled file (Ubuntu cmake)
@@ -354,6 +351,8 @@ jobs:
             #     cd ..
             #   if: ${{ contains(matrix.platform, 'ubuntu') && contains(matrix.make-args, 'GGML_OPENBLAS=1') }}
 
+
+
             - name: Save the compiled file (Windows Test 1)
               if: contains(matrix.platform, 'windows')
               run: |
@@ -364,14 +363,6 @@ jobs:
                 ls archive\${{ matrix.build-name }}_${{ env.now }}\build\bin\Release
 
 
-
-            # - name: Archive the compiled file
-            #   if: contains(matrix.platform, 'ubuntu')
-            #   uses: actions/upload-artifact@v4
-            #   with:
-            #     name: ${{ matrix.build-name }}_${{ env.now }}
-            #     path: |
-            #       archive
 
             - name: Archive the compiled file (Ubuntu Test 1)
               if: contains(matrix.platform, 'ubuntu')
@@ -391,45 +382,44 @@ jobs:
 
 
 
-            # - name: Download assets on Linux
-            #   if: contains(matrix.platform, 'windows') == false
-            #   run: |
-            #     wget -c ${{ env.MODEL_openvino_URL }}
-            #     7z x "$(basename "${{ env.MODEL_openvino_URL }}")"
-            #   # wget ${{ env.AUDIO_URL }}
+            - name: Download assets on Linux
+              if: contains(matrix.platform, 'windows') == false
+              run: |
+                wget -c ${{ env.MODEL_openvino_URL }}
+                7z x "$(basename "${{ env.MODEL_openvino_URL }}")"
+              # wget ${{ env.AUDIO_URL }}
 
-            # - name: Download assets on Windows
-            #   if: contains(matrix.platform, 'windows')
-            #   run: |
-            #     C:\msys64\usr\bin\wget.exe ${{ env.MODEL_openvino_URL }}
-            #     7z x "$("${{ env.MODEL_openvino_URL }}" -split "/" | Select-Object -Last 1)"
-            #   # C:\msys64\usr\bin\wget.exe ${{ env.AUDIO_URL }}
+            - name: Download assets on Windows
+              if: contains(matrix.platform, 'windows')
+              run: |
+                C:\msys64\usr\bin\wget.exe ${{ env.MODEL_openvino_URL }}
+                7z x "$("${{ env.MODEL_openvino_URL }}" -split "/" | Select-Object -Last 1)"
+              # C:\msys64\usr\bin\wget.exe ${{ env.AUDIO_URL }}
 
 
 
-            # - name: Test compiled file (Ubuntu cmake) 1
-            #   run: |
-            #       source $openvino_folder_root/setupvars.sh
-            #       echo -e "\ncheck OpenVINO_DIR : $OpenVINO_DIR"
-            #       echo -e "\nTesting 1 : main \n"
-            #       ./build/bin/main -h
-            #       ldd build/bin/main
-            #       readelf -d build/bin/main
-            #       echo -e "\nTesting 1 : stream \n"
-            #       ./build/bin/stream -h
-            #       ldd build/bin/stream
-            #       readelf -d build/bin/stream
-            #       echo -e "\nTesting 1 : bench \n"
-            #       ./build/bin/bench -h
-            #       time ./build/bin/bench -m "$(echo "$(basename "${{ env.MODEL_openvino_URL }}")" | sed 's/\-models.zip$//').bin" -fa
-            #   if: ${{ contains(matrix.platform, 'ubuntu') && contains(matrix.cmake-args, '-DCMAKE_BUILD_TYPE=Release') }}
+            - name: Test compiled file (Ubuntu cmake) 1
+              run: |
+                  echo -e "\nTesting 1 : main \n"
+                  ./build/bin/main -h
+                  ldd build/bin/main
+                  readelf -d build/bin/main
+                  echo -e "\nTesting 1 : stream \n"
+                  ./build/bin/stream -h
+                  ldd build/bin/stream
+                  readelf -d build/bin/stream
+                  echo -e "\nTesting 1 : bench \n"
+                  ./build/bin/bench -h
+                  time ./build/bin/bench -m "$(echo "$(basename "${{ env.MODEL_openvino_URL }}")" | sed 's/\-models.zip$//').bin" -fa
+              if: ${{ contains(matrix.platform, 'ubuntu') && contains(matrix.cmake-args, '-DCMAKE_BUILD_TYPE=Release') }}
 
-            # - name: Test compiled file (Ubuntu cmake) 2
-            #   run: |
-            #       source $openvino_folder_root/setupvars.sh
-            #       echo -e "\ncheck OpenVINO_DIR : $OpenVINO_DIR"
-            #       time ./build/bin/main -m "$(echo "$(basename "${{ env.MODEL_openvino_URL }}")" | sed 's/\-models.zip$//').bin" -f ${{ env.AUDIO_FILENAME }} -l ${{ env.language }} --prompt ${{ env.initial_prompt }} -fa
-            #   if: ${{ contains(matrix.platform, 'ubuntu') && contains(matrix.cmake-args, '-DCMAKE_BUILD_TYPE=Release') }}
+            - name: Test compiled file (Ubuntu cmake) 2
+              run: |
+                  echo -e "\nTesting 2 : main \n"
+                  time ./build/bin/main -m "$(echo "$(basename "${{ env.MODEL_openvino_URL }}")" | sed 's/\-models.zip$//').bin" -f ${{ env.AUDIO_FILENAME }} -l ${{ env.language }} --prompt ${{ env.initial_prompt }} -fa
+              if: ${{ contains(matrix.platform, 'ubuntu') && contains(matrix.cmake-args, '-DCMAKE_BUILD_TYPE=Release') }}
+
+
 
             # - name: Test compiled file (Ubuntu make) 1
             #   run: |
@@ -437,26 +427,22 @@ jobs:
             #       time ./main -m "$(echo "$(basename "${{ env.MODEL_openvino_URL }}")" | sed 's/\-models.zip$//').bin" -f ${{ env.AUDIO_FILENAME }} -l ${{ env.language }} --prompt ${{ env.initial_prompt }} -fa
             #   if: ${{ contains(matrix.platform, 'ubuntu') && contains(matrix.make-args, 'GGML_OPENBLAS=1') }}             
 
-            # - name: Test compiled file (Windows) 1
-            #   if: contains(matrix.platform, 'windows')
-            #   run: |
-            #       cmd.exe /c "$pwd\$env:openvino_folder_root\setupvars.bat"
-            #       echo `n"check OpenVINO_DIR : $OpenVINO_DIR"
-            #       echo `n"Testing 1 : main.exe"`n
-            #       .\build\bin\Release\main -h
-            #       echo `n"Testing 1 : stream.exe"`n
-            #       .\build\bin\Release\stream -h
-            #       echo `n"Testing 1 : bench.exe"`n
-            #       .\build\bin\Release\bench -h
-            #       .\build\bin\Release\bench -m "$("$("${{ env.MODEL_openvino_URL }}" -split "/" | Select-Object -Last 1)".Replace("-models.zip", ".bin"))" -fa
+            - name: Test compiled file (Windows msbuild-1) 1
+              if: contains(matrix.platform, 'windows')
+              run: |
+                  echo `n"Testing 1 : main.exe"`n
+                  .\build\bin\Release\main -h
+                  echo `n"Testing 1 : stream.exe"`n
+                  .\build\bin\Release\stream -h
+                  echo `n"Testing 1 : bench.exe"`n
+                  .\build\bin\Release\bench -h
+                  .\build\bin\Release\bench -m "$("$("${{ env.MODEL_openvino_URL }}" -split "/" | Select-Object -Last 1)".Replace("-models.zip", ".bin"))" -fa
 
-            # - name: Test compiled file (Windows) 2
-            #   if: contains(matrix.platform, 'windows')
-            #   run: |
-            #       cmd.exe /c "$pwd\$env:openvino_folder_root\setupvars.bat"
-            #       echo `n"check OpenVINO_DIR : $OpenVINO_DIR"
-            #       echo `n"Testing 2 : main.exe"`n
-            #       .\build\bin\Release\main -m "$("$("${{ env.MODEL_openvino_URL }}" -split "/" | Select-Object -Last 1)".Replace("-models.zip", ".bin"))" -f ${{ env.AUDIO_FILENAME }} -l ${{ env.language }} --prompt ${{ env.initial_prompt }} -fa
+            - name: Test compiled file (Windows msbuild-1) 2
+              if: contains(matrix.platform, 'windows')
+              run: |
+                  echo `n"Testing 2 : main.exe"`n
+                  .\build\bin\Release\main -m "$("$("${{ env.MODEL_openvino_URL }}" -split "/" | Select-Object -Last 1)".Replace("-models.zip", ".bin"))" -f ${{ env.AUDIO_FILENAME }} -l ${{ env.language }} --prompt ${{ env.initial_prompt }} -fa
 
 
 
