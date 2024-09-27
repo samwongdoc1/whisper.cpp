@@ -336,7 +336,11 @@ jobs:
             #     ls build\bin\Release     
             #   if: ${{ contains(matrix.platform, 'windows') && contains(matrix.cmake-args, '-DCMAKE_BUILD_TYPE=Release') }}   
 
-
+            - name: Build for Windows (cmake)
+              run: |
+                cmake --build build --config Release
+                ls build\bin     
+              if: ${{ contains(matrix.platform, 'windows') && contains(matrix.cmake-args, '-DCMAKE_BUILD_TYPE=Release') }}  
 
             # - name: Save the compiled file (Ubuntu cmake)
             #   run: |
@@ -373,16 +377,14 @@ jobs:
 
 
 
-            # - name: Save the compiled file (Windows Test 1)
-            #   if: contains(matrix.platform, 'windows')
-            #   run: |
-            #     mkdir archive
-            #     mkdir archive\${{ matrix.build-name }}_${{ env.now }}
-            #     copy -r build archive\${{ matrix.build-name }}_${{ env.now }}
-            #     ls archive\${{ matrix.build-name }}_${{ env.now }}\build
-            #     ls archive\${{ matrix.build-name }}_${{ env.now }}\build\bin\Release
-
-
+            - name: Save the compiled file (Windows Test 1)
+              if: contains(matrix.platform, 'windows')
+              run: |
+                mkdir archive
+                mkdir archive\${{ matrix.build-name }}_${{ env.now }}
+                copy -r build archive\${{ matrix.build-name }}_${{ env.now }}
+                ls archive\${{ matrix.build-name }}_${{ env.now }}\build
+                ls archive\${{ matrix.build-name }}_${{ env.now }}\build\bin
 
             # - name: Archive the compiled file (Ubuntu Test 1)
             #   if: contains(matrix.platform, 'ubuntu')
@@ -409,12 +411,12 @@ jobs:
             #     7z x "$(basename "${{ env.MODEL_openvino_URL }}")"
             #   # wget ${{ env.AUDIO_URL }}
 
-            # - name: Download assets on Windows
-            #   if: contains(matrix.platform, 'windows')
-            #   run: |
-            #     C:\msys64\usr\bin\wget.exe ${{ env.MODEL_openvino_URL }}
-            #     7z x "$("${{ env.MODEL_openvino_URL }}" -split "/" | Select-Object -Last 1)"
-            #   # C:\msys64\usr\bin\wget.exe ${{ env.AUDIO_URL }}
+            - name: Download assets on Windows
+              if: contains(matrix.platform, 'windows')
+              run: |
+                C:\msys64\usr\bin\wget.exe ${{ env.MODEL_openvino_URL }}
+                7z x "$("${{ env.MODEL_openvino_URL }}" -split "/" | Select-Object -Last 1)"
+              # C:\msys64\usr\bin\wget.exe ${{ env.AUDIO_URL }}
 
 
 
@@ -447,22 +449,22 @@ jobs:
             #       time ./main -m "$(echo "$(basename "${{ env.MODEL_openvino_URL }}")" | sed 's/\-models.zip$//').bin" -f ${{ env.AUDIO_FILENAME }} -l ${{ env.language }} --prompt ${{ env.initial_prompt }} -fa
             #   if: ${{ contains(matrix.platform, 'ubuntu') && contains(matrix.make-args, 'GGML_OPENBLAS=1') }}             
 
-            # - name: Test compiled file (Windows msbuild-1) 1
-            #   if: contains(matrix.platform, 'windows')
-            #   run: |
-            #       echo `n"Testing 1 : main.exe"`n
-            #       .\build\bin\Release\main -h
-            #       echo `n"Testing 1 : stream.exe"`n
-            #       .\build\bin\Release\stream -h
-            #       echo `n"Testing 1 : bench.exe"`n
-            #       .\build\bin\Release\bench -h
-            #       .\build\bin\Release\bench -m "$("$("${{ env.MODEL_openvino_URL }}" -split "/" | Select-Object -Last 1)".Replace("-models.zip", ".bin"))" -fa
+            - name: Test compiled file (Windows msbuild-1) 1
+              if: contains(matrix.platform, 'windows')
+              run: |
+                  echo `n"Testing 1 : main.exe"`n
+                  .\build\bin\main -h
+                  echo `n"Testing 1 : stream.exe"`n
+                  .\build\bin\stream -h
+                  echo `n"Testing 1 : bench.exe"`n
+                  .\build\bin\bench -h
+                  .\build\bin\bench -m "$("$("${{ env.MODEL_openvino_URL }}" -split "/" | Select-Object -Last 1)".Replace("-models.zip", ".bin"))" -fa
 
-            # - name: Test compiled file (Windows msbuild-1) 2
-            #   if: contains(matrix.platform, 'windows')
-            #   run: |
-            #       echo `n"Testing 2 : main.exe"`n
-            #       .\build\bin\Release\main -m "$("$("${{ env.MODEL_openvino_URL }}" -split "/" | Select-Object -Last 1)".Replace("-models.zip", ".bin"))" -f ${{ env.AUDIO_FILENAME }} -l ${{ env.language }} --prompt ${{ env.initial_prompt }} -fa
+            - name: Test compiled file (Windows msbuild-1) 2
+              if: contains(matrix.platform, 'windows')
+              run: |
+                  echo `n"Testing 2 : main.exe"`n
+                  .\build\bin\main -m "$("$("${{ env.MODEL_openvino_URL }}" -split "/" | Select-Object -Last 1)".Replace("-models.zip", ".bin"))" -f ${{ env.AUDIO_FILENAME }} -l ${{ env.language }} --prompt ${{ env.initial_prompt }} -fa
 
 
 
