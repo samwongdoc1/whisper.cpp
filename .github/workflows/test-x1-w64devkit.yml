@@ -111,7 +111,7 @@ jobs:
                 - platform: "windows-2022"
                   name: "windows-x86_64-cpu-cmake-sdl2-w64devkit-vcpkg"
                   build-name: "build-windows-x86_64-cpu-cmake-sdl2-w64devkit-vcpkg"
-                  cmake-args: "-DGGML_CCACHE=OFF -DBUILD_SHARED_LIBS=OFF -DWHISPER_SDL2=ON -DCMAKE_BUILD_TYPE=Release -DGGML_STATIC=ON"
+                  cmake-args: "-DWHISPER_SDL2=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER="C:\w64devkit\bin\gcc.exe" -DCMAKE_CXX_COMPILER="C:\w64devkit\bin\g++.exe""
                   # s2ver: 2.30.7                  
 
                 # - platform: "windows-latest"
@@ -209,46 +209,43 @@ jobs:
             #     ls
             #     make -v
 
-            # - name: Prepare SDL2 for Windows (vcpkg) Test 1
-            #   if: contains(matrix.platform, 'windows')
-            #   run: |
-            #     cmake --version
-            #     vcpkg list
-            #     vcpkg install sdl2:x64-windows
-            #     vcpkg list
-            #     echo `n"Search for "manual-link" "`n
-            #     vcpkg owns manual-link
-            #     echo `n"Search for "sdl2" "`n
-            #     vcpkg owns sdl2
-            #     vcpkg export --x-all-installed --zip
-            #     ls
-            #     make -v
-            #   # vcpkg integrate instal
+            - name: Prepare SDL2 for Windows (vcpkg) Test 1
+              if: contains(matrix.platform, 'windows')
+              run: |
+                cmake --version
+                vcpkg list
+                vcpkg install sdl2:x64-windows
+                vcpkg list
+                echo `n"Search for "manual-link" "`n
+                vcpkg owns manual-link
+                echo `n"Search for "sdl2" "`n
+                vcpkg owns sdl2
+                vcpkg export --x-all-installed --zip
+                ls
+                make -v
+              # vcpkg integrate instal
 
             - name: Prepare w64devkit Test 1
               if: contains(matrix.platform, 'windows')
               run: |
                 cmake --version
                 make -v
-                C:\msys64\usr\bin\wget.exe -qO w64devkit-x64.exe https://github.com/skeeto/w64devkit/releases/download/v2.0.0/w64devkit-x64-2.0.0.exe
+                C:\msys64\usr\bin\wget.exe w64devkit-x64.exe https://github.com/skeeto/w64devkit/releases/download/v2.0.0/w64devkit-x64-2.0.0.exe
                 ls w64devkit-x64.exe
                 7z x w64devkit-x64.exe -o"C:\" -y
                 ls C:\w64devkit
-                C:\w64devkit\w64devkit.exe
+              # C:\w64devkit\w64devkit.exe
               # echo -e "\nw64devkit Test 1 \n"
               # cmake --version
               # make -v
 
-
-
-
-            # - name: Archive the compiled file (Windows Test 0)
-            #   if: contains(matrix.platform, 'windows')
-            #   uses: actions/upload-artifact@v4
-            #   with:
-            #     name: vcpkg-export-windows_${{ env.now }}
-            #     path: |
-            #       C:\vcpkg\*.zip
+            - name: Archive the compiled file (Windows Test 0)
+              if: contains(matrix.platform, 'windows')
+              uses: actions/upload-artifact@v4
+              with:
+                name: vcpkg-export-windows-sdl2_${{ env.now }}
+                path: |
+                  C:\vcpkg\*.zip
 
             # - name: Archive the compiled file (Ubuntu Test 0)
             #   if: contains(matrix.platform, 'ubuntu')
@@ -296,14 +293,19 @@ jobs:
             #     ls build
             #   if: ${{ contains(matrix.platform, 'ubuntu') && contains(matrix.cmake-args, '-DCMAKE_BUILD_TYPE=Release') }}
 
-            # - name: Configure cmake for Windows (vcpkg)
-            #   run: |
-            #     echo `n"The cmake args are: ${{ matrix.cmake-args }} -DCMAKE_TOOLCHAIN_FILE=C:\vcpkg\scripts\buildsystems\vcpkg.cmake "`n 
-            #     cmake -B build ${{ matrix.cmake-args }} -DCMAKE_TOOLCHAIN_FILE=C:\vcpkg\scripts\buildsystems\vcpkg.cmake
-            #     ls build
-            #   if: ${{ contains(matrix.platform, 'windows') && contains(matrix.cmake-args, '-DCMAKE_BUILD_TYPE=Release') }} 
+            - name: Configure cmake for Windows (vcpkg)
+              run: |
+                echo `n"The cmake args are: ${{ matrix.cmake-args }} -DCMAKE_TOOLCHAIN_FILE=C:\vcpkg\scripts\buildsystems\vcpkg.cmake "`n 
+                cmake -B build ${{ matrix.cmake-args }} -DCMAKE_TOOLCHAIN_FILE=C:\vcpkg\scripts\buildsystems\vcpkg.cmake
+                ls build
+              if: ${{ contains(matrix.platform, 'windows') && contains(matrix.cmake-args, '-DCMAKE_BUILD_TYPE=Release') }} 
 
-
+            - name: Configure cmake for Windows (w64devkit & vcpkg)
+              run: |
+                echo `n"The cmake args are: ${{ matrix.cmake-args }} -DCMAKE_TOOLCHAIN_FILE=C:\vcpkg\scripts\buildsystems\vcpkg.cmake "`n 
+                cmake -B build ${{ matrix.cmake-args }} -DCMAKE_TOOLCHAIN_FILE=C:\vcpkg\scripts\buildsystems\vcpkg.cmake 
+                ls build
+              if: ${{ contains(matrix.platform, 'windows') && contains(matrix.cmake-args, 'w64devkit') }} 
 
             # - name: Build for Ubuntu (cmake)
             #   run: |
