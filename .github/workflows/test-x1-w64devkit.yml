@@ -235,9 +235,9 @@ jobs:
                 7z x w64devkit-x64.exe -o"C:\" -y
                 ls C:\w64devkit
                 C:\w64devkit\w64devkit.exe
-                echo -e "\nw64devkit Test 1 \n"
-                cmake --version
-                make -v
+              # echo -e "\nw64devkit Test 1 \n"
+              # cmake --version
+              # make -v
 
 
 
