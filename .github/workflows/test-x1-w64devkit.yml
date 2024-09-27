@@ -111,7 +111,7 @@ jobs:
                 - platform: "windows-2022"
                   name: "windows-x86_64-cpu-cmake-sdl2-w64devkit-vcpkg"
                   build-name: "build-windows-x86_64-cpu-cmake-sdl2-w64devkit-vcpkg"
-                  cmake-args: "-DWHISPER_SDL2=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=C:\w64devkit\bin\gcc.exe -DCMAKE_CXX_COMPILER=C:\w64devkit\bin\g++.exe"
+                  cmake-args: "-DWHISPER_SDL2=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER="C:\w64devkit\bin\gcc.exe" -DCMAKE_CXX_COMPILER="C:\w64devkit\bin\g++.exe" "
                   # s2ver: 2.30.7                  
 
                 # - platform: "windows-latest"
