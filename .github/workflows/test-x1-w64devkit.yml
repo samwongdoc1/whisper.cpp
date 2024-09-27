@@ -109,8 +109,8 @@ jobs:
 
                 # # Windows
                 - platform: "windows-2022"
-                  name: "windows-x86_64-cpu-msbuild-1-sdl2-vcpkg"
-                  build-name: "build-windows-x86_64-cpu-msbuild-1-sdl2-vcpkg"
+                  name: "windows-x86_64-cpu-cmake-sdl2-w64devkit-vcpkg"
+                  build-name: "build-windows-x86_64-cpu-cmake-sdl2-w64devkit-vcpkg"
                   cmake-args: "-DGGML_CCACHE=OFF -DBUILD_SHARED_LIBS=OFF -DWHISPER_SDL2=ON -DCMAKE_BUILD_TYPE=Release -DGGML_STATIC=ON"
                   # s2ver: 2.30.7                  
 
@@ -230,7 +230,8 @@ jobs:
               run: |
                 cmake --version
                 C:\msys64\usr\bin\wget.exe -qO w64devkit-x64.exe https://github.com/skeeto/w64devkit/releases/download/v2.0.0/w64devkit-x64-2.0.0.exe
-                w64devkit-x64.exe -o"C:\w64devkit-x64" -y
+                ls w64devkit-x64.exe
+                & w64devkit-x64.exe -o"C:\w64devkit-x64" -y
                 ls C:\w64devkit-x64
 
 
