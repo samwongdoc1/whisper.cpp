@@ -394,13 +394,13 @@ jobs:
             #     path: |
             #       archive/${{ matrix.build-name }}_${{ env.now }}.tar.gz
 
-            # - name: Archive the compiled file (Windows Test 1)
-            #   if: contains(matrix.platform, 'windows')
-            #   uses: actions/upload-artifact@v4
-            #   with:
-            #     name: ${{ matrix.build-name }}_${{ env.now }}
-            #     path: |
-            #       archive
+            - name: Archive the compiled file (Windows Test 1)
+              if: contains(matrix.platform, 'windows')
+              uses: actions/upload-artifact@v4
+              with:
+                name: ${{ matrix.build-name }}_${{ env.now }}
+                path: |
+                  archive
 
 
 
