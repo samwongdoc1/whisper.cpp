@@ -221,7 +221,7 @@ jobs:
                 echo `n"Search for "sdl2" "`n
                 vcpkg owns sdl2
                 vcpkg export --x-all-installed --zip
-                tar -cvzf vcpkg-x64-windows.tar.gz "C:\vcpkg" 
+                tar -cvzf vcpkg-x64-windows.zip "C:\vcpkg" 
               # 7z a vcpkg-x64-windows.7z "C:\vcpkg\*"
               # ls
               # make -v
@@ -249,7 +249,7 @@ jobs:
               with:
                 name: vcpkg-x64-windows_${{ env.now }}
                 path: |
-                  vcpkg-x64-windows.tar.gz
+                  vcpkg-x64-windows.zip
                 # C:\vcpkg\*.zip
 
             # - name: Archive the compiled file (vcpkg sdl2)
@@ -260,14 +260,14 @@ jobs:
             #     path: |
             #       C:\vcpkg\*.zip
 
-            - name: Archive the compiled file (w64devkit)
-              if: contains(matrix.platform, 'windows')
-              uses: actions/upload-artifact@v4
-              with:
-                name: w64devkit-x64_${{ env.now }}
-                path: |
-                  w64devkit-x64.tar.gz
-                # C:\vcpkg\*.zip
+            # - name: Archive the compiled file (w64devkit)
+            #   if: contains(matrix.platform, 'windows')
+            #   uses: actions/upload-artifact@v4
+            #   with:
+            #     name: w64devkit-x64_${{ env.now }}
+            #     path: |
+            #       w64devkit-x64.tar.gz
+            #     # C:\vcpkg\*.zip
 
             # - name: Archive the compiled file (Ubuntu Test 0)
             #   if: contains(matrix.platform, 'ubuntu')
