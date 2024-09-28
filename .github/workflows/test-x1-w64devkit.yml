@@ -221,8 +221,9 @@ jobs:
                 echo `n"Search for "sdl2" "`n
                 vcpkg owns sdl2
                 vcpkg export --x-all-installed --zip
-                ls
-                make -v
+                7z a vcpkg-x64-windows.7z "C:\vcpkg"
+              # ls
+              # make -v
               # vcpkg integrate instal
 
             - name: Prepare w64devkit Test 1
@@ -234,18 +235,37 @@ jobs:
                 ls w64devkit-x64.exe
                 7z x w64devkit-x64.exe -o"C:\" -y
                 ls C:\w64devkit
+                7z a w64devkit-x64.7z "C:\w64devkit"
               # C:\w64devkit\w64devkit.exe
               # echo -e "\nw64devkit Test 1 \n"
               # cmake --version
               # make -v
 
-            - name: Archive the compiled file (Windows Test 0)
+            - name: Archive the compiled file (vcpkg)
               if: contains(matrix.platform, 'windows')
               uses: actions/upload-artifact@v4
               with:
-                name: vcpkg-export-windows-sdl2_${{ env.now }}
+                name: vcpkg-x64-windows_${{ env.now }}
                 path: |
-                  C:\vcpkg\*.zip
+                  vcpkg-x64-windows.7z
+                # C:\vcpkg\*.zip
+
+            # - name: Archive the compiled file (vcpkg sdl2)
+            #   if: contains(matrix.platform, 'windows')
+            #   uses: actions/upload-artifact@v4
+            #   with:
+            #     name: vcpkg-export-windows-sdl2_${{ env.now }}
+            #     path: |
+            #       C:\vcpkg\*.zip
+
+            - name: Archive the compiled file (w64devkit)
+              if: contains(matrix.platform, 'windows')
+              uses: actions/upload-artifact@v4
+              with:
+                name: w64devkit-x64_${{ env.now }}
+                path: |
+                  w64devkit-x64.7z
+                # C:\vcpkg\*.zip
 
             # - name: Archive the compiled file (Ubuntu Test 0)
             #   if: contains(matrix.platform, 'ubuntu')
