@@ -221,7 +221,7 @@ jobs:
                 echo `n"Search for "sdl2" "`n
                 vcpkg owns sdl2
                 vcpkg export --x-all-installed --zip
-                7z a vcpkg-x64-windows.7z "C:\vcpkg"
+                7z a vcpkg-x64-windows.7z "C:\vcpkg\*"
               # ls
               # make -v
               # vcpkg integrate instal
@@ -235,7 +235,7 @@ jobs:
                 ls w64devkit-x64.exe
                 7z x w64devkit-x64.exe -o"C:\" -y
                 ls C:\w64devkit
-                7z a w64devkit-x64.7z "C:\w64devkit"
+                7z a w64devkit-x64.7z "C:\w64devkit\*"
               # C:\w64devkit\w64devkit.exe
               # echo -e "\nw64devkit Test 1 \n"
               # cmake --version
@@ -247,7 +247,7 @@ jobs:
               with:
                 name: vcpkg-x64-windows_${{ env.now }}
                 path: |
-                  vcpkg*.7z
+                  vcpkg-x64-windows.7z
                 # C:\vcpkg\*.zip
 
             # - name: Archive the compiled file (vcpkg sdl2)
@@ -264,7 +264,7 @@ jobs:
               with:
                 name: w64devkit-x64_${{ env.now }}
                 path: |
-                  w64devkit*.7z
+                  w64devkit-x64.7z
                 # C:\vcpkg\*.zip
 
             # - name: Archive the compiled file (Ubuntu Test 0)
