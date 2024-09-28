@@ -249,7 +249,7 @@ jobs:
               with:
                 name: vcpkg-x64-windows_${{ env.now }}
                 path: |
-                  vcpkg-x64-windows.7z
+                  vcpkg-x64-windows.tar.gz
                 # C:\vcpkg\*.zip
 
             # - name: Archive the compiled file (vcpkg sdl2)
@@ -266,7 +266,7 @@ jobs:
               with:
                 name: w64devkit-x64_${{ env.now }}
                 path: |
-                  w64devkit-x64.7z
+                  w64devkit-x64.tar.gz
                 # C:\vcpkg\*.zip
 
             # - name: Archive the compiled file (Ubuntu Test 0)
