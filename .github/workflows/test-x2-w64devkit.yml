@@ -1,0 +1,492 @@
+name: w64devkit Test 1 (sdl2) (make)
+on: 
+  # push:
+  # pull_request:
+  workflow_dispatch:
+    # inputs:
+    #   cmake_build_type:
+    #     required: false
+    #     default: Release
+    #     type: choice
+    #     options:
+    #       - Debug
+    #       - Release
+
+env:
+  MODEL_URL: https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-tiny.bin
+  MODEL_openvino_URL: https://huggingface.co/Intel/whisper.cpp-openvino-models/resolve/main/ggml-large-v3-models.zip
+  MODEL_FILENAME: ggml-large-v3.bin
+  AUDIO_URL: https://github.com/fcbond/hkcancor/raw/refs/heads/master/sample/m.mp3
+  AUDIO_FILENAME: m.wav
+  language: yue
+  initial_prompt: 繁體
+  CMAKE_BUILD_TYPE: Release
+  
+
+jobs:
+    test:
+        permissions:
+            contents: write
+        strategy:
+            fail-fast: false
+            matrix:
+              include:
+                # # macOS
+
+                # - platform: "macos-latest"
+                #   name: "MacOS (Arm) - aarch64"
+                #   cmake-args: "-DGGML_CCACHE=OFF -DBUILD_SHARED_LIBS=OFF -DCMAKE_BUILD_TYPE=${{ inputs.cmake_build_type }} -DGGML_STATIC=ON"
+      
+                # Linux cmake
+                # - platform: "ubuntu-22.04"
+                #   name: "ubuntu-2204-x86_64-cpu-cmake"
+                #   build-name: "build-ubuntu-2204-x86_64-cpu-cmake"
+                #   cmake-args: "-DGGML_CCACHE=OFF -DBUILD_SHARED_LIBS=OFF -DCMAKE_BUILD_TYPE=${{ inputs.cmake_build_type }} -DGGML_STATIC=ON"
+
+                # # Linux cmake SDL2
+                # - platform: "ubuntu-22.04"
+                #   name: "ubuntu-2204-x86_64-cpu-cmake-sdl2"
+                #   build-name: "build-ubuntu-2204-x86_64-cpu-cmake-sdl2"
+                #   cmake-args: "-DWHISPER_SDL2=ON -DCMAKE_BUILD_TYPE=Release"
+
+                # # Linux cmake SDL2 Static
+                # - platform: "ubuntu-22.04"
+                #   name: "ubuntu-2204-x86_64-cpu-cmake-sdl2-static"
+                #   build-name: "build-ubuntu-2204-x86_64-cpu-cmake-sdl2-static"
+                #   cmake-args: "-DGGML_CCACHE=OFF -DBUILD_SHARED_LIBS=OFF -DWHISPER_SDL2=ON -DCMAKE_BUILD_TYPE=Release -DGGML_STATIC=ON"
+
+                # Linux cmake SDL2 Static
+                # - platform: "ubuntu-22.04"
+                #   name: "ubuntu-2204-x86_64-cpu-cmake-sdl2-static-vcpkg"
+                #   build-name: "build-ubuntu-2204-x86_64-cpu-cmake-sdl2-static-vcpkg"
+                #   cmake-args: "-DGGML_CCACHE=OFF -DBUILD_SHARED_LIBS=OFF -DWHISPER_SDL2=ON -DCMAKE_BUILD_TYPE=Release -DGGML_STATIC=ON"
+
+                #   # Linux make SDL2 + OpenBLAS
+                # - platform: "ubuntu-22                # # Linux cmake SDL2
+                # - platform: "ubuntu-22.04"
+                #   name: "ubuntu-2204-x86_64-cpu-cmake-sdl2"
+                #   build-name: "build-ubuntu-2204-x86_64-cpu-cmake-sdl2"
+                #   cmake-args: "-DWHISPER_SDL2=ON -DCMAKE_BUILD_TYPE=Release"
+
+                # # Linux cmake SDL2 Static
+                # - platform: "ubuntu-22.04"
+                #   name: "ubuntu-2204-x86_64-cpu-cmake-sdl2-static"
+                #   build-name: "build-ubuntu-2204-x86_64-cpu-cmake-sdl2-static"
+                #   cmake-args: "-DGGML_CCACHE=OFF -DBUILD_SHARED_LIBS=OFF -DWHISPER_SDL2=ON -DCMAKE_BUILD_TYPE=Release -DGGML_STATIC=ON"
+                
+                #   # Linux make SDL2 + OpenBLAS
+                # - platform: "ubuntu-22.04"
+                #   name: "ubuntu-2204-x86_64-cpu-make-sdl2-openblas"
+                #   build-name: "build-ubuntu-2204-x86_64-cpu-make-sdl2-openblas"
+                #   make-args: "GGML_OPENBLAS=1"
+                #   # cmake-args: "-DGGML_CCACHE=OFF -DBUILD_SHARED_LIBS=OFF -DWHISPER_SDL2=ON -DCMAKE_BUILD_TYPE=Release -DGGML_STATIC=ON -DGGML_OPENBLAS=ON"
+
+                # # Linux cmake SDL2 Static
+                # - platform: "ubuntu-24.04"
+                #   name: "ubuntu-2404-x86_64-cpu-cmake-sdl2-static"
+                #   build-name: "build-ubuntu-2404-x86_64-cpu-cmake-sdl2-static"
+                #   cmake-args: "-DGGML_CCACHE=OFF -DBUILD_SHARED_LIBS=OFF -DWHISPER_SDL2=ON -DCMAKE_BUILD_TYPE=Release -DGGML_STATIC=ON".04"
+                #   name: "ubuntu-2204-x86_64-cpu-make-sdl2-openblas"
+                #   build-name: "build-ubuntu-2204-x86_64-cpu-make-sdl2-openblas"
+                #   make-args: "GGML_OPENBLAS=1"
+                #   # cmake-args: "-DGGML_CCACHE=OFF -DBUILD_SHARED_LIBS=OFF -DWHISPER_SDL2=ON -DCMAKE_BUILD_TYPE=Release -DGGML_STATIC=ON -DGGML_OPENBLAS=ON"
+
+                # # Linux cmake SDL2 Static
+                # - platform: "ubuntu-24.04"
+                #   name: "ubuntu-2404-x86_64-cpu-cmake-sdl2-static"
+                #   build-name: "build-ubuntu-2404-x86_64-cpu-cmake-sdl2-static"
+                #   cmake-args: "-DGGML_CCACHE=OFF -DBUILD_SHARED_LIBS=OFF -DWHISPER_SDL2=ON -DCMAKE_BUILD_TYPE=Release -DGGML_STATIC=ON"
+
+                # - platform: "ubuntu-24.04"
+                #   name: "Ubuntu 24.04 - x86_64 - Vulkan"
+                #   cmake-args: "-DGGML_VULKAN=ON -DGGML_CCACHE=OFF -DBUILD_SHARED_LIBS=OFF -DCMAKE_BUILD_TYPE=${{ inputs.cmake_build_type }} -DGGML_STATIC=ON"
+      
+                # Windows
+                # - platform: "windows-2022"
+                #   name: "windows-x86_64-cpu-msbuild-1"
+                #   build-name: "build-windows-x86_64-cpu-msbuild-1"
+                #   cmake-args: "-DGGML_CCACHE=OFF -DBUILD_SHARED_LIBS=OFF -DCMAKE_BUILD_TYPE=Release -DGGML_STATIC=ON"
+
+                # # Windows
+                - platform: "windows-2022"
+                  name: "windows-x86_64-cpu-make-sdl2-w64devkit-vcpkg"
+                  build-name: "build-windows-x86_64-cpu-make-sdl2-w64devkit-vcpkg"
+                  # cmake-args: "-DWHISPER_SDL2=ON -DCMAKE_BUILD_TYPE=Release"
+                  # s2ver: 2.30.7                  
+
+                # - platform: "windows-latest"
+                #   name: "Windows - x86_64 - Vulkan"
+                #   cmake-args: "-DGGML_VULKAN=ON -DGGML_CCACHE=OFF -DBUILD_SHARED_LIBS=OFF -DCMAKE_BUILD_TYPE=${{ inputs.cmake_build_type }} -DGGML_STATIC=ON"
+
+        runs-on: ${{ matrix.platform }}
+        name: ${{ matrix.name }}
+        steps:
+            - uses: actions/checkout@v4
+
+            # - name: Add msbuild to PATH
+            #   uses: microsoft/setup-msbuild@v2
+
+            - name: Set default env variables for Linux
+              if: contains(matrix.platform, 'windows') == false
+              run: |
+                echo "now=$(TZ="Asia/Hong_Kong" date +%Y%m%d-%H%M%S)" >> $GITHUB_ENV
+              # echo "CMAKE_BUILD_TYPE=${{ inputs.cmake_build_type || 'Release' }}" >> $GITHUB_ENV
+
+            - name: Set default env variables for Windows
+              if: contains(matrix.platform, 'windows')
+              run: |
+                $now =(Get-Date).ToUniversalTime().AddHours(8).ToString("yyyyMMdd-HHmmss")
+                echo "now=$now" >> $env:GITHUB_ENV
+              # echo "CMAKE_BUILD_TYPE=${{ inputs.cmake_build_type || 'Release' }}" >> $GITHUB_ENV
+
+            - name: Ubuntu Test 1
+              if: contains(matrix.platform, 'ubuntu')
+              run: |
+                echo -e "\nThe current runner of Github action is : ${{ matrix.platform }}"
+                echo -e "\nThe current build name is              : ${{ matrix.build-name }}_${{ env.now }}"
+                echo -e "\nThe Current Folder                     : $(pwd) \n"
+                ls -al
+                echo -e "\nThe path of GITHUB_ENV : "
+                echo $GITHUB_ENV
+                echo -e "\nThe variable of GITHUB_ENV : "
+                cat "$GITHUB_ENV"         
+                echo -e "\nThe variable of PATH : "
+                echo $PATH
+                echo -e "\nThe variable of cmake-args : "
+                echo ${{ matrix.cmake-args }}
+                echo -e "\nThe variable of make-args  : "
+                echo ${{ matrix.make-args }}
+
+            - name: Windows Test 1
+              if: contains(matrix.platform, 'windows')
+              run: |
+                echo `n"The current runner of Github action is : ${{ matrix.platform }}"
+                echo `n"The current build name is              : ${{ matrix.build-name }}_${{ env.now }}"
+                echo `n"The Current Folder                     : $(pwd) \n"
+                ls
+                echo `n"The path of GITHUB_ENV : "
+                echo $env:GITHUB_ENV
+                echo `n"The variable of GITHUB_ENV : "
+                echo $env:GITHUB_ENV         
+                echo `n"The variable of PATH : "
+                $env:PATH -split ';'
+                echo `n"The variable of cmake-args : "
+                echo ${{ matrix.cmake-args }}
+                Get-ChildItem env:
+                echo `n"The current version of Powershell: "
+                $PSVersionTable
+
+
+
+            # - name: Load the compiled file (Windows Test 1)
+            #   if: contains(matrix.platform, 'windows')
+            #   uses: actions/download-artifact@v4.1.8
+            #   with:
+            #     github-token: ${{ secrets.x1 }}
+            #     repository: samwongdoc1/whisper.cpp
+            #     run-id: 10950754786
+            #     run: ls
+
+            - name: Export GitHub Actions cache environment variables
+              uses: actions/github-script@v7
+              with:
+                script: |
+                      core.exportVariable('ACTIONS_CACHE_URL', process.env.ACTIONS_CACHE_URL || '');
+                      core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
+
+            # - name: Prepare SDL2 for Linux (vcpkg) Test 1
+            #   if: contains(matrix.platform, 'ubuntu')
+            #   run: |
+            #     cmake --version
+            #     vcpkg list
+            #     vcpkg install sdl2[core,x11,alsa]:x64-linux
+            #     vcpkg list
+            #     echo -e "\nSearch for "manual-link" \n"
+            #     vcpkg owns manual-link
+            #     echo -e "\nSearch for "sdl2" \n"
+            #     vcpkg owns sdl2
+            #     vcpkg export --x-all-installed --zip
+            #     ls
+            #     make -v
+
+            - name: Prepare SDL2 for Windows (vcpkg) Test 1
+              if: contains(matrix.platform, 'windows')
+              run: |
+                cmake --version
+                vcpkg list
+                vcpkg install sdl2:x64-windows
+                vcpkg list
+                echo `n"Search for "manual-link" "`n
+                vcpkg owns manual-link
+                echo `n"Search for "sdl2" "`n
+                vcpkg owns sdl2
+                vcpkg export --x-all-installed --zip
+                tar -cvzf vcpkg-x64-windows.zip "C:\vcpkg" 
+              # 7z a vcpkg-x64-windows.7z "C:\vcpkg\*"
+              # ls
+              # make -v
+              # vcpkg integrate instal
+
+            - name: Prepare w64devkit Test 1
+              if: contains(matrix.platform, 'windows')
+              run: |
+                cmake --version
+                make -v
+                C:\msys64\usr\bin\wget.exe -qO w64devkit-x64.exe https://github.com/skeeto/w64devkit/releases/download/v2.0.0/w64devkit-x64-2.0.0.exe
+                ls w64devkit-x64.exe
+                7z x w64devkit-x64.exe -o"C:\" -y
+                ls C:\w64devkit
+                tar -cvzf w64devkit-x64.tar.gz "C:\w64devkit"
+              # 7z a w64devkit-x64.7z "C:\w64devkit\*"
+              # C:\w64devkit\w64devkit.exe
+              # echo -e "\nw64devkit Test 1 \n"
+              # cmake --version
+              # make -v
+
+            - name: Archive the compiled file (vcpkg)
+              if: contains(matrix.platform, 'windows')
+              uses: actions/upload-artifact@v4
+              with:
+                name: vcpkg-x64-windows_${{ env.now }}
+                path: |
+                  vcpkg-x64-windows.zip
+                # C:\vcpkg\*.zip
+
+            # - name: Archive the compiled file (vcpkg sdl2)
+            #   if: contains(matrix.platform, 'windows')
+            #   uses: actions/upload-artifact@v4
+            #   with:
+            #     name: vcpkg-export-windows-sdl2_${{ env.now }}
+            #     path: |
+            #       C:\vcpkg\*.zip
+
+            # - name: Archive the compiled file (w64devkit)
+            #   if: contains(matrix.platform, 'windows')
+            #   uses: actions/upload-artifact@v4
+            #   with:
+            #     name: w64devkit-x64_${{ env.now }}
+            #     path: |
+            #       w64devkit-x64.tar.gz
+            #     # C:\vcpkg\*.zip
+
+            # - name: Archive the compiled file (Ubuntu Test 0)
+            #   if: contains(matrix.platform, 'ubuntu')
+            #   uses: actions/upload-artifact@v4
+            #   with:
+            #     name: vcpkg-export-ubuntu_${{ env.now }}
+            #     path: |
+            #       /usr/local/share/vcpkg/*.zip
+
+            # - name: vcpkg Test 2
+            #   if: contains(matrix.platform, 'ubuntu')
+            #   run: |
+            #     sudo apt update
+            #     sudo apt install autoconf automake autoconf-archive -y
+            #     cmake --version
+            #     vcpkg list
+            #     vcpkg install openvino:x64-linux
+            #     vcpkg list
+            #     ls
+
+            # - name: Windows Test 1
+            #   if: contains(matrix.platform, 'windows')
+            #   run: |
+            #     msbuild.exe -v
+            #     nmake.exe -v
+            #     ls
+
+            # - name: Windows Test 1
+            #   if: contains(matrix.platform, 'windows')
+            #   run: |
+            #     echo $GH_TOKEN=${{ secrets.x1 }} | gh auth login
+            #     gh run download ${{ env.run_id }} -R samwongdoc1/whisper.cpp -n ${{ env.file }}
+            #     ls ${{ env.file }}\build\bin\Release
+            #     .\${{ env.file }}\build\bin\Release\main -h
+
+
+              # ls build*\build\bin\Release           
+
+
+
+            # - name: Configure cmake for Ubuntu (vcpkg)
+            #   run: |
+            #     echo -e "\nThe cmake args are: ${{ matrix.cmake-args }} -DCMAKE_TOOLCHAIN_FILE=/usr/local/share/vcpkg/scripts/buildsystems/vcpkg.cmake \n"
+            #     cmake -B build ${{ matrix.cmake-args }} -DCMAKE_TOOLCHAIN_FILE=/usr/local/share/vcpkg/scripts/buildsystems/vcpkg.cmake
+            #     ls build
+            #   if: ${{ contains(matrix.platform, 'ubuntu') && contains(matrix.cmake-args, '-DCMAKE_BUILD_TYPE=Release') }}
+
+            # - name: Configure cmake for Windows (vcpkg)
+            #   run: |
+            #     echo `n"The cmake args are: ${{ matrix.cmake-args }} -DCMAKE_TOOLCHAIN_FILE=C:\vcpkg\scripts\buildsystems\vcpkg.cmake "`n 
+            #     cmake -B build ${{ matrix.cmake-args }} -DCMAKE_TOOLCHAIN_FILE=C:\vcpkg\scripts\buildsystems\vcpkg.cmake
+            #     ls build
+            #   if: ${{ contains(matrix.platform, 'windows') && contains(matrix.cmake-args, '-DCMAKE_BUILD_TYPE=Release') }} 
+
+            - name: Configure cmake for Windows (w64devkit & vcpkg)
+              run: |
+                echo `n"The cmake args are: ${{ matrix.cmake-args }} -DCMAKE_TOOLCHAIN_FILE=C:\vcpkg\scripts\buildsystems\vcpkg.cmake -DCMAKE_C_COMPILER="C:\w64devkit\bin\gcc.exe" -DCMAKE_CXX_COMPILER="C:\w64devkit\bin\g++.exe" -G "MinGW Makefiles" "`n 
+                cmake -B build ${{ matrix.cmake-args }} -DCMAKE_TOOLCHAIN_FILE=C:\vcpkg\scripts\buildsystems\vcpkg.cmake -DCMAKE_C_COMPILER="C:\w64devkit\bin\gcc.exe" -DCMAKE_CXX_COMPILER="C:\w64devkit\bin\g++.exe" -G "MinGW Makefiles"
+                ls build
+              if: ${{ contains(matrix.platform, 'windows') && contains(matrix.cmake-args, '-DCMAKE_BUILD_TYPE=Release') }} 
+
+            # - name: Build for Ubuntu (cmake)
+            #   run: |
+            #     cmake --build build -j$(nproc) --config Release
+            #     echo -e "\n The compiled files are : \n"
+            #     ls -al build/bin
+            #   if: ${{ contains(matrix.platform, 'ubuntu') && contains(matrix.cmake-args, '-DCMAKE_BUILD_TYPE=Release') }}
+
+            # - name: Build for Ubuntu (make)
+            #   run: |
+            #     echo -e "\nThe make args are: ${{ matrix.make-args }}\n"
+            #     ${{ matrix.make-args }} make -j$(nproc)
+            #     echo -e "\n The compiled files are : \n"
+            #     {
+            #     for file in * ; do
+            #       if [ -f "$file" ]; then
+            #         if file "$file" | grep -q "ELF"; then
+            #           ls -al $file
+            #         fi
+            #       fi
+            #     done
+            #     }
+            #   if: ${{ contains(matrix.platform, 'ubuntu') && contains(matrix.make-args, 'GGML_OPENBLAS=1') }}
+
+            # - name: Build for Windows (msbuild-1)
+            #   run: |
+            #     cmake --build build --config Release
+            #     ls build\bin\Release     
+            #   if: ${{ contains(matrix.platform, 'windows') && contains(matrix.cmake-args, '-DCMAKE_BUILD_TYPE=Release') }}   
+
+            - name: Build for Windows (cmake)
+              run: |
+                cmake --build build --config Release
+                ls build\bin     
+              if: ${{ contains(matrix.platform, 'windows') && contains(matrix.cmake-args, '-DCMAKE_BUILD_TYPE=Release') }}  
+
+            # - name: Save the compiled file (Ubuntu cmake)
+            #   run: |
+            #     mkdir archive
+            #     mkdir archive/${{ matrix.build-name }}_${{ env.now }}
+            #     cp -r build archive/${{ matrix.build-name }}_${{ env.now }}
+            #     ls -al archive/${{ matrix.build-name }}_${{ env.now }}/build
+            #     cd archive 
+            #     tar -cvzf ${{ matrix.build-name }}_${{ env.now }}.tar.gz ${{ matrix.build-name }}_${{ env.now }}
+            #     ls -al ${{ matrix.build-name }}_${{ env.now }}.tar.gz
+            #     cd ..
+            #   if: ${{ contains(matrix.platform, 'ubuntu') && contains(matrix.cmake-args, '-DCMAKE_BUILD_TYPE=Release') }}
+
+            # - name: Save the compiled file (Ubuntu make)
+            #   run: |
+            #     mkdir archive
+            #     mkdir archive/${{ matrix.build-name }}_${{ env.now }}
+            #     mkdir archive/${{ matrix.build-name }}_${{ env.now }}/build
+            #     {
+            #     for file in *; do
+            #       if [ -f "$file" ]; then
+            #         if file "$file" | grep -q "ELF"; then
+            #           cp $file archive/${{ matrix.build-name }}_${{ env.now }}/build
+            #           ls -al archive/${{ matrix.build-name }}_${{ env.now }}/build/$file
+            #         fi
+            #       fi
+            #     done
+            #     }
+            #     cd archive 
+            #     tar -cvzf ${{ matrix.build-name }}_${{ env.now }}.tar.gz ${{ matrix.build-name }}_${{ env.now }}
+            #     ls -al ${{ matrix.build-name }}_${{ env.now }}.tar.gz
+            #     cd ..
+            #   if: ${{ contains(matrix.platform, 'ubuntu') && contains(matrix.make-args, 'GGML_OPENBLAS=1') }}
+
+
+
+            - name: Save the compiled file (Windows Test 1)
+              if: contains(matrix.platform, 'windows')
+              run: |
+                mkdir archive
+                mkdir archive\${{ matrix.build-name }}_${{ env.now }}
+                copy -r build archive\${{ matrix.build-name }}_${{ env.now }}
+                ls archive\${{ matrix.build-name }}_${{ env.now }}\build
+                ls archive\${{ matrix.build-name }}_${{ env.now }}\build\bin
+
+            # - name: Archive the compiled file (Ubuntu Test 1)
+            #   if: contains(matrix.platform, 'ubuntu')
+            #   uses: actions/upload-artifact@v4
+            #   with:
+            #     name: ${{ matrix.build-name }}_${{ env.now }}
+            #     path: |
+            #       archive/${{ matrix.build-name }}_${{ env.now }}.tar.gz
+
+            - name: Archive the compiled file (Windows Test 1)
+              if: contains(matrix.platform, 'windows')
+              uses: actions/upload-artifact@v4
+              with:
+                name: ${{ matrix.build-name }}_${{ env.now }}
+                path: |
+                  archive
+
+
+
+            # - name: Download assets on Linux
+            #   if: contains(matrix.platform, 'windows') == false
+            #   run: |
+            #     wget -c ${{ env.MODEL_openvino_URL }}
+            #     7z x "$(basename "${{ env.MODEL_openvino_URL }}")"
+            #   # wget ${{ env.AUDIO_URL }}
+
+            - name: Download assets on Windows
+              if: contains(matrix.platform, 'windows')
+              run: |
+                C:\msys64\usr\bin\wget.exe ${{ env.MODEL_openvino_URL }}
+                7z x "$("${{ env.MODEL_openvino_URL }}" -split "/" | Select-Object -Last 1)"
+              # C:\msys64\usr\bin\wget.exe ${{ env.AUDIO_URL }}
+
+
+
+            # - name: Test compiled file (Ubuntu cmake) 1
+            #   run: |
+            #       echo -e "\nTesting 1 : main \n"
+            #       ./build/bin/main -h
+            #       ldd build/bin/main
+            #       readelf -d build/bin/main
+            #       echo -e "\nTesting 1 : stream \n"
+            #       ./build/bin/stream -h
+            #       ldd build/bin/stream
+            #       readelf -d build/bin/stream
+            #       echo -e "\nTesting 1 : bench \n"
+            #       ./build/bin/bench -h
+            #       time ./build/bin/bench -m "$(echo "$(basename "${{ env.MODEL_openvino_URL }}")" | sed 's/\-models.zip$//').bin" -fa
+            #   if: ${{ contains(matrix.platform, 'ubuntu') && contains(matrix.cmake-args, '-DCMAKE_BUILD_TYPE=Release') }}
+
+            # - name: Test compiled file (Ubuntu cmake) 2
+            #   run: |
+            #       echo -e "\nTesting 2 : main \n"
+            #       time ./build/bin/main -m "$(echo "$(basename "${{ env.MODEL_openvino_URL }}")" | sed 's/\-models.zip$//').bin" -f ${{ env.AUDIO_FILENAME }} -l ${{ env.language }} --prompt ${{ env.initial_prompt }} -fa
+            #   if: ${{ contains(matrix.platform, 'ubuntu') && contains(matrix.cmake-args, '-DCMAKE_BUILD_TYPE=Release') }}
+
+
+
+            # - name: Test compiled file (Ubuntu make) 1
+            #   run: |
+            #       ./main -h
+            #       time ./main -m "$(echo "$(basename "${{ env.MODEL_openvino_URL }}")" | sed 's/\-models.zip$//').bin" -f ${{ env.AUDIO_FILENAME }} -l ${{ env.language }} --prompt ${{ env.initial_prompt }} -fa
+            #   if: ${{ contains(matrix.platform, 'ubuntu') && contains(matrix.make-args, 'GGML_OPENBLAS=1') }}             
+
+            - name: Test compiled file (Windows msbuild-1) 1
+              if: contains(matrix.platform, 'windows')
+              run: |
+                  echo `n"Testing 1 : main.exe"`n
+                  .\build\bin\main -h
+                  echo `n"Testing 1 : stream.exe"`n
+                  .\build\bin\stream -h
+                  echo `n"Testing 1 : bench.exe"`n
+                  .\build\bin\bench -h
+                  .\build\bin\bench -m "$("$("${{ env.MODEL_openvino_URL }}" -split "/" | Select-Object -Last 1)".Replace("-models.zip", ".bin"))" -fa
+
+            - name: Test compiled file (Windows msbuild-1) 2
+              if: contains(matrix.platform, 'windows')
+              run: |
+                  echo `n"Testing 2 : main.exe"`n
+                  .\build\bin\main -m "$("$("${{ env.MODEL_openvino_URL }}" -split "/" | Select-Object -Last 1)".Replace("-models.zip", ".bin"))" -f ${{ env.AUDIO_FILENAME }} -l ${{ env.language }} --prompt ${{ env.initial_prompt }} -fa
+
+
+
