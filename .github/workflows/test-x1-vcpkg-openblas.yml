@@ -255,6 +255,22 @@ jobs:
               # make -v
               # vcpkg integrate instal
 
+            - name: Prepare SDL2 for Mingw (vcpkg) Test 1
+              if: contains(matrix.platform, 'windows')
+              run: |
+                cmake --version
+                vcpkg list
+                vcpkg remove sdl2:x64-windows
+                vcpkg list
+                vcpkg install sdl2:x64-mingw-static
+                vcpkg list
+                echo `n"Search for "manual-link" "`n
+                vcpkg owns manual-link
+                echo `n"Search for "sdl2" "`n
+                vcpkg owns sdl2
+                vcpkg export --x-all-installed --zip
+                tar -cvzf vcpkg-x64-windows_sdl2.tar.gz "C:\vcpkg"
+
             - name: Prepare Openblas for Windows (vcpkg) Test 2
               if: contains(matrix.platform, 'windows')
               run: |
