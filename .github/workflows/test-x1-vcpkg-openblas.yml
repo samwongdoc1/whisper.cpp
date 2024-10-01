@@ -1,4 +1,4 @@
-name: VCPKG Test 3 Windows (openblas)
+name: VCPKG Test 3 (openblas)
 on: 
   # push:
   # pull_request:
@@ -14,13 +14,13 @@ on:
 
 env:
   MODEL_URL: https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-tiny.bin
-  MODEL_FILENAME: ggml-tiny.bin
-  AUDIO_URL: https://github.com/ggerganov/whisper.cpp/raw/master/samples/jfk.wav
-  AUDIO_FILENAME: jfk.wav
+  MODEL_openvino_URL: https://huggingface.co/Intel/whisper.cpp-openvino-models/resolve/main/ggml-large-v3-models.zip
+  MODEL_FILENAME: ggml-large-v3.bin
+  AUDIO_URL: https://github.com/fcbond/hkcancor/raw/refs/heads/master/sample/m.mp3
+  AUDIO_FILENAME: m.wav
+  language: yue
+  initial_prompt: 繁體
   CMAKE_BUILD_TYPE: Release
-  VCPKG_BINARY_SOURCES: "clear;x-gha,readwrite"
-  # file: build-windows-x86_64-cpu-msbuild-1-sdl2-openvino_20240920-080612
-  # run_id: 10950754786
   
 
 jobs:
@@ -54,7 +54,19 @@ jobs:
                 #   name: "ubuntu-2204-x86_64-cpu-cmake-sdl2-static"
                 #   build-name: "build-ubuntu-2204-x86_64-cpu-cmake-sdl2-static"
                 #   cmake-args: "-DGGML_CCACHE=OFF -DBUILD_SHARED_LIBS=OFF -DWHISPER_SDL2=ON -DCMAKE_BUILD_TYPE=Release -DGGML_STATIC=ON"
-                
+
+                # # Linux cmake SDL2 Static
+                # - platform: "ubuntu-22.04"
+                #   name: "ubuntu-2204-x86_64-cpu-cmake-sdl2-static-vcpkg"
+                #   build-name: "build-ubuntu-2204-x86_64-cpu-cmake-sdl2-static-vcpkg"
+                #   cmake-args: "-DGGML_CCACHE=OFF -DBUILD_SHARED_LIBS=OFF -DWHISPER_SDL2=ON -DCMAKE_BUILD_TYPE=Release -DGGML_STATIC=ON"
+
+                # Linux cmake SDL2 + OpenBLAS Static
+                - platform: "ubuntu-22.04"
+                  name: "ubuntu-2204-x86_64-cpu-cmake-sdl2-openblas-static-vcpkg"
+                  build-name: "build-ubuntu-2204-x86_64-cpu-cmake-sdl2-openblas-static-vcpkg"
+                  # cmake-args: "-DGGML_CCACHE=OFF -DBUILD_SHARED_LIBS=OFF -DWHISPER_SDL2=ON -DCMAKE_BUILD_TYPE=Release -DGGML_STATIC=ON"
+
                 #   # Linux make SDL2 + OpenBLAS
                 # - platform: "ubuntu-22                # # Linux cmake SDL2
                 # - platform: "ubuntu-22.04"
@@ -101,11 +113,17 @@ jobs:
                 #   build-name: "build-windows-x86_64-cpu-msbuild-1"
                 #   cmake-args: "-DGGML_CCACHE=OFF -DBUILD_SHARED_LIBS=OFF -DCMAKE_BUILD_TYPE=Release -DGGML_STATIC=ON"
 
+                # # # Windows
+                # - platform: "windows-2022"
+                #   name: "windows-x86_64-cpu-msbuild-1-sdl2-vcpkg"
+                #   build-name: "build-windows-x86_64-cpu-msbuild-1-sdl2-vcpkg"
+                #   cmake-args: "-DGGML_CCACHE=OFF -DBUILD_SHARED_LIBS=OFF -DWHISPER_SDL2=ON -DCMAKE_BUILD_TYPE=Release -DGGML_STATIC=ON"
+
                 # # Windows
                 - platform: "windows-2022"
-                  name: "windows-x86_64-cpu-sdl2-openblas-vcpkg-1"
+                  name: "windows-x86_64-cpu-msbuild-1-sdl2-openblas-vcpkg"
                   build-name: "build-windows-x86_64-cpu-sdl2-openblas-vcpkg-1"
-                  make-args: "GGML_OPENBLAS=1"
+                  # make-args: "GGML_OPENBLAS=1"
                   # s2ver: 2.30.7                  
 
                 # - platform: "windows-latest"
@@ -187,27 +205,75 @@ jobs:
                       core.exportVariable('ACTIONS_CACHE_URL', process.env.ACTIONS_CACHE_URL || '');
                       core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
 
-            - name: vcpkg Test 1
+            - name: Prepare SDL2 for Linux (vcpkg) Test 1
+              if: contains(matrix.platform, 'ubuntu')
+              run: |
+                cmake --version
+                vcpkg list
+                vcpkg install sdl2[core,x11,alsa]:x64-linux
+                vcpkg list
+                echo -e "\nSearch for "manual-link" \n"
+                vcpkg owns manual-link
+                echo -e "\nSearch for "sdl2" \n"
+                vcpkg owns sdl2
+                vcpkg export --x-all-installed --zip
+                tar -cvzf vcpkg-x64-ubuntu_sdl2.tar.gz "/usr/local/share/vcpkg"
+              # ls
+              # make -v
+
+            - name: Prepare SDL2 for Windows (vcpkg) Test 1
               if: contains(matrix.platform, 'windows')
               run: |
                 cmake --version
                 vcpkg list
                 vcpkg install sdl2:x64-windows
                 vcpkg list
-                ls
-                make -v
+                echo `n"Search for "manual-link" "`n
+                vcpkg owns manual-link
+                echo `n"Search for "sdl2" "`n
+                vcpkg owns sdl2
+                vcpkg export --x-all-installed --zip
+                tar -cvzf vcpkg-x64-windows_sdl2.tar.gz "C:\vcpkg" 
+              # 7z a vcpkg-x64-windows.7z "C:\vcpkg\*"
+              # ls
+              # make -v
+              # vcpkg integrate instal
 
-            - name: vcpkg Test 2
+            - name: Archive the compiled file (vcpkg sdl2 export (Windows))
               if: contains(matrix.platform, 'windows')
-              run: |
-                cmake --version
-                vcpkg list
-                vcpkg install openblas:x64-windows
-                vcpkg list
-                ls
+              uses: actions/upload-artifact@v4
+              with:
+                name: vcpkg-export-windows_${{ env.now }}
+                path: |
+                  C:\vcpkg\*.zip
+
+            - name: Archive the compiled file (back up vcpkg Windows)(sdl2)
+              if: contains(matrix.platform, 'windows')
+              uses: actions/upload-artifact@v4
+              with:
+                name: vcpkg-x64-windows_sdl2_${{ env.now }}
+                path: |
+                  vcpkg-x64-windows_sdl2.tar.gz
+                # C:\vcpkg\*.zip
+
+            - name: Archive the compiled file (vcpkg sdl2 export (Ubuntu))
+              if: contains(matrix.platform, 'ubuntu')
+              uses: actions/upload-artifact@v4
+              with:
+                name: vcpkg-export-ubuntu_${{ env.now }}
+                path: |
+                  /usr/local/share/vcpkg/*.zip
+
+            - name: Archive the compiled file (back up vcpkg Ubuntu)(sdl2)
+              if: contains(matrix.platform, 'ubuntu')
+              uses: actions/upload-artifact@v4
+              with:
+                name: vcpkg-x64-ubuntu_sdl2_${{ env.now }}
+                path: |
+                  vcpkg-x64-ubuntu_sdl2.tar.gz
 
             # - name: vcpkg Test 2
-            #   if: contains(matrix.platform, 'windows')
+            #   if: contains(matrix.platform, 'ubuntu')
             #   run: |
             #     sudo apt update
             #     sudo apt install autoconf automake autoconf-archive -y
@@ -235,16 +301,18 @@ jobs:
 
               # ls build*\build\bin\Release           
 
-            # - name: Configure cmake for Ubuntu (vcpkg)
-            #   run: |
-            #     echo -e "\nThe cmake args are: ${{ matrix.cmake-args }}\n"
-            #     cmake -B build ${{ matrix.cmake-args }} -DCMAKE_TOOLCHAIN_FILE=/usr/local/share/vcpkg/scripts/buildsystems/vcpkg.cmake
-            #     ls build
-            #   if: ${{ contains(matrix.platform, 'ubuntu') && contains(matrix.cmake-args, '-DCMAKE_BUILD_TYPE=Release') }}
 
-            - name: Configure cmake for Windows  (vcpkg)
+
+            - name: Configure cmake for Ubuntu (vcpkg)
               run: |
-                echo "`nThe cmake args are: ${{ matrix.cmake-args }}`n"
+                echo -e "\nThe cmake args are: ${{ matrix.cmake-args }} -DCMAKE_TOOLCHAIN_FILE=/usr/local/share/vcpkg/scripts/buildsystems/vcpkg.cmake \n"
+                cmake -B build ${{ matrix.cmake-args }} -DCMAKE_TOOLCHAIN_FILE=/usr/local/share/vcpkg/scripts/buildsystems/vcpkg.cmake
+                ls build
+              if: ${{ contains(matrix.platform, 'ubuntu') && contains(matrix.cmake-args, '-DCMAKE_BUILD_TYPE=Release') }}
+
+            - name: Configure cmake for Windows (vcpkg)
+              run: |
+                echo `n"The cmake args are: ${{ matrix.cmake-args }} -DCMAKE_TOOLCHAIN_FILE=C:\vcpkg\scripts\buildsystems\vcpkg.cmake "`n 
                 cmake -B build ${{ matrix.cmake-args }} -DCMAKE_TOOLCHAIN_FILE=C:\vcpkg\scripts\buildsystems\vcpkg.cmake
                 ls build
               if: ${{ contains(matrix.platform, 'windows') && contains(matrix.cmake-args, '-DCMAKE_BUILD_TYPE=Release') }} 
