@@ -221,6 +221,22 @@ jobs:
               # ls
               # make -v
 
+            - name: Prepare Openblas for Linux (vcpkg) Test 2
+              if: contains(matrix.platform, 'ubuntu')
+              run: |
+                cmake --version
+                vcpkg list
+                vcpkg install openblas:x64-linux
+                vcpkg list
+                echo -e "\nSearch for "manual-link" \n"
+                vcpkg owns manual-link
+                echo -e "\nSearch for "sdl2" \n"
+                vcpkg owns openblas
+                vcpkg export --x-all-installed --zip
+                tar -cvzf vcpkg-x64-ubuntu_sdl2_openblas.tar.gz "/usr/local/share/vcpkg"
+              # ls
+              # make -v
+
             - name: Prepare SDL2 for Windows (vcpkg) Test 1
               if: contains(matrix.platform, 'windows')
               run: |
@@ -239,7 +255,21 @@ jobs:
               # make -v
               # vcpkg integrate instal
 
-            - name: Archive the compiled file (vcpkg sdl2 export (Windows))
+            - name: Prepare Openblas for Windows (vcpkg) Test 2
+              if: contains(matrix.platform, 'windows')
+              run: |
+                cmake --version
+                vcpkg list
+                vcpkg install openblas:x64-windows
+                vcpkg list
+                echo `n"Search for "manual-link" "`n
+                vcpkg owns manual-link
+                echo `n"Search for "sdl2" "`n
+                vcpkg owns openblas
+                vcpkg export --x-all-installed --zip
+                tar -cvzf vcpkg-x64-windows_sdl2_openblas.tar.gz "C:\vcpkg" 
+
+            - name: Archive the compiled file (vcpkg export (Windows))
               if: contains(matrix.platform, 'windows')
               uses: actions/upload-artifact@v4
               with:
@@ -247,16 +277,17 @@ jobs:
                 path: |
                   C:\vcpkg\*.zip
 
-            - name: Archive the compiled file (back up vcpkg Windows)(sdl2)
+            - name: Archive the compiled file (back up vcpkg Windows)
               if: contains(matrix.platform, 'windows')
               uses: actions/upload-artifact@v4
               with:
-                name: vcpkg-x64-windows_sdl2_${{ env.now }}
+                name: vcpkg-x64-windows_all_${{ env.now }}
                 path: |
-                  vcpkg-x64-windows_sdl2.tar.gz
+                  .tar.gz
+                # vcpkg-x64-windows_sdl2.tar.gz
                 # C:\vcpkg\*.zip
 
-            - name: Archive the compiled file (vcpkg sdl2 export (Ubuntu))
+            - name: Archive the compiled file (vcpkg export (Ubuntu))
               if: contains(matrix.platform, 'ubuntu')
               uses: actions/upload-artifact@v4
               with:
@@ -264,13 +295,14 @@ jobs:
                 path: |
                   /usr/local/share/vcpkg/*.zip
 
-            - name: Archive the compiled file (back up vcpkg Ubuntu)(sdl2)
+            - name: Archive the compiled file (back up vcpkg Ubuntu)
               if: contains(matrix.platform, 'ubuntu')
               uses: actions/upload-artifact@v4
               with:
-                name: vcpkg-x64-ubuntu_sdl2_${{ env.now }}
+                name: vcpkg-x64-ubuntu_all_${{ env.now }}
                 path: |
-                  vcpkg-x64-ubuntu_sdl2.tar.gz
+                  *.tar.gz
+                # vcpkg-x64-ubuntu_sdl2.tar.gz
 
             # - name: vcpkg Test 2
             #   if: contains(matrix.platform, 'ubuntu')
