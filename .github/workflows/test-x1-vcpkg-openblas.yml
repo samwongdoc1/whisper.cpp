@@ -283,7 +283,7 @@ jobs:
               with:
                 name: vcpkg-x64-windows_all_${{ env.now }}
                 path: |
-                  .tar.gz
+                  *.tar.gz
                 # vcpkg-x64-windows_sdl2.tar.gz
                 # C:\vcpkg\*.zip
 
